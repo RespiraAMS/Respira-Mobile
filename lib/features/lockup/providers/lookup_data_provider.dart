@@ -2,7 +2,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../models/lookup_category.dart';
 import '../models/recent_item.dart';
 
-/// Giả lập dữ liệu state management (có thể thay bằng Riverpod/Bloc sau này)
 class LookupDataProvider {
   static const List<LookupCategory> categories = [
     LookupCategory(title: 'Nhóm kháng sinh', subtitle: 'Phân loại và mô tả', icon: LucideIcons.layers),

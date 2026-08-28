@@ -17,14 +17,12 @@ class MedicalLookupScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: c.background, // #F7F9F9
       body: SafeArea(
-        bottom: false, // Để Bottom Nav nổi đè lên phần dưới
+        bottom: false,
         child: Stack(
           children: [
-            // Nội dung chính có thể cuộn
             ListView(
               padding: const EdgeInsets.fromLTRB(Spacing.group, 22, Spacing.group, 120),
               children: [
-                // 1. App Bar (Custom vì dùng Menu icon thay vì Back)
                 Row(
                   children: [
                     InkWell(
@@ -52,11 +50,9 @@ class MedicalLookupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Spacing.screen),
 
-                // 2. Search Input
                 const LookupSearchField(),
                 const SizedBox(height: Spacing.section),
 
-                // 3. Section: Danh mục
                 Text(
                   'Danh mục',
                   style: TypographyTokens.bodyLarge(context).copyWith(
@@ -66,7 +62,6 @@ class MedicalLookupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Spacing.control),
                 
-                // Grid danh mục
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -85,7 +80,6 @@ class MedicalLookupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Spacing.section),
 
-                // 4. Section: Đã xem gần đây
                 Text(
                   'Đã xem gần đây',
                   style: TypographyTokens.bodyLarge(context).copyWith(
@@ -95,12 +89,10 @@ class MedicalLookupScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: Spacing.control),
 
-                // Danh sách đã xem
                 ...LookupDataProvider.recentItems.map((item) => RecentLookupTile(item: item)),
               ],
             ),
 
-            // 5. Floating Bottom Navigation
             const Positioned(
               left: 0,
               right: 0,

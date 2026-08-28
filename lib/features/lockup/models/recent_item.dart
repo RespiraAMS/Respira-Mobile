@@ -1,7 +1,7 @@
 class RecentItem {
   final String title;
   final String subtitle;
-  final String tag; // Ví dụ: 'Thuốc', 'Bệnh'
+  final String tag;
 
   const RecentItem({
     required this.title,
