@@ -3,6 +3,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../features/diagnosis/routes.dart';
 import '../../features/authentication/routes.dart';
+import '../../features/patient/routes.dart';
 
 part 'app_router.g.dart';
 
@@ -11,7 +12,7 @@ GoRouter buildAppRouter({
 }) {
   return GoRouter(
     initialLocation: initialLocation,
-    routes: [...authenticationRoutes, ...diagnosisRoutes],
+    routes: [...authenticationRoutes, ...patientRoutes, ...diagnosisRoutes],
   );
 }
 
