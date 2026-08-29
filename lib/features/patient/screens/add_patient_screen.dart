@@ -34,7 +34,7 @@ class AddPatientScreen extends ConsumerWidget {
                       AppAppBar(
                         title: 'Thêm bệnh nhân',
                         subtitle: 'Tạo hồ sơ bệnh nhân mới',
-                        onBack: () => context.goBackOr(PatientRoutes.detail),
+                        onBack: () => context.goBackOr(PatientRoutes.list),
                       ),
                       const SizedBox(height: Spacing.section),
                       AppTextField(

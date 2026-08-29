@@ -26,6 +26,7 @@ export 'components/dialog/app_dialog.dart';
 export 'components/feedback/app_toast.dart';
 export 'components/input/app_text_field.dart';
 export 'components/navigation/app_app_bar.dart';
+export 'components/navigation/app_bottom_navigation.dart';
 export 'components/tabs/app_segmented_tabs.dart';
 export 'components/text/app_link_text.dart';
 

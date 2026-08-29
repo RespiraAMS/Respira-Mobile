@@ -28,11 +28,11 @@ abstract final class LightColors {
   static const iconPrimary = Color(0xFF1D9BF0);
   static const iconInverse = Color(0xFFFFFFFF);
 
-  static const success = Color(0xFF17B26A);
+  static const success = Color(0xFF00BA7C);
   static const successSoft = Color(0xFFE8F8F0);
   static const warning = Color(0xFFF0B400);
   static const warningSoft = Color(0xFFFFF4CC);
-  static const error = Color(0xFFD92D20);
+  static const error = Color(0xFFF4212E);
   static const errorSoft = Color(0xFFFEECEB);
   static const info = Color(0xFF1D9BF0);
   static const infoSoft = Color(0xFFE8F5FD);

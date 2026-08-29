@@ -52,7 +52,7 @@ class PatientDetailScreen extends ConsumerWidget {
                         title: 'Chi tiết bệnh nhân',
                         subtitle: 'Thông tin chỉ đọc và tiến trình điều trị',
                         onBack: () =>
-                            context.goBackOr(PatientRoutes.addPatient),
+                            context.goBackOr(PatientRoutes.list),
                       ),
                       const SizedBox(height: Spacing.block),
                       PatientHeader(

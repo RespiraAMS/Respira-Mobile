@@ -6,15 +6,9 @@ part of 'app_router.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appRouterHash() => r'd4fc690d80765f9d1cdc7e2cd22e9ede53d87d4a';
+String _$appRouterHash() => r'2fb7dca5d30706cb872f53e8cb2bb062f8a19b48';
 
-/// Provided via Riverpod so each [ProviderScope] owns an isolated router —
-/// no navigation-state leakage across scopes (e.g. between tests).
-///
-/// The app boots into the auth journey: splash → login → welcome, then
-/// Bắt đầu enters `/` (clinical workspace).
-///
-/// Copied from [appRouter].
+/// See also [appRouter].
 @ProviderFor(appRouter)
 final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
   appRouter,

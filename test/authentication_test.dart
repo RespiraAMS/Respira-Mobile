@@ -74,7 +74,7 @@ void main() {
     // Enter the clinical workspace.
     await tester.tap(find.text('Bắt đầu'));
     await _settleNavigation(tester);
-    expect(find.text('Thêm bệnh nhân'), findsOneWidget);
+    expect(find.text('Danh sách bệnh nhân'), findsOneWidget);
   });
 
   testWidgets('password reset flow reaches the success screen', (tester) async {

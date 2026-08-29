@@ -5,14 +5,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:respira_mobile/core/router/app_router.dart';
 import 'package:respira_mobile/core/theme/theme_mode_provider.dart';
 import 'package:respira_mobile/design_system/design_system.dart';
+import 'package:respira_mobile/features/patient/routes.dart';
 import 'package:respira_mobile/main.dart';
 
-/// Pumps the app with an isolated router that starts at `/` so clinical
-/// flow tests don't walk through the auth journey every time.
+/// Pumps the app with an isolated router that starts on the add-patient
+/// screen so clinical flow tests skip the auth journey entirely.
 Future<void> _pumpClinicalApp(WidgetTester tester) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [appRouterProvider.overrideWithValue(buildAppRouter())],
+      overrides: [
+        appRouterProvider.overrideWithValue(
+          buildAppRouter(initialLocation: PatientRoutes.addPatient),
+        ),
+      ],
       child: const RespiraMobileApp(),
     ),
   );

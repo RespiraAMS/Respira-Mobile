@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import 'package:respira_mobile/features/patient/routes.dart';
+
 import '../../../../design_system/design_system.dart';
 import '../widgets/brand_header_widget.dart';
 
@@ -110,7 +112,9 @@ class WelcomeScreen extends ConsumerWidget {
                               expand: true,
                               // Enters the clinical workspace, clearing the
                               // auth stack.
-                              onPressed: () => context.go('/'),
+                              // Enters the workspace home (patient roster),
+                              // clearing the auth stack.
+                              onPressed: () => context.go(PatientRoutes.list),
                             ),
                             const SizedBox(height: Spacing.control),
                             AppText(

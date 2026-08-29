@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import 'package:respira_mobile/features/diagnosis/routes.dart';
+
 import '../models/add_progress_form_state.dart';
 import '../providers/add_progress_controller.dart';
 import '../providers/current_patient_provider.dart';
@@ -93,7 +95,7 @@ class AddProgressScreen extends ConsumerWidget {
                         child: AppButton(
                           label: 'Lưu diễn biến',
                           expand: true,
-                          onPressed: () => context.push('/diagnosis/curb-65'),
+                          onPressed: () => context.push(DiagnosisRoutes.curb65),
                         ),
                       ),
                     ],
