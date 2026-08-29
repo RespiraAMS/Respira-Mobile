@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../design_system/design_system.dart';
 import '../models/antibiotic.dart';
+import '../widgets/detail_row.dart';
+import '../widgets/gfr_card.dart';
+import '../widgets/pathogen_tag.dart';
 
 class AntibioticDetailScreen extends StatelessWidget {
   final Antibiotic antibiotic;
@@ -29,7 +32,6 @@ class AntibioticDetailScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(Spacing.group, 8, Spacing.group, Spacing.screen),
                 children: [
-                  // 1. Drug Hero Section
                   Container(
                     padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
                     decoration: BoxDecoration(
@@ -59,30 +61,27 @@ class AntibioticDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  // 2. Dosage Info (Liều dùng)
                   AppText('Liều dùng', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppCard.divided(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     const [
-                      _DetailRow(label: 'Đường dùng', value: 'Tiêm tĩnh mạch'),
-                      _DetailRow(label: 'Liều chuẩn', value: '2 g mỗi 24 giờ'),
-                      _DetailRow(label: 'Liều tối đa', value: '4 g/ngày'),
+                      DetailRow(label: 'Đường dùng', value: 'Tiêm tĩnh mạch'),
+                      DetailRow(label: 'Liều chuẩn', value: '2 g mỗi 24 giờ'),
+                      DetailRow(label: 'Liều tối đa', value: '4 g/ngày'),
                     ],
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  // 3. GFR Adjustment (Điều chỉnh GFR)
                   AppText('Điều chỉnh theo GFR', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
-                  _GfrCard(title: 'GFR ≥ 50 mL/phút', sub: 'Dùng liều chuẩn', tag: 'Chuẩn', tagBg: c.successSoft, tagColor: c.success),
+                  GfrCard(title: 'GFR ≥ 50 mL/phút', sub: 'Dùng liều chuẩn', tag: 'Chuẩn', tagBg: c.successSoft, tagColor: c.success),
                   const SizedBox(height: Spacing.control),
-                  _GfrCard(title: 'GFR 10–49 mL/phút', sub: 'Theo dõi chức năng thận', tag: 'Theo dõi', tagBg: c.warningSoft, tagColor: c.warning),
+                  GfrCard(title: 'GFR 10–49 mL/phút', sub: 'Theo dõi chức năng thận', tag: 'Theo dõi', tagBg: c.warningSoft, tagColor: c.warning),
                   const SizedBox(height: Spacing.control),
-                  _GfrCard(title: 'GFR < 10 mL/phút', sub: 'Tối đa 2 g/ngày', tag: 'Giảm liều', tagBg: c.errorSoft, tagColor: c.error),
+                  GfrCard(title: 'GFR < 10 mL/phút', sub: 'Tối đa 2 g/ngày', tag: 'Giảm liều', tagBg: c.errorSoft, tagColor: c.error),
                   const SizedBox(height: Spacing.section),
 
-                  // 4. Pathogen Coverage (Tác nhân nhạy cảm)
                   AppText('Tác nhân nhạy cảm', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppSurface(
@@ -90,15 +89,14 @@ class AntibioticDetailScreen extends StatelessWidget {
                     child: Wrap(
                       spacing: 8, runSpacing: 8,
                       children: [
-                        _PathogenTag('S. pneumoniae', bg: c.successSoft, color: c.success),
-                        _PathogenTag('H. influenzae', bg: c.successSoft, color: c.success),
-                        _PathogenTag('Enterobacterales', bg: c.warningSoft, color: c.warning),
+                        PathogenTag('S. pneumoniae', bg: c.successSoft, color: c.success),
+                        PathogenTag('H. influenzae', bg: c.successSoft, color: c.success),
+                        PathogenTag('Enterobacterales', bg: c.warningSoft, color: c.warning),
                       ],
                     ),
                   ),
                   const SizedBox(height: Spacing.screen),
 
-                  // 5. CTA Button
                   AppButton(
                     label: 'Xem phác đồ liên quan',
                     expand: true,
@@ -110,75 +108,6 @@ class AntibioticDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-// Custom Row cho thẻ Liều dùng
-class _DetailRow extends StatelessWidget {
-  final String label;
-  final String value;
-  const _DetailRow({required this.label, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          AppText(label, type: AppTextType.caption, fontWeight: FontWeight.w600),
-          AppText(value, type: AppTextType.label, color: context.respiraColors.textPrimary),
-        ],
-      ),
-    );
-  }
-}
-
-// Custom Card cho GFR
-class _GfrCard extends StatelessWidget {
-  final String title, sub, tag;
-  final Color tagBg, tagColor;
-  const _GfrCard({required this.title, required this.sub, required this.tag, required this.tagBg, required this.tagColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppSurface(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(title, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
-              const SizedBox(height: 4),
-              AppText(sub, type: AppTextType.caption),
-            ],
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(color: tagBg, borderRadius: AppRadius.full),
-            child: AppText(tag, type: AppTextType.label, color: tagColor),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// Pill cho vi khuẩn
-class _PathogenTag extends StatelessWidget {
-  final String label;
-  final Color bg, color;
-  const _PathogenTag(this.label, {required this.bg, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(color: bg, borderRadius: AppRadius.full),
-      child: AppText(label, type: AppTextType.label, color: color),
     );
   }
 }
