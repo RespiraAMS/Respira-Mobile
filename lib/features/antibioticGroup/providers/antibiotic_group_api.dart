@@ -9,11 +9,9 @@ class PaginatedGroupResponse {
 }
 
 class AntibioticGroupApi {
-  // Giả lập API có phân trang
   static Future<PaginatedGroupResponse> fetchGroups({int page = 1, int pageSize = 10}) async {
     await Future.delayed(const Duration(seconds: 1)); // Fake network delay
 
-    // Data mock từ API bạn cung cấp
     const String mockResponse = '''
     {
       "metadata": {

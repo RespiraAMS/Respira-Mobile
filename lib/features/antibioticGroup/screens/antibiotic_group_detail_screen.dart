@@ -32,7 +32,6 @@ class AntibioticGroupDetailScreen extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(Spacing.group, 8, Spacing.group, Spacing.screen),
                 children: [
-                  // 1. Hero Card
                   Container(
                     padding: const EdgeInsets.all(Spacing.block),
                     decoration: BoxDecoration(
@@ -86,7 +85,6 @@ class AntibioticGroupDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: Spacing.screen),
 
-                  // 4. CTA Button
                   AppButton(
                     label: 'Xem danh sách kháng sinh',
                     expand: true,

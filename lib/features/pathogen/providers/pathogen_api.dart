@@ -9,7 +9,6 @@ class PaginatedPathogenResponse {
 }
 
 class PathogenApi {
-  // Giả lập API có phân trang (Infinite Scrolling)
   static Future<PaginatedPathogenResponse> fetchPathogens({int page = 1, int pageSize = 10}) async {
     await Future.delayed(const Duration(seconds: 1)); // Fake network delay
 

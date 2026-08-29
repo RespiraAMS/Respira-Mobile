@@ -9,7 +9,6 @@ class PaginatedAntibiogramResponse {
 }
 
 class AntibiogramApi {
-  // Giả lập API có phân trang (Infinite Scrolling)
   static Future<PaginatedAntibiogramResponse> fetchAntibiograms({int page = 1, int pageSize = 10}) async {
     await Future.delayed(const Duration(seconds: 1)); // Fake network delay
 

@@ -92,7 +92,6 @@ class _AntibiogramListScreenState extends State<AntibiogramListScreen> {
 
                         final item = _antibiograms[index];
                         
-                        // Xử lý màu sắc thẻ MIC level
                         final Color tagBg = item.micLevel == 'Susceptible' ? c.successSoft 
                                           : item.micLevel == 'Intermediate' ? c.warningSoft : c.errorSoft;
                         final Color tagText = item.micLevel == 'Susceptible' ? c.success 
