@@ -3,6 +3,7 @@ import '../../../../design_system/design_system.dart';
 import '../../antibiograms/screens/antibiogram_list_screen.dart';
 import '../../antibiotic/screens/antibiotic_list_screen.dart';
 import '../../antibioticGroup/screens/antibiotic_group_list_screen.dart';
+import '../../diseases/screens/disease_list_screen.dart';
 import '../../pathogen/screens/pathogen_list_screen.dart';
 import '../models/lookup_category.dart';
 
@@ -22,13 +23,14 @@ class CategoryGridItem extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (_) => const AntibioticListScreen()),
           );
-        }
-        else if (category.title == 'Nhóm kháng sinh') {
+        } else if (category.title == 'Nhóm kháng sinh') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const AntibioticGroupListScreen()));
-        }else if (category.title == 'Tác nhân gây bệnh') {
+        } else if (category.title == 'Tác nhân gây bệnh') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const PathogenListScreen()));
         } else if (category.title == 'Kháng sinh đồ') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const AntibiogramListScreen()));
+        } else if (category.title == 'Bệnh lý') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const DiseaseListScreen()));
         } else {
           showAppToast(context, 'Tính năng ${category.title} đang phát triển');
         }
