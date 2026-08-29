@@ -26,7 +26,7 @@ class MedicalLookupScreen extends StatelessWidget {
                 Row(
                   children: [
                     InkWell(
-                      onTap: () {}, // Mở Drawer
+                      onTap: () {},
                       borderRadius: BorderRadius.circular(20),
                       child: Container(
                         width: 40,
