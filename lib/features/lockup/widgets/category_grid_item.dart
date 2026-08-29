@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/design_system.dart';
 import '../../antibiotic/screens/antibiotic_list_screen.dart';
+import '../../antibioticGroup/screens/antibiotic_group_list_screen.dart';
 import '../models/lookup_category.dart';
 
 class CategoryGridItem extends StatelessWidget {
@@ -19,6 +20,9 @@ class CategoryGridItem extends StatelessWidget {
             context,
             MaterialPageRoute(builder: (_) => const AntibioticListScreen()),
           );
+        }
+        else if (category.title == 'Nhóm kháng sinh') {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const AntibioticGroupListScreen()));
         } else {
           showAppToast(context, 'Tính năng ${category.title} đang phát triển');
         }

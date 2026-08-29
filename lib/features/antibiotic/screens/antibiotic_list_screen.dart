@@ -42,7 +42,6 @@ class AntibioticListScreen extends StatelessWidget {
                     separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
                     itemBuilder: (context, index) {
                       final item = antibiotics[index];
-                      // Định dạng màu classification (Access -> Xanh, Watch -> Vàng, Reserve -> Đỏ)
                       final Color tagBg = item.classification == 'Access' ? c.successSoft 
                                         : item.classification == 'Watch' ? c.warningSoft : c.errorSoft;
                       final Color tagText = item.classification == 'Access' ? c.success 

@@ -2,9 +2,8 @@ import 'dart:convert';
 import '../models/antibiotic.dart';
 
 class AntibioticApi {
-  // Giả lập gọi API lấy danh sách
   static Future<List<Antibiotic>> fetchAntibiotics() async {
-    await Future.delayed(const Duration(seconds: 1)); // Fake network delay
+    await Future.delayed(const Duration(seconds: 1)); 
 
     const String mockResponse = '''
     {
