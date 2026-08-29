@@ -8,6 +8,7 @@ import '../models/otp_state.dart';
 import '../providers/otp_controller.dart';
 import '../widgets/brand_header_widget.dart';
 import '../widgets/otp_input_widget.dart';
+import '../routes.dart';
 
 /// Route `/otp-verification` — password-reset step 1/2: verify identity.
 class OtpVerificationScreen extends ConsumerWidget {
@@ -22,8 +23,7 @@ class OtpVerificationScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.xl),
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -41,7 +41,8 @@ class OtpVerificationScreen extends ConsumerWidget {
                         child: Container(
                           height: 64,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: Spacing.group),
+                            horizontal: Spacing.group,
+                          ),
                           decoration: BoxDecoration(
                             color: c.primarySoft,
                             borderRadius: AppRadius.full,
@@ -52,7 +53,10 @@ class OtpVerificationScreen extends ConsumerWidget {
                               AvatarGlyphWidget(glyph: '👨🏻', size: 44),
                               Transform.translate(
                                 offset: const Offset(-12, 0),
-                                child: AvatarGlyphWidget(glyph: '👩🏾', size: 44),
+                                child: AvatarGlyphWidget(
+                                  glyph: '👩🏾',
+                                  size: 44,
+                                ),
                               ),
                             ],
                           ),
@@ -61,8 +65,9 @@ class OtpVerificationScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section),
                       Text(
                         'Nhập mã xác thực',
-                        style: TypographyTokens.h1(context)
-                            .copyWith(color: c.textPrimary),
+                        style: TypographyTokens.h1(
+                          context,
+                        ).copyWith(color: c.textPrimary),
                       ),
                       const SizedBox(height: Spacing.inline),
                       AppText('Mã 6 chữ số đã được gửi đến bs.m***@respira.vn'),
@@ -75,7 +80,10 @@ class OtpVerificationScreen extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          AppText(otp.countdownLabel, type: AppTextType.caption),
+                          AppText(
+                            otp.countdownLabel,
+                            type: AppTextType.caption,
+                          ),
                           if (otp.secondsRemaining == 0)
                             AppLinkText(
                               'Gửi lại mã',
@@ -93,7 +101,8 @@ class OtpVerificationScreen extends ConsumerWidget {
                         label: 'Xác nhận',
                         expand: true,
                         onPressed: otp.isComplete
-                            ? () => context.push('/new-password')
+                            ? () =>
+                                  context.push(AuthenticationRoutes.newPassword)
                             : null,
                       ),
                       const SizedBox(height: Spacing.section),
@@ -107,8 +116,9 @@ class OtpVerificationScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Bảo mật tài khoản',
-                              style: TypographyTokens.bodyLarge(context)
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: TypographyTokens.bodyLarge(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: Spacing.inline - 4),
                             AppText(
@@ -120,14 +130,14 @@ class OtpVerificationScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: Spacing.inline),
+                        padding: const EdgeInsets.only(bottom: Spacing.inline),
                         child: AppButton(
                           label: 'Đổi email nhận mã',
                           type: AppButtonType.secondary,
                           expand: true,
-                          onPressed: () =>
-                              context.goBackOr('/forgot-password'),
+                          onPressed: () => context.goBackOr(
+                            AuthenticationRoutes.forgotPassword,
+                          ),
                         ),
                       ),
                       AppText(

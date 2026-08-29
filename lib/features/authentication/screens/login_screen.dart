@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../design_system/design_system.dart';
 import '../providers/login_controller.dart';
 import '../widgets/brand_header_widget.dart';
+import '../routes.dart';
 
 /// Route `/login` — email/staff-code sign-in.
 class LoginScreen extends ConsumerWidget {
@@ -19,10 +20,7 @@ class LoginScreen extends ConsumerWidget {
 
     void submit() {
       if (!controller.canSubmit) {
-        showAppToast(
-          context,
-          'Vui lòng nhập email/mã nhân viên và mật khẩu.',
-        );
+        showAppToast(context, 'Vui lòng nhập email/mã nhân viên và mật khẩu.');
         return;
       }
       // Repository-backed auth lands with the networking layer; the
@@ -33,8 +31,7 @@ class LoginScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.xl),
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -48,8 +45,9 @@ class LoginScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section + 4),
                       Text(
                         'Đăng nhập',
-                        style: TypographyTokens.h1(context)
-                            .copyWith(color: c.textPrimary),
+                        style: TypographyTokens.h1(
+                          context,
+                        ).copyWith(color: c.textPrimary),
                       ),
                       const SizedBox(height: Spacing.inline),
                       AppText('Tiếp tục vào không gian làm việc RespiraAMS.'),
@@ -76,7 +74,8 @@ class LoginScreen extends ConsumerWidget {
                         alignment: Alignment.centerRight,
                         child: AppLinkText(
                           'Quên mật khẩu?',
-                          onPressed: () => context.push('/forgot-password'),
+                          onPressed: () =>
+                              context.push(AuthenticationRoutes.forgotPassword),
                         ),
                       ),
                       const SizedBox(height: Spacing.block - 4),
@@ -114,8 +113,11 @@ class LoginScreen extends ConsumerWidget {
                                 color: c.primarySoft,
                                 shape: BoxShape.circle,
                               ),
-                              child: Icon(LucideIcons.shieldCheck,
-                                  size: ControlSize.iconLg, color: c.primary),
+                              child: Icon(
+                                LucideIcons.shieldCheck,
+                                size: ControlSize.iconLg,
+                                color: c.primary,
+                              ),
                             ),
                             const SizedBox(width: Spacing.control + 4),
                             Expanded(
@@ -124,9 +126,9 @@ class LoginScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'Phiên đăng nhập an toàn',
-                                    style: TypographyTokens.body(context)
-                                        .copyWith(
-                                            fontWeight: FontWeight.w700),
+                                    style: TypographyTokens.body(
+                                      context,
+                                    ).copyWith(fontWeight: FontWeight.w700),
                                   ),
                                   const SizedBox(height: Spacing.xxs - 4),
                                   AppText(
@@ -141,8 +143,7 @@ class LoginScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: Spacing.inline),
+                        padding: const EdgeInsets.only(bottom: Spacing.inline),
                         child: AppText(
                           'Cần hỗ trợ? Liên hệ quản trị viên bệnh viện.',
                           type: AppTextType.caption,
@@ -175,12 +176,12 @@ class _DividerWithLabel extends StatelessWidget {
       children: [
         Expanded(child: Container(height: 1, color: c.borderSubtle)),
         Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.control),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.control),
           child: Text(
             label,
-            style: TypographyTokens.caption(context)
-                .copyWith(color: c.textTertiary),
+            style: TypographyTokens.caption(
+              context,
+            ).copyWith(color: c.textTertiary),
           ),
         ),
         Expanded(child: Container(height: 1, color: c.borderSubtle)),

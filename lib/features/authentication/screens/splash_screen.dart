@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../design_system/design_system.dart';
+import '../routes.dart';
 import '../widgets/brand_header_widget.dart';
 
 /// Route `/splash` — brand intro; advances to `/login` automatically.
@@ -22,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _timer = Timer(_autoAdvanceAfter, () {
-      if (mounted) context.go('/login');
+      if (mounted) context.go(AuthenticationRoutes.login);
     });
   }
 
@@ -43,14 +44,13 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             children: [
               const Spacer(flex: 3),
-              RespiraLogoMarkWidget(
-                size: 96,
-              ),
+              RespiraLogoMarkWidget(size: 96),
               const SizedBox(height: Spacing.xl),
               Text(
                 'RespiraAMS',
-                style:
-                    TypographyTokens.h1(context).copyWith(color: c.textPrimary),
+                style: TypographyTokens.h1(
+                  context,
+                ).copyWith(color: c.textPrimary),
               ),
               const SizedBox(height: Spacing.inline),
               AppText(

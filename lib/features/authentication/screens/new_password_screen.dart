@@ -8,6 +8,7 @@ import '../models/new_password_form_state.dart';
 import '../providers/new_password_controller.dart';
 import '../widgets/brand_header_widget.dart';
 import '../widgets/password_requirement_widget.dart';
+import '../routes.dart';
 
 /// Route `/new-password` — password-reset step 2/2: set a new password.
 class NewPasswordScreen extends ConsumerWidget {
@@ -22,8 +23,7 @@ class NewPasswordScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.xl),
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -37,8 +37,9 @@ class NewPasswordScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section + 4),
                       Text(
                         'Tạo mật khẩu mới',
-                        style: TypographyTokens.h1(context)
-                            .copyWith(color: c.textPrimary),
+                        style: TypographyTokens.h1(
+                          context,
+                        ).copyWith(color: c.textPrimary),
                       ),
                       const SizedBox(height: Spacing.inline),
                       AppText(
@@ -71,8 +72,9 @@ class NewPasswordScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Mật khẩu cần có',
-                              style: TypographyTokens.body(context)
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: TypographyTokens.body(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: Spacing.control - 4),
                             PasswordRequirementWidget(
@@ -98,22 +100,23 @@ class NewPasswordScreen extends ConsumerWidget {
                         // Error never relies on color alone (§12).
                         Text(
                           'Mật khẩu xác nhận chưa khớp.',
-                          style: TypographyTokens.caption(context)
-                              .copyWith(color: c.error),
+                          style: TypographyTokens.caption(
+                            context,
+                          ).copyWith(color: c.error),
                         ),
                       ],
                       const Spacer(),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: Spacing.inline),
+                        padding: const EdgeInsets.only(bottom: Spacing.inline),
                         child: Column(
                           children: [
                             AppButton(
                               label: 'Cập nhật mật khẩu',
                               expand: true,
                               onPressed: form.canSubmit
-                                  ? () => context
-                                      .push('/password-reset-success')
+                                  ? () => context.push(
+                                      AuthenticationRoutes.passwordResetSuccess,
+                                    )
                                   : null,
                             ),
                             const SizedBox(height: Spacing.control),
@@ -121,7 +124,8 @@ class NewPasswordScreen extends ConsumerWidget {
                               label: 'Hủy và quay lại',
                               type: AppButtonType.secondary,
                               expand: true,
-                              onPressed: () => context.goBackOr('/login'),
+                              onPressed: () =>
+                                  context.goBackOr(AuthenticationRoutes.login),
                             ),
                           ],
                         ),

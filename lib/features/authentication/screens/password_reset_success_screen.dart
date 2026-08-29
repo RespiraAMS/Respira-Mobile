@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../design_system/design_system.dart';
 import '../widgets/brand_header_widget.dart';
+import '../routes.dart';
 
 /// Route `/password-reset-success` — terminal screen of the reset flow.
 class PasswordResetSuccessScreen extends ConsumerWidget {
@@ -17,8 +18,7 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.xl),
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -49,8 +49,11 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
                               color: c.surface,
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(LucideIcons.checkCircle2,
-                                size: ControlSize.iconXl, color: c.success),
+                            child: Icon(
+                              LucideIcons.checkCircle2,
+                              size: ControlSize.iconXl,
+                              color: c.success,
+                            ),
                           ),
                         ),
                       ),
@@ -58,8 +61,9 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
                       Text(
                         'Mật khẩu đã được cập nhật',
                         textAlign: TextAlign.center,
-                        style: TypographyTokens.h1(context)
-                            .copyWith(color: c.textPrimary),
+                        style: TypographyTokens.h1(
+                          context,
+                        ).copyWith(color: c.textPrimary),
                       ),
                       const SizedBox(height: Spacing.control + 4),
                       AppText(
@@ -80,9 +84,9 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
                                 children: [
                                   Text(
                                     'BS. Lê Hoàng Minh',
-                                    style: TypographyTokens.body(context)
-                                        .copyWith(
-                                            fontWeight: FontWeight.w700),
+                                    style: TypographyTokens.body(
+                                      context,
+                                    ).copyWith(fontWeight: FontWeight.w700),
                                   ),
                                   const SizedBox(height: Spacing.xxs - 4),
                                   AppText(
@@ -100,16 +104,18 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(Spacing.group),
                         decoration: BoxDecoration(
                           color: c.primarySoft,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.lgValue - 4),
+                          borderRadius: BorderRadius.circular(
+                            AppRadius.lgValue - 4,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Không gian làm việc đã sẵn sàng',
-                              style: TypographyTokens.body(context)
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: TypographyTokens.body(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: Spacing.inline - 4),
                             AppText(
@@ -121,19 +127,20 @@ class PasswordResetSuccessScreen extends ConsumerWidget {
                       ),
                       const Spacer(),
                       Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: Spacing.inline),
+                        padding: const EdgeInsets.only(bottom: Spacing.inline),
                         child: Column(
                           children: [
                             AppButton(
                               label: 'Đăng nhập ngay',
                               expand: true,
-                              onPressed: () => context.go('/login'),
+                              onPressed: () =>
+                                  context.go(AuthenticationRoutes.login),
                             ),
                             const SizedBox(height: Spacing.control),
                             AppLinkText(
                               'Về trang chào mừng',
-                              onPressed: () => context.go('/welcome'),
+                              onPressed: () =>
+                                  context.go(AuthenticationRoutes.welcome),
                             ),
                           ],
                         ),

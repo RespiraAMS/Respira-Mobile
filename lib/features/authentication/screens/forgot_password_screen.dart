@@ -7,6 +7,7 @@ import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../providers/forgot_password_controller.dart';
 import '../widgets/brand_header_widget.dart';
+import '../routes.dart';
 
 /// Route `/forgot-password` — request a 6-digit verification code.
 class ForgotPasswordScreen extends ConsumerWidget {
@@ -20,15 +21,14 @@ class ForgotPasswordScreen extends ConsumerWidget {
 
     void submit() {
       if (controller.submit()) {
-        context.push('/otp-verification');
+        context.push(AuthenticationRoutes.otpVerification);
       }
     }
 
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Spacing.xl),
+          padding: const EdgeInsets.symmetric(horizontal: Spacing.xl),
           child: LayoutBuilder(
             builder: (context, constraints) => SingleChildScrollView(
               child: ConstrainedBox(
@@ -40,15 +40,19 @@ class ForgotPasswordScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.xxs),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: _BackButton(onTap: () => context.goBackOr('/login')),
+                        child: _BackButton(
+                          onTap: () =>
+                              context.goBackOr(AuthenticationRoutes.login),
+                        ),
                       ),
                       const SizedBox(height: Spacing.block),
                       const Center(child: RespiraLogoMarkWidget(size: 48)),
                       const SizedBox(height: Spacing.section),
                       Text(
                         'Quên mật khẩu?',
-                        style: TypographyTokens.h1(context)
-                            .copyWith(color: c.textPrimary),
+                        style: TypographyTokens.h1(
+                          context,
+                        ).copyWith(color: c.textPrimary),
                       ),
                       const SizedBox(height: Spacing.inline),
                       AppText(
@@ -75,7 +79,8 @@ class ForgotPasswordScreen extends ConsumerWidget {
                         label: 'Quay lại đăng nhập',
                         type: AppButtonType.secondary,
                         expand: true,
-                        onPressed: () => context.goBackOr('/login'),
+                        onPressed: () =>
+                            context.goBackOr(AuthenticationRoutes.login),
                       ),
                       const SizedBox(height: Spacing.section),
                       AppSurface(
@@ -86,8 +91,9 @@ class ForgotPasswordScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Không nhận được email?',
-                              style: TypographyTokens.bodyMedium(context)
-                                  .copyWith(fontWeight: FontWeight.w700),
+                              style: TypographyTokens.bodyMedium(
+                                context,
+                              ).copyWith(fontWeight: FontWeight.w700),
                             ),
                             const SizedBox(height: Spacing.inline - 4),
                             AppText(
@@ -128,8 +134,11 @@ class _BackButton extends StatelessWidget {
         height: ControlSize.touchTargetMin,
         child: InkWell(
           onTap: onTap,
-          child: Icon(LucideIcons.arrowLeft,
-              size: ControlSize.iconLg, color: c.iconDefault),
+          child: Icon(
+            LucideIcons.arrowLeft,
+            size: ControlSize.iconLg,
+            color: c.iconDefault,
+          ),
         ),
       ),
     );
