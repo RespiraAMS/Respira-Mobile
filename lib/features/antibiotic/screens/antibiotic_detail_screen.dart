@@ -66,14 +66,14 @@ class AntibioticDetailScreen extends StatelessWidget {
                   AppCard.divided(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     const [
-                      DetailRow(label: 'Đường dùng', value: 'Tiêm tĩnh mạch'),
-                      DetailRow(label: 'Liều chuẩn', value: '2 g mỗi 24 giờ'),
-                      DetailRow(label: 'Liều tối đa', value: '4 g/ngày'),
+                      DetailRow(label: 'Đường dùng', value: 'Không có dữ liệu'),
+                      DetailRow(label: 'Liều chuẩn', value: 'Không có dữ liệu'),
+                      DetailRow(label: 'Liều tối đa', value: 'Không có dữ liệu'),
                     ],
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  AppText('Điều chỉnh theo GFR', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
+                  AppText('Điều chỉnh theo GFR (chỗ này dữ liệu cứng)', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   GfrCard(title: 'GFR ≥ 50 mL/phút', sub: 'Dùng liều chuẩn', tag: 'Chuẩn', tagBg: c.successSoft, tagColor: c.success),
                   const SizedBox(height: Spacing.control),
@@ -82,7 +82,7 @@ class AntibioticDetailScreen extends StatelessWidget {
                   GfrCard(title: 'GFR < 10 mL/phút', sub: 'Tối đa 2 g/ngày', tag: 'Giảm liều', tagBg: c.errorSoft, tagColor: c.error),
                   const SizedBox(height: Spacing.section),
 
-                  AppText('Tác nhân nhạy cảm', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
+                  AppText('Tác nhân nhạy cảm (chỗ này dữ liệu cứng)', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppSurface(
                     padding: const EdgeInsets.all(16),

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import '../models/antibiogram.dart';
-import './antibiogram_service.dart';
+import '../models/antibiotic.dart';
+import './antibiotic_service.dart';
 
-class AntibiogramProvider extends ChangeNotifier {
-  final AntibiogramRepository _repository;
+class AntibioticProvider extends ChangeNotifier {
+  final AntibioticRepository _repository;
 
-  AntibiogramProvider(this._repository);
+  AntibioticProvider(this._repository);
 
-  final List<Antibiogram> _items = [];
-  List<Antibiogram> get items => _items;
+  final List<Antibiotic> _items = [];
+  List<Antibiotic> get items => _items;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -29,7 +29,7 @@ class AntibiogramProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _repository.fetchAntibiograms(page: _currentPage);
+      final response = await _repository.fetchAntibiotics(page: _currentPage);
       
       _items.addAll(response.items);
       _hasMore = response.hasNextPage;
