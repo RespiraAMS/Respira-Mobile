@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:respira_mobile/core/network/api_client.dart';
 import '../../../../design_system/design_system.dart';
+import '../../antibiograms/providers/antibiogram_provider.dart';
+import '../../antibiograms/providers/antibiogram_service.dart';
 import '../../antibiograms/screens/antibiogram_list_screen.dart';
 import '../../antibiotic/screens/antibiotic_list_screen.dart';
 import '../../antibioticGroup/screens/antibiotic_group_list_screen.dart';
@@ -28,7 +32,19 @@ class CategoryGridItem extends StatelessWidget {
         } else if (category.title == 'Tác nhân gây bệnh') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const PathogenListScreen()));
         } else if (category.title == 'Kháng sinh đồ') {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const AntibiogramListScreen()));
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ChangeNotifierProvider(
+                create: (_) {
+                  final apiClient = ApiClient(); 
+                  final repository = AntibiogramRepository(apiClient: apiClient);
+                  return AntibiogramProvider(repository);
+                },
+                child: const AntibiogramListScreen(),
+              ),
+            ),
+          );
         } else if (category.title == 'Bệnh lý') {
           Navigator.push(context, MaterialPageRoute(builder: (_) => const DiseaseListScreen()));
         } else {

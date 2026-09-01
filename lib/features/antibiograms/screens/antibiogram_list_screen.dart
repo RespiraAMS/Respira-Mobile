@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
-import '../models/antibiogram.dart';
-import '../providers/antibiogram_api.dart';
+import '../providers/antibiogram_provider.dart';
 import 'antibiogram_detail_screen.dart';
 
 class AntibiogramListScreen extends StatefulWidget {
@@ -13,16 +13,14 @@ class AntibiogramListScreen extends StatefulWidget {
 
 class _AntibiogramListScreenState extends State<AntibiogramListScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<Antibiogram> _antibiograms = [];
-  
-  bool _isLoading = false;
-  bool _hasMore = true;
-  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchPage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AntibiogramProvider>().fetchPage();
+    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -34,26 +32,7 @@ class _AntibiogramListScreenState extends State<AntibiogramListScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      _fetchPage();
-    }
-  }
-
-  Future<void> _fetchPage() async {
-    if (_isLoading || !_hasMore) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await AntibiogramApi.fetchAntibiograms(page: _currentPage);
-      setState(() {
-        _antibiograms.addAll(response.items);
-        _hasMore = response.hasNextPage;
-        _currentPage++;
-      });
-    } catch (e) {
-      if (mounted) showAppToast(context, 'Lỗi tải dữ liệu');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      context.read<AntibiogramProvider>().fetchPage();
     }
   }
 
@@ -75,58 +54,70 @@ class _AntibiogramListScreenState extends State<AntibiogramListScreen> {
               ),
             ),
             Expanded(
-              child: _antibiograms.isEmpty && _isLoading
-                  ? Center(child: CircularProgressIndicator(color: c.primary))
-                  : ListView.separated(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(Spacing.group),
-                      itemCount: _antibiograms.length + (_hasMore ? 1 : 0),
-                      separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
-                      itemBuilder: (context, index) {
-                        if (index == _antibiograms.length) {
-                          return Padding(
-                            padding: const EdgeInsets.all(Spacing.group),
-                            child: Center(child: CircularProgressIndicator(color: c.primary)),
-                          );
-                        }
+              child: Consumer<AntibiogramProvider>(
+                builder: (context, provider, child) {
+                  if (provider.errorMessage != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showAppToast(context, provider.errorMessage!);
+                      provider.clearError();
+                    });
+                  }
 
-                        final item = _antibiograms[index];
-                        
-                        final Color tagBg = item.micLevel == 'Susceptible' ? c.successSoft 
-                                          : item.micLevel == 'Intermediate' ? c.warningSoft : c.errorSoft;
-                        final Color tagText = item.micLevel == 'Susceptible' ? c.success 
-                                            : item.micLevel == 'Intermediate' ? c.warning : c.error;
+                  if (provider.items.isEmpty && provider.isLoading) {
+                    return Center(child: CircularProgressIndicator(color: c.primary));
+                  }
 
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => AntibiogramDetailScreen(antibiogram: item)),
-                          ),
-                          child: AppSurface(
-                            padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      AppText(item.pathogen.name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
-                                      const SizedBox(height: 4),
-                                      AppText('${item.firstPriorityMedicines.length} thuốc ưu tiên', type: AppTextType.caption),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                                  decoration: BoxDecoration(color: tagBg, borderRadius: AppRadius.full),
-                                  child: AppText(item.micLevel, type: AppTextType.label, color: tagText),
-                                ),
-                              ],
-                            ),
-                          ),
+                  return ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(Spacing.group),
+                    itemCount: provider.items.length + (provider.hasMore ? 1 : 0),
+                    separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
+                    itemBuilder: (context, index) {
+                      if (index == provider.items.length) {
+                        return Padding(
+                          padding: const EdgeInsets.all(Spacing.group),
+                          child: Center(child: CircularProgressIndicator(color: c.primary)),
                         );
-                      },
-                    ),
+                      }
+
+                      final item = provider.items[index];
+                      final Color tagBg = item.micLevel == 'Susceptible' ? c.successSoft 
+                                        : item.micLevel == 'Intermediate' ? c.warningSoft : c.errorSoft;
+                      final Color tagText = item.micLevel == 'Susceptible' ? c.success 
+                                          : item.micLevel == 'Intermediate' ? c.warning : c.error;
+
+                      return GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => AntibiogramDetailScreen(antibiogram: item)),
+                        ),
+                        child: AppSurface(
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppText(item.pathogen.name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
+                                    const SizedBox(height: 4),
+                                    AppText('${item.firstPriorityMedicines.length} thuốc ưu tiên', type: AppTextType.caption),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(color: tagBg, borderRadius: AppRadius.full),
+                                child: AppText(item.micLevel, type: AppTextType.label, color: tagText),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),

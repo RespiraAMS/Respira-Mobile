@@ -23,11 +23,11 @@ class TreatmentCard extends StatelessWidget {
         children: [
           AppText(name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
           const SizedBox(height: 12),
-          const _RowTreatment('Liều dùng', 'Theo phác đồ'),
+          const _RowTreatment('Liều dùng', 'Không có dữ liệu'),
           const SizedBox(height: 8),
-          const _RowTreatment('Đường dùng', 'Theo phác đồ'),
+          const _RowTreatment('Đường dùng', 'Không có dữ liệu'),
           const SizedBox(height: 8),
-          const _RowTreatment('Tần suất', 'Theo phác đồ'),
+          const _RowTreatment('Tần suất', 'Không có dữ liệu'),
           if (note != null) ...[
             const SizedBox(height: 12),
             Container(

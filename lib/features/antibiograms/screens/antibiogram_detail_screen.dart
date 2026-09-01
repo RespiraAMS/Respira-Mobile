@@ -81,7 +81,7 @@ class AntibiogramDetailScreen extends StatelessWidget {
                   ResultAccordion(
                     title: 'Đề kháng thuốc MIC',
                     summary: '${antibiogram.mics.length} kháng sinh',
-                    children: antibiogram.mics.map((m) => MicListRow(name: m.name, mic: 'MIC 8 mg/L', result: 'R')).toList(),
+                    children: antibiogram.mics.map((m) => MicListRow(name: m.name, mic: '', result: '')).toList(),
                   ),
                   const SizedBox(height: Spacing.control),
                   
@@ -95,7 +95,7 @@ class AntibiogramDetailScreen extends StatelessWidget {
                   ResultAccordion(
                     title: 'Lựa chọn thay thế',
                     summary: '${antibiogram.secondPriorityMedicines.length} lựa chọn',
-                    children: antibiogram.secondPriorityMedicines.map((m) => TreatmentCard(name: m.name, note: 'Khi có nguy cơ kháng thuốc')).toList(),
+                    children: antibiogram.secondPriorityMedicines.map((m) => TreatmentCard(name: m.name, note: null)).toList(),
                   ),
                 ],
               ),
