@@ -1,15 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../design_system/design_system.dart';
 import '../models/disease.dart';
-import '../providers/disease_api.dart';
+import '../providers/disease_provider.dart';
 import '../widgets/info_row_with_icon.dart';
 import '../widgets/disease_info_row.dart';
 
-class DiseaseDetailScreen extends StatelessWidget {
+class DiseaseDetailScreen extends StatefulWidget {
   final String diseaseId;
 
   const DiseaseDetailScreen({super.key, required this.diseaseId});
+
+  @override
+  State<DiseaseDetailScreen> createState() => _DiseaseDetailScreenState();
+}
+
+class _DiseaseDetailScreenState extends State<DiseaseDetailScreen> {
+  late Future<DiseaseDetail> _detailFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _detailFuture = context.read<DiseaseProvider>().fetchDiseaseDetail(widget.diseaseId);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,13 +33,18 @@ class DiseaseDetailScreen extends StatelessWidget {
       backgroundColor: c.background,
       body: SafeArea(
         child: FutureBuilder<DiseaseDetail>(
-          future: DiseaseApi.fetchDiseaseDetail(diseaseId),
+          future: _detailFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(child: CircularProgressIndicator(color: c.primary));
             }
             if (!snapshot.hasData || snapshot.hasError) {
-              return Center(child: AppText('Không tải được thông tin', color: c.error));
+              return Center(
+                child: AppText(
+                  'Không tải được thông tin: ${snapshot.error}', 
+                  color: c.error,
+                ),
+              );
             }
 
             final detail = snapshot.data!;
@@ -108,7 +127,7 @@ class DiseaseDetailScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 4),
                         detail.icuCriteria.map((c) => DiseaseInfoRow(
                           title: c.name, 
-                          subtitle: 'Điểm đánh giá', 
+                          subtitle: '', 
                           value: '+${c.score} điểm'
                         )).toList(),
                       ),
@@ -121,7 +140,7 @@ class DiseaseDetailScreen extends StatelessWidget {
                         detail.risks.map((r) => DiseaseInfoRow(
                           title: r.name, 
                           subtitle: r.type, 
-                          value: 'Kháng thuốc'
+                          value: r.pathogenName
                         )).toList(),
                       ),
                     ],

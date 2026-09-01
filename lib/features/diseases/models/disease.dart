@@ -39,6 +39,7 @@ class DiseaseDetail extends Disease {
     final criteriaList = (json['icuHospitalizeCriteria'] as List?)
             ?.map((c) => DiseaseCriterion(
                   name: c['criterion']['name'],
+                  type: c['criterion']['type'],
                   score: c['score'],
                 ))
             .toList() ?? [];
@@ -46,6 +47,7 @@ class DiseaseDetail extends Disease {
     final riskList = (json['resistanceRiskFactors'] as List?)
             ?.map((r) => DiseaseRisk(
                   name: r['criterion']['name'],
+                  pathogenName: r['pathogenName'],
                   type: r['name'],
                 ))
             .toList() ?? [];
@@ -65,11 +67,13 @@ class DiseaseDetail extends Disease {
 class DiseaseCriterion {
   final String name;
   final int score;
-  const DiseaseCriterion({required this.name, required this.score});
+  final String type;
+  const DiseaseCriterion({required this.name, required this.score, required this.type});
 }
 
 class DiseaseRisk {
   final String name;
   final String type;
-  const DiseaseRisk({required this.name, required this.type});
+  final String pathogenName;
+  const DiseaseRisk({required this.name, required this.type, required this.pathogenName});
 }
