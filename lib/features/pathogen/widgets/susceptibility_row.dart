@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../design_system/design_system.dart';
 
-class _SusceptibilityRow extends StatelessWidget {
+class SusceptibilityRow extends StatelessWidget {
   final String label;
   final String value;
-  const _SusceptibilityRow({required this.label, required this.value});
+  const SusceptibilityRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
