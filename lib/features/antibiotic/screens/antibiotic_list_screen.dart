@@ -29,7 +29,6 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
   }
 
   void _onScroll() {
-    // Tự động tải thêm khi cuộn gần tới cuối danh sách (cách đáy 200px)
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       context.read<AntibioticProvider>().fetchPage();
@@ -103,7 +102,6 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
                     itemCount: provider.items.length + (provider.hasMore ? 1 : 0),
                     separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
                     itemBuilder: (context, index) {
-                      // Item loading ở cuối danh sách khi đang tải trang tiếp theo
                       if (index == provider.items.length) {
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: Spacing.control),

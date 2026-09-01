@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../antibiotic/models/antibiotic.dart';
 import '../models/antibiotic_group.dart';
 import 'antibiotic_group_service.dart';
 
@@ -45,5 +46,9 @@ class AntibioticGroupProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<List<Antibiotic>> fetchAntibioticsByGroupId(String groupId) {
+    return _repository.fetchAntibioticsByGroupId(groupId);
   }
 }
