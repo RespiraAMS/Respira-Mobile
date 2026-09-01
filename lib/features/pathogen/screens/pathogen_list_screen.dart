@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
 import '../../../core/network/api_client.dart';
@@ -15,6 +18,8 @@ class PathogenListScreen extends StatefulWidget {
 
 class _PathogenListScreenState extends State<PathogenListScreen> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -29,6 +34,8 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -36,6 +43,15 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
       context.read<PathogenProvider>().fetchPage();
     }
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        context.read<PathogenProvider>().search(query);
+      }
+    });
   }
 
   @override
@@ -55,6 +71,29 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
                 onBack: () => Navigator.pop(context),
               ),
             ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.group),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'Tìm kiếm tác nhân...',
+                  hintStyle: TextStyle(color: c.textSecondary),
+                  prefixIcon: Icon(LucideIcons.search, color: c.iconDefault, size: 20),
+                  filled: true,
+                  fillColor: c.surface,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                style: TextStyle(color: c.textPrimary),
+              ),
+            ),
+            
+            const SizedBox(height: Spacing.control),
             Expanded(
               child: Consumer<PathogenProvider>(
                 builder: (context, provider, child) {
@@ -67,6 +106,12 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
 
                   if (provider.items.isEmpty && provider.isLoading) {
                     return Center(child: CircularProgressIndicator(color: c.primary));
+                  }
+
+                  if (provider.items.isEmpty && !provider.isLoading) {
+                    return Center(
+                      child: AppText('Không tìm thấy kết quả nào.', color: c.textSecondary),
+                    );
                   }
 
                   return ListView.separated(

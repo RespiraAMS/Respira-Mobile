@@ -15,14 +15,18 @@ class PathogenRepository {
 
   PathogenRepository({required this.apiClient});
 
-  Future<PaginatedPathogenResponse> fetchPathogens({int page = 1, int pageSize = 10}) async {
+  Future<PaginatedPathogenResponse> fetchPathogens({int page = 1, int pageSize = 10, String? name}) async {
     try {
+      final queryParams = <String, dynamic>{
+        'page': page,
+        'pageSize': pageSize,
+      };
+      if (name != null && name.trim().isNotEmpty) {
+        queryParams['name'] = name.trim();
+      }
       final response = await apiClient.dio.get(
-        '/pathogens', // Thay đổi endpoint này theo đúng cấu hình backend của bạn
-        queryParameters: {
-          'page': page,
-          'pageSize': pageSize,
-        },
+        '/pathogens',
+        queryParameters: queryParams,
       );
 
       final Map<String, dynamic> responseBody = response.data;

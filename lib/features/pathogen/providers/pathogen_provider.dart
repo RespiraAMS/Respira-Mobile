@@ -21,6 +21,7 @@ class PathogenProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   int _currentPage = 1;
+  String _searchQuery = '';
 
   Future<void> fetchPage() async {
     if (_isLoading || !_hasMore) return;
@@ -30,7 +31,10 @@ class PathogenProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _repository.fetchPathogens(page: _currentPage);
+      final response = await _repository.fetchPathogens(
+        page: _currentPage, 
+        name: _searchQuery,
+      );
       
       _items.addAll(response.items);
       _hasMore = response.hasNextPage;
@@ -50,5 +54,16 @@ class PathogenProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  void search(String query) {
+    if (_searchQuery == query) return;
+    
+    _searchQuery = query;
+    _currentPage = 1;
+    _items.clear();
+    _hasMore = true;
+    _isLoading = false; 
+    fetchPage();
   }
 }
