@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
 import '../providers/antibiotic_provider.dart';
@@ -13,6 +16,8 @@ class AntibioticListScreen extends StatefulWidget {
 
 class _AntibioticListScreenState extends State<AntibioticListScreen> {
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -35,9 +40,20 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
     }
   }
 
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        context.read<AntibioticProvider>().search(query);
+      }
+    });
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
+    _searchController.dispose();
+    _debounce?.cancel();
     super.dispose();
   }
 
@@ -58,17 +74,45 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
                 onBack: () => Navigator.pop(context),
               ),
             ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Spacing.group),
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: 'Tìm kiếm kháng sinh...',
+                  hintStyle: TextStyle(color: c.textSecondary),
+                  prefixIcon: Icon(LucideIcons.search, color: c.iconDefault, size: 20),
+                  filled: true,
+                  fillColor: c.surface,
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+                style: TextStyle(color: c.textPrimary),
+              ),
+            ),
+            const SizedBox(height: Spacing.control),
+            
             Expanded(
               child: Consumer<AntibioticProvider>(
                 builder: (context, provider, child) {
-                  // 1. Đang tải trang đầu tiên
+                  if (provider.errorMessage != null && provider.items.isNotEmpty) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showAppToast(context, provider.errorMessage!);
+                      provider.clearError();
+                    });
+                  }
+
                   if (provider.isLoading && provider.items.isEmpty) {
                     return Center(
                       child: CircularProgressIndicator(color: c.primary),
                     );
                   }
 
-                  // 2. Lỗi khi tải trang đầu tiên
                   if (provider.errorMessage != null && provider.items.isEmpty) {
                     return Center(
                       child: Column(
@@ -88,14 +132,18 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
                     );
                   }
 
-                  // 3. Danh sách trống
                   if (provider.items.isEmpty) {
                     return Center(
                       child: AppText('Không có dữ liệu kháng sinh'),
                     );
                   }
 
-                  // 4. Hiển thị danh sách dữ liệu
+                  if (provider.items.isEmpty && !provider.isLoading) {
+                    return Center(
+                      child: AppText('Không tìm thấy kết quả nào.', color: c.textSecondary),
+                    );
+                  }
+                  
                   return ListView.separated(
                     controller: _scrollController,
                     padding: const EdgeInsets.all(Spacing.group),

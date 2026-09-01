@@ -14,14 +14,20 @@ class AntibioticRepository {
 
   AntibioticRepository({required this.apiClient});
 
-  Future<PaginatedAntibioticResponse> fetchAntibiotics({int page = 1, int pageSize = 10}) async {
+  Future<PaginatedAntibioticResponse> fetchAntibiotics({int page = 1, int pageSize = 10, String? name,}) async {
     try {
+      final queryParams = <String, dynamic>{
+        'page': page,
+        'pageSize': pageSize,
+      };
+
+      if (name != null && name.trim().isNotEmpty) {
+        queryParams['name'] = name.trim();
+      }
+
       final response = await apiClient.dio.get(
         '/antibiotics',
-        queryParameters: {
-          'page': page,
-          'pageSize': pageSize,
-        },
+        queryParameters: queryParams,
       );
 
       final Map<String, dynamic> responseBody = response.data;

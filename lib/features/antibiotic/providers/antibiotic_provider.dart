@@ -20,6 +20,7 @@ class AntibioticProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   int _currentPage = 1;
+  String _searchQuery = '';
 
   Future<void> fetchPage() async {
     if (_isLoading || !_hasMore) return;
@@ -29,7 +30,7 @@ class AntibioticProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _repository.fetchAntibiotics(page: _currentPage);
+      final response = await _repository.fetchAntibiotics(page: _currentPage, name: _searchQuery);
       
       _items.addAll(response.items);
       _hasMore = response.hasNextPage;
@@ -40,6 +41,18 @@ class AntibioticProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void search(String query) {
+    if (_searchQuery == query) return;
+    
+    _searchQuery = query;
+    _currentPage = 1;
+    _items.clear();
+    _hasMore = true;
+    _isLoading = false; 
+    
+    fetchPage();
   }
 
   void clearError() {
