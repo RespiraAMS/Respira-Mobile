@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../design_system/design_system.dart';
+import '../../antibiograms/models/antibiogram.dart';
 import '../models/pathogen.dart';
+import '../providers/pathogen_provider.dart';
 
-class PathogenDetailScreen extends StatelessWidget {
+class PathogenDetailScreen extends StatefulWidget {
   final Pathogen pathogen;
 
   const PathogenDetailScreen({super.key, required this.pathogen});
+
+  @override
+  State<PathogenDetailScreen> createState() => _PathogenDetailScreenState();
+}
+
+class _PathogenDetailScreenState extends State<PathogenDetailScreen> {
+  late Future<List<Antibiogram>> _antibiogramsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _antibiogramsFuture = context
+        .read<PathogenProvider>()
+        .fetchPathogenAntibiograms(widget.pathogen.id);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +38,7 @@ class PathogenDetailScreen extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: 8),
               child: AppAppBar(
-                title: pathogen.name,
+                title: widget.pathogen.name,
                 subtitle: 'Tác nhân gây bệnh',
                 onBack: () => Navigator.pop(context),
               ),
@@ -49,7 +67,7 @@ class PathogenDetailScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppText(pathogen.name, type: AppTextType.h3, fontWeight: FontWeight.w700),
+                              AppText(widget.pathogen.name, type: AppTextType.h3, fontWeight: FontWeight.w700),
                               const SizedBox(height: 4),
                               AppText('Tác nhân gây bệnh', type: AppTextType.caption),
                             ],
@@ -60,25 +78,60 @@ class PathogenDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  // 2. Bệnh thường gặp
-                  AppText('Bệnh thường gặp', type: AppTextType.button, fontWeight: FontWeight.w700),
+                  AppText('Mô tả', type: AppTextType.button, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppText(
-                    pathogen.description,
+                    widget.pathogen.description,
                     type: AppTextType.body,
                     color: c.textPrimary,
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  AppText('Độ nhạy tham khảo (chỗ này dữ liệu cứng)', type: AppTextType.button, fontWeight: FontWeight.w700),
+                  AppText('Độ nhạy tham khảo', type: AppTextType.button, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
-                  AppCard.divided(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
-                    const [
-                      _SusceptibilityRow(label: 'Meropenem', value: 'S'),
-                      _SusceptibilityRow(label: 'Ceftriaxone', value: 'R'),
-                      _SusceptibilityRow(label: 'Amikacin', value: 'S'),
-                    ],
+                  FutureBuilder<List<Antibiogram>>(
+                    future: _antibiogramsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      
+                      if (snapshot.hasError) {
+                        return AppText('Không tải được dữ liệu độ nhạy', color: c.error);
+                      }
+
+                      final antibiograms = snapshot.data ?? [];
+                      if (antibiograms.isEmpty) {
+                        return AppText('Chưa có dữ liệu độ nhạy cho tác nhân này', color: c.textSecondary);
+                      }
+
+                      final List<Widget> susceptibilityRows = [];
+                      for (final antibiogram in antibiograms) {
+                        final String shortValue = antibiogram.micLevel.isNotEmpty
+                            ? antibiogram.micLevel[0].toUpperCase()
+                            : '?';
+
+                        for (final mic in antibiogram.mics) {
+                          susceptibilityRows.add(
+                            _SusceptibilityRow(label: mic.name, value: shortValue),
+                          );
+                        }
+                      }
+
+                      if (susceptibilityRows.isEmpty) {
+                         return AppText('Chưa có dữ liệu MICs', color: c.textSecondary);
+                      }
+
+                      return AppCard.divided(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        susceptibilityRows,
+                      );
+                    },
                   ),
                 ],
               ),
@@ -99,13 +152,21 @@ class _SusceptibilityRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = context.respiraColors;
     
+    final Color valueColor = value == 'S' 
+        ? c.success 
+        : value == 'I' 
+            ? c.warning 
+            : c.error;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          AppText(label, type: AppTextType.label, color: c.textSecondary),
-          AppText(value, type: AppTextType.label, color: c.textPrimary, fontWeight: FontWeight.w600),
+          Expanded(
+            child: AppText(label, type: AppTextType.label, color: c.textSecondary),
+          ),
+          AppText(value, type: AppTextType.label, color: valueColor, fontWeight: FontWeight.w600),
         ],
       ),
     );

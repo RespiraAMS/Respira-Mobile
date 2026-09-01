@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../../core/network/api_client.dart';
+import '../../antibiograms/models/antibiogram.dart';
 import '../models/pathogen.dart';
 
 class PaginatedPathogenResponse {
@@ -34,6 +35,31 @@ class PathogenRepository {
         items: itemsJson.map((item) => Pathogen.fromJson(item)).toList(),
         hasNextPage: hasNext,
       );
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Lỗi server: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Lỗi kết nối mạng: Vui lòng kiểm tra internet');
+      }
+    } catch (e) {
+      throw Exception('Lỗi xử lý dữ liệu: $e');
+    }
+  }
+
+  Future<List<Antibiogram>> fetchPathogenAntibiograms(String pathogenId) async {
+    try {
+      final response = await apiClient.dio.get(
+        '/antibiograms',
+        queryParameters: {
+          'PathogenId': pathogenId,
+        },
+      );
+
+      final Map<String, dynamic> responseBody = response.data;
+      final Map<String, dynamic> data = responseBody['data'] ?? {};
+      final List<dynamic> itemsJson = data['items'] ?? [];
+
+      return itemsJson.map((item) => Antibiogram.fromJson(item)).toList();
     } on DioException catch (e) {
       if (e.response != null) {
         throw Exception('Lỗi server: ${e.response?.statusCode}');

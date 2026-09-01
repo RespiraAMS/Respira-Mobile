@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../antibiograms/models/antibiogram.dart';
 import '../models/pathogen.dart';
 import 'pathogen_service.dart';
 
@@ -40,6 +41,10 @@ class PathogenProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<List<Antibiogram>> fetchPathogenAntibiograms(String pathogenId) {
+    return _repository.fetchPathogenAntibiograms(pathogenId);
   }
 
   void clearError() {

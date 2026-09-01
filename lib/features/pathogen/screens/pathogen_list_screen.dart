@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../core/network/api_client.dart';
 import '../providers/pathogen_provider.dart';
+import '../providers/pathogen_service.dart';
 import 'pathogen_detail_screen.dart';
 
 class PathogenListScreen extends StatefulWidget {
@@ -82,10 +84,21 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
 
                       final item = provider.items[index];
                       return GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => PathogenDetailScreen(pathogen: item)),
-                        ),
+                        onTap: () => {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ChangeNotifierProvider(
+                                create: (_) {
+                                  final apiClient = ApiClient(); 
+                                  final repository = PathogenRepository(apiClient: apiClient);
+                                  return PathogenProvider(repository);
+                                },
+                                child: PathogenDetailScreen(pathogen: item),
+                              ),
+                            ),
+                          )
+                        },
                         child: AppSurface(
                           padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
                           child: Column(
