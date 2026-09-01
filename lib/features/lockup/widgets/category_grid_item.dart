@@ -8,6 +8,8 @@ import '../../antibiograms/screens/antibiogram_list_screen.dart';
 import '../../antibiotic/providers/antibiotic_provider.dart';
 import '../../antibiotic/providers/antibiotic_service.dart';
 import '../../antibiotic/screens/antibiotic_list_screen.dart';
+import '../../antibioticGroup/providers/antibiotic_group_provider.dart';
+import '../../antibioticGroup/providers/antibiotic_group_service.dart';
 import '../../antibioticGroup/screens/antibiotic_group_list_screen.dart';
 import '../../diseases/screens/disease_list_screen.dart';
 import '../../pathogen/screens/pathogen_list_screen.dart';
@@ -45,8 +47,8 @@ class CategoryGridItem extends StatelessWidget {
               builder: (_) => ChangeNotifierProvider(
                 create: (_) {
                   final apiClient = ApiClient(); 
-                  final repository = AntibiogramRepository(apiClient: apiClient);
-                  return AntibiogramProvider(repository);
+                  final repository = AntibioticGroupRepository(apiClient: apiClient);
+                  return AntibioticGroupProvider(repository);
                 },
                 child: const AntibioticGroupListScreen(),
               ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
-import '../models/antibiotic_group.dart';
-import '../providers/antibiotic_group_api.dart';
+import '../providers/antibiotic_group_provider.dart';
 import 'antibiotic_group_detail_screen.dart';
 
 class AntibioticGroupListScreen extends StatefulWidget {
@@ -13,16 +13,14 @@ class AntibioticGroupListScreen extends StatefulWidget {
 
 class _AntibioticGroupListScreenState extends State<AntibioticGroupListScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<AntibioticGroup> _groups = [];
-  
-  bool _isLoading = false;
-  bool _hasMore = true;
-  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchPage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AntibioticGroupProvider>().fetchPage();
+    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -34,26 +32,7 @@ class _AntibioticGroupListScreenState extends State<AntibioticGroupListScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      _fetchPage();
-    }
-  }
-
-  Future<void> _fetchPage() async {
-    if (_isLoading || !_hasMore) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await AntibioticGroupApi.fetchGroups(page: _currentPage);
-      setState(() {
-        _groups.addAll(response.items);
-        _hasMore = response.hasNextPage;
-        _currentPage++;
-      });
-    } catch (e) {
-      if (mounted) showAppToast(context, 'Lỗi tải dữ liệu');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      context.read<AntibioticGroupProvider>().fetchPage();
     }
   }
 
@@ -75,43 +54,66 @@ class _AntibioticGroupListScreenState extends State<AntibioticGroupListScreen> {
               ),
             ),
             Expanded(
-              child: _groups.isEmpty && _isLoading
-                  ? Center(child: CircularProgressIndicator(color: c.primary))
-                  : ListView.separated(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(Spacing.group),
-                      itemCount: _groups.length + (_hasMore ? 1 : 0),
-                      separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
-                      itemBuilder: (context, index) {
-                        if (index == _groups.length) {
-                          return Padding(
-                            padding: const EdgeInsets.all(Spacing.group),
-                            child: Center(child: CircularProgressIndicator(color: c.primary)),
-                          );
-                        }
+              child: Consumer<AntibioticGroupProvider>(
+                builder: (context, provider, child) {
+                  if (provider.errorMessage != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showAppToast(context, provider.errorMessage!);
+                      provider.clearError(); 
+                    });
+                  }
 
-                        final item = _groups[index];
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => AntibioticGroupDetailScreen(group: item)),
-                          ),
-                          child: AppSurface(
-                            padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(item.name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
-                                if (item.parentName != null) ...[
-                                  const SizedBox(height: 4),
-                                  AppText(item.parentName!, type: AppTextType.caption),
-                                ],
-                              ],
-                            ),
-                          ),
+                  if (provider.items.isEmpty && provider.isLoading) {
+                    return Center(child: CircularProgressIndicator(color: c.primary));
+                  }
+
+                  return ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(Spacing.group),
+                    itemCount: provider.items.length + (provider.hasMore ? 1 : 0),
+                    separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
+                    itemBuilder: (context, index) {
+                      // Indicator load thêm dữ liệu ở cuối danh sách
+                      if (index == provider.items.length) {
+                        return Padding(
+                          padding: const EdgeInsets.all(Spacing.group),
+                          child: Center(child: CircularProgressIndicator(color: c.primary)),
                         );
-                      },
-                    ),
+                      }
+
+                      final item = provider.items[index];
+                      return GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => AntibioticGroupDetailScreen(group: item),
+                          ),
+                        ),
+                        child: AppSurface(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Spacing.group,
+                            vertical: Spacing.control,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                item.name,
+                                type: AppTextType.bodyMedium,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              if (item.parentName != null) ...[
+                                const SizedBox(height: 4),
+                                AppText(item.parentName!, type: AppTextType.caption),
+                              ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),

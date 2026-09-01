@@ -68,12 +68,12 @@ class AntibioticGroupDetailScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     [
                       _InfoRow(label: 'Nhóm cha', value: group.parentName ?? 'Không có'),
-                      const _InfoRow(label: 'Mô tả', value: 'Kháng sinh phổ rộng'), // Hardcode mô tả theo figma
+                      const _InfoRow(label: 'Mô tả', value: 'Không có dữ liệu'),
                     ],
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  AppText('Kháng sinh trong nhóm', type: AppTextType.button, fontWeight: FontWeight.w700),
+                  AppText('Kháng sinh trong nhóm (Chỗ này dữ liệu cứng)', type: AppTextType.button, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppCard.divided(
                     padding: const EdgeInsets.symmetric(vertical: 4),
