@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
-import '../models/pathogen.dart';
-import '../providers/pathogen_api.dart';
+import '../providers/pathogen_provider.dart';
 import 'pathogen_detail_screen.dart';
 
 class PathogenListScreen extends StatefulWidget {
@@ -13,16 +13,14 @@ class PathogenListScreen extends StatefulWidget {
 
 class _PathogenListScreenState extends State<PathogenListScreen> {
   final ScrollController _scrollController = ScrollController();
-  final List<Pathogen> _pathogens = [];
-  
-  bool _isLoading = false;
-  bool _hasMore = true;
-  int _currentPage = 1;
 
   @override
   void initState() {
     super.initState();
-    _fetchPage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<PathogenProvider>().fetchPage();
+    });
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -34,26 +32,7 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
 
   void _onScroll() {
     if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
-      _fetchPage();
-    }
-  }
-
-  Future<void> _fetchPage() async {
-    if (_isLoading || !_hasMore) return;
-
-    setState(() => _isLoading = true);
-
-    try {
-      final response = await PathogenApi.fetchPathogens(page: _currentPage);
-      setState(() {
-        _pathogens.addAll(response.items);
-        _hasMore = response.hasNextPage;
-        _currentPage++;
-      });
-    } catch (e) {
-      if (mounted) showAppToast(context, 'Lỗi tải dữ liệu');
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
+      context.read<PathogenProvider>().fetchPage();
     }
   }
 
@@ -75,46 +54,59 @@ class _PathogenListScreenState extends State<PathogenListScreen> {
               ),
             ),
             Expanded(
-              child: _pathogens.isEmpty && _isLoading
-                  ? Center(child: CircularProgressIndicator(color: c.primary))
-                  : ListView.separated(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(Spacing.group),
-                      itemCount: _pathogens.length + (_hasMore ? 1 : 0),
-                      separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
-                      itemBuilder: (context, index) {
-                        if (index == _pathogens.length) {
-                          return Padding(
-                            padding: const EdgeInsets.all(Spacing.group),
-                            child: Center(child: CircularProgressIndicator(color: c.primary)),
-                          );
-                        }
+              child: Consumer<PathogenProvider>(
+                builder: (context, provider, child) {
+                  if (provider.errorMessage != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      showAppToast(context, provider.errorMessage!);
+                      provider.clearError();
+                    });
+                  }
 
-                        final item = _pathogens[index];
-                        return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => PathogenDetailScreen(pathogen: item)),
-                          ),
-                          child: AppSurface(
-                            padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(item.name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
-                                const SizedBox(height: 4),
-                                AppText(
-                                  item.description, 
-                                  type: AppTextType.caption, 
-                                  maxLines: 2, 
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
+                  if (provider.items.isEmpty && provider.isLoading) {
+                    return Center(child: CircularProgressIndicator(color: c.primary));
+                  }
+
+                  return ListView.separated(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.all(Spacing.group),
+                    itemCount: provider.items.length + (provider.hasMore ? 1 : 0),
+                    separatorBuilder: (_, __) => const SizedBox(height: Spacing.control),
+                    itemBuilder: (context, index) {
+                      if (index == provider.items.length) {
+                        return Padding(
+                          padding: const EdgeInsets.all(Spacing.group),
+                          child: Center(child: CircularProgressIndicator(color: c.primary)),
                         );
-                      },
-                    ),
+                      }
+
+                      final item = provider.items[index];
+                      return GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => PathogenDetailScreen(pathogen: item)),
+                        ),
+                        child: AppSurface(
+                          padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(item.name, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
+                              const SizedBox(height: 4),
+                              AppText(
+                                item.description, 
+                                type: AppTextType.caption, 
+                                maxLines: 2, 
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),

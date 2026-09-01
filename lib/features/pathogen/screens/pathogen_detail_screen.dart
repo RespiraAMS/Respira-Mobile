@@ -70,7 +70,7 @@ class PathogenDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  AppText('Độ nhạy tham khảo', type: AppTextType.button, fontWeight: FontWeight.w700),
+                  AppText('Độ nhạy tham khảo (chỗ này dữ liệu cứng)', type: AppTextType.button, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   AppCard.divided(
                     padding: const EdgeInsets.symmetric(vertical: 4),
