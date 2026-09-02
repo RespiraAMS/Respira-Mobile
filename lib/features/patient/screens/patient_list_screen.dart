@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:respira_mobile/features/statistics/routes.dart';
 
 import '../../../../design_system/design_system.dart';
 import '../models/patient_summary.dart';
@@ -151,7 +152,9 @@ class PatientListScreen extends ConsumerWidget {
                 items: navItems,
                 activeIndex: 0,
                 onTap: (index) {
-                  if (index != 0) {
+                  if (index == 4) {
+                    context.push(StatisticsRoutes.overview);
+                  } else if (index != 0) {
                     _showTabPlaceholder(context, navItems[index].label);
                   }
                 },
