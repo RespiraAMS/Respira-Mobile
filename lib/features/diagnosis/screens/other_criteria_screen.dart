@@ -35,7 +35,7 @@ class OtherCriteriaScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kinh nghiệm',
-                        subtitle: 'Bước 4/4 · Tiêu chí khác',
+                        subtitle: 'Bước 5/5 · Tiêu chí khác',
                         onBack: () =>
                             context.goBackOr(DiagnosisRoutes.resistanceRisk),
                       ),

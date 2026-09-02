@@ -95,7 +95,7 @@ class AddProgressScreen extends ConsumerWidget {
                         child: AppButton(
                           label: 'Lưu diễn biến',
                           expand: true,
-                          onPressed: () => context.push(DiagnosisRoutes.curb65),
+                          onPressed: () => context.push(DiagnosisRoutes.vitals),
                         ),
                       ),
                     ],

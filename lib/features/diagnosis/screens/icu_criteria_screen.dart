@@ -4,27 +4,20 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
-import '../widgets/selection_row_widget.dart';
+import '../../patient/widgets/selection_row_widget.dart';
 import '../models/diagnosis_state.dart';
 import '../providers/diagnosis_controller.dart';
+import '../routes.dart';
 import '../widgets/criteria_banner_widget.dart';
 
-import '../routes.dart';
-
-/// Route `/diagnosis/icu-criteria` — empirical treatment wizard, step 2/4:
-/// "Tiêu chuẩn nhập ICU".
-///
-/// Layout adapted from the Figma template (fixed 390×844 frame) to the
-/// responsive token system: absolute positions replaced by semantic
-/// spacing; hardcoded hex values mapped to RespiraColors.
+/// Route `/icu-criteria` — diagnosis wizard, step 3/5: "Tiêu chuẩn nhập
+/// ICU". Two selectable criteria + the measured PaO₂/FiO₂ ratio input.
 class IcuCriteriaScreen extends ConsumerWidget {
   const IcuCriteriaScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selected = ref
-        .watch(diagnosisCriteriaControllerProvider)
-        .selectedIcuCriteria;
+    final state = ref.watch(diagnosisCriteriaControllerProvider);
     final controller = ref.read(diagnosisCriteriaControllerProvider.notifier);
 
     return Scaffold(
@@ -41,7 +34,7 @@ class IcuCriteriaScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kinh nghiệm',
-                        subtitle: 'Bước 2/4 · Tiêu chuẩn nhập ICU',
+                        subtitle: 'Bước 3/5 · Tiêu chuẩn nhập ICU',
                         onBack: () => context.goBackOr(DiagnosisRoutes.curb65),
                       ),
                       const SizedBox(height: Spacing.section),
@@ -51,16 +44,34 @@ class IcuCriteriaScreen extends ConsumerWidget {
                           children: [
                             const CriteriaBannerWidget('Tiêu chuẩn nhập ICU'),
                             const SizedBox(height: Spacing.control),
-                            for (final criterion in IcuCriterion.values) ...[
+                            for (final criterion in IcuCriterion.values.take(
+                              2,
+                            )) ...[
                               SelectionRowWidget(
                                 title: criterion.title,
                                 description: criterion.description,
-                                selected: selected.contains(criterion),
+                                selected: selectedIcu(state, criterion),
                                 onTap: () => controller.toggleIcu(criterion),
                               ),
-                              if (criterion != IcuCriterion.values.last)
-                                const SizedBox(height: Spacing.inline),
+                              const SizedBox(height: Spacing.inline),
                             ],
+                            // PaO₂/FiO₂ is measured, not ticked.
+                            Container(
+                              padding: const EdgeInsets.all(Spacing.control),
+                              decoration: BoxDecoration(
+                                color: context.respiraColors.surface,
+                                borderRadius: AppRadius.sm,
+                                border: Border.all(
+                                  color: context.respiraColors.borderSubtle,
+                                ),
+                              ),
+                              child: AppUnitField(
+                                label: 'PaO₂/FiO₂',
+                                unit: 'mmHg',
+                                initialValue: state.pao2Fio2,
+                                onChanged: controller.setPao2Fio2,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -102,4 +113,7 @@ class IcuCriteriaScreen extends ConsumerWidget {
       ),
     );
   }
+
+  bool selectedIcu(DiagnosisCriteriaState state, IcuCriterion criterion) =>
+      state.selectedIcuCriteria.contains(criterion);
 }

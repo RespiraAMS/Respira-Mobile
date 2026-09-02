@@ -7,7 +7,7 @@ part of 'diagnosis_result_provider.dart';
 // **************************************************************************
 
 String _$currentDiagnosisResultHash() =>
-    r'ebbf84065a28916728c19477a1fb6efb032dd0ad';
+    r'c0a6d0f7a368cbbccaed8858c2197c8dfcfe671b';
 
 /// Builds the diagnosis result from the wizard selections.
 ///

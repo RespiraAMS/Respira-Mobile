@@ -36,7 +36,7 @@ class ResistanceRiskScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kinh nghiệm',
-                        subtitle: 'Bước 3/4 · Nguy cơ kháng thuốc',
+                        subtitle: 'Bước 4/5 · Nguy cơ kháng thuốc',
                         onBack: () =>
                             context.goBackOr(DiagnosisRoutes.icuCriteria),
                       ),

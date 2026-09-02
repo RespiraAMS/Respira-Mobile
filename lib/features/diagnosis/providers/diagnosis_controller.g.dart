@@ -7,10 +7,10 @@ part of 'diagnosis_controller.dart';
 // **************************************************************************
 
 String _$diagnosisCriteriaControllerHash() =>
-    r'575602892a78362e26549564f1a1a851aaed6013';
+    r'430518886c4da83ae0b7968477f9da02867b7f78';
 
-/// Holds the criteria selections of the empirical-treatment wizard
-/// (CURB-65 step 1/4 and ICU-criteria step 2/4).
+/// Holds the measurements & selections of the diagnosis wizard
+/// (vitals 1/5 · CURB-65 2/5 · ICU 3/5 · resistance 4/5 · other 5/5).
 ///
 /// Copied from [DiagnosisCriteriaController].
 @ProviderFor(DiagnosisCriteriaController)

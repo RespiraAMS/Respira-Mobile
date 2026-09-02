@@ -1,6 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/diagnosis_result.dart';
+import '../models/diagnosis_state.dart';
 import 'diagnosis_controller.dart';
 
 part 'diagnosis_result_provider.g.dart';
@@ -12,9 +13,9 @@ part 'diagnosis_result_provider.g.dart';
 /// Figma templates.
 @Riverpod(keepAlive: true)
 DiagnosisResult currentDiagnosisResult(CurrentDiagnosisResultRef ref) {
-  // Reactive on the wizard selections; severity/care derived from the score.
+  // Reactive on the wizard inputs; CURB-65 is derived from measurements.
   final criteria = ref.watch(diagnosisCriteriaControllerProvider);
-  final score = criteria.selectedCurb65Criteria.length;
+  final score = criteria.curb65Score;
   final isHigh = score >= 3;
 
   return DiagnosisResult(

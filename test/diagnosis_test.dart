@@ -46,40 +46,66 @@ void main() {
       await tester.tap(find.text('Cập nhật trạng thái'));
       await _settleNavigation(tester);
 
-      // Step 1/4: CURB-65.
+      // Step 1/5: vitals.
       await tester.ensureVisible(find.text('Lưu diễn biến'));
       await tester.pump(const Duration(milliseconds: 200));
       await tester.tap(find.text('Lưu diễn biến'));
       await _settleNavigation(tester);
 
-      expect(find.text('Bước 1/4 · CURB-65'), findsOneWidget);
-      expect(find.text('CURB-65'), findsOneWidget);
-      expect(find.text('Lú lẫn mới xuất hiện'), findsOneWidget);
-      expect(find.text('Tuổi ≥ 65'), findsOneWidget);
+      expect(find.text('Bước 1/5 · Thông số lâm sàng'), findsOneWidget);
+      expect(find.text('Thông số lâm sàng'), findsOneWidget);
+      await tester.enterText(
+          find.widgetWithText(AppUnitField, 'Chiều cao'), '170');
+      await tester.enterText(
+          find.widgetWithText(AppUnitField, 'Cân nặng'), '65');
+      await tester.enterText(
+          find.widgetWithText(AppUnitField, 'Creatinine máu'), '80');
+      await tester.pump(const Duration(milliseconds: 100));
 
-      // Continue to step 2/4.
+      // Continue to step 2/5: CURB-65.
       await tester.tap(find.text('Tiếp tục'));
       await _settleNavigation(tester);
 
-      expect(find.text('Bước 2/4 · Tiêu chuẩn nhập ICU'), findsOneWidget);
-      expect(find.text('Tiêu chuẩn nhập ICU'), findsOneWidget);
-      expect(find.text('PaO₂/FiO₂ ≤ 250'), findsOneWidget);
+      expect(find.text('Bước 2/5 · CURB-65'), findsOneWidget);
+      expect(find.text('CURB-65'), findsOneWidget);
+      expect(find.text('Lú lẫn mới xuất hiện'), findsOneWidget);
 
-      // Continue to step 3/4. Both wizard steps keep a 'Tiếp tục' button
-      // alive below the pushed route, so target the topmost one.
+      // Confusion (pre-checked) + urea 9 (>7) + age 70 (≥65) → score 3.
+      await tester.enterText(find.widgetWithText(AppUnitField, 'Urea'), '9');
+      await tester.enterText(find.widgetWithText(AppUnitField, 'Tuổi'), '70');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Continue to step 3/5 (button may be below the test fold).
+      await tester.ensureVisible(find.text('Tiếp tục').last);
+      await tester.pump(const Duration(milliseconds: 200));
       await tester.tap(find.text('Tiếp tục').last);
       await _settleNavigation(tester);
 
-      expect(find.text('Bước 3/4 · Nguy cơ kháng thuốc'), findsOneWidget);
+      expect(find.text('Bước 3/5 · Tiêu chuẩn nhập ICU'), findsOneWidget);
+      expect(find.text('Tiêu chuẩn nhập ICU'), findsOneWidget);
+      expect(find.text('Cần thở máy xâm nhập'), findsOneWidget);
+
+      // PaO₂/FiO₂ is now a measured input (≤ 250 → supports ICU care).
+      expect(find.text('PaO₂/FiO₂'), findsOneWidget);
+      await tester.enterText(
+          find.widgetWithText(AppUnitField, 'PaO₂/FiO₂'), '220');
+      await tester.pump(const Duration(milliseconds: 100));
+
+      // Continue to step 4/5. Wizard steps keep a 'Tiếp tục' button alive
+      // below the pushed route, so target the topmost one.
+      await tester.tap(find.text('Tiếp tục').last);
+      await _settleNavigation(tester);
+
+      expect(find.text('Bước 4/5 · Nguy cơ kháng thuốc'), findsOneWidget);
       expect(find.text('Yếu tố nguy cơ kháng thuốc'), findsOneWidget);
       expect(find.text('Dùng kháng sinh 90 ngày gần đây'), findsOneWidget);
       expect(find.text('Nằm viện ≥ 5 ngày'), findsOneWidget);
 
-      // Continue to step 4/4.
+      // Continue to step 5/5.
       await tester.tap(find.text('Tiếp tục').last);
       await _settleNavigation(tester);
 
-      expect(find.text('Bước 4/4 · Tiêu chí khác'), findsOneWidget);
+      expect(find.text('Bước 5/5 · Tiêu chí khác'), findsOneWidget);
       expect(find.text('Tiêu chí khác'), findsOneWidget);
       expect(find.text('Tiêu chí bổ sung'), findsOneWidget);
       expect(find.text('Chẩn đoán'), findsOneWidget);
@@ -90,8 +116,9 @@ void main() {
 
       expect(find.text('Kết quả chẩn đoán'), findsOneWidget);
       expect(find.text('Kinh nghiệm · Viêm phổi cộng đồng'), findsOneWidget);
-      // Live CURB-65 score from the wizard defaults (Confusion/Urea/Age).
+      // Derived CURB-65 score: confusion ✓ + urea 9 (>7) + age 70 (≥65).
       expect(find.text('CURB-65'), findsOneWidget);
+      expect(find.text('3'), findsOneWidget);
       expect(find.text('Viêm phổi cộng đồng'), findsOneWidget);
       expect(find.text('Nguy cơ cao'), findsOneWidget);
 

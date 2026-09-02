@@ -4,18 +4,37 @@ import '../models/diagnosis_state.dart';
 
 part 'diagnosis_controller.g.dart';
 
-/// Holds the criteria selections of the empirical-treatment wizard
-/// (CURB-65 step 1/4 and ICU-criteria step 2/4).
+/// Holds the measurements & selections of the diagnosis wizard
+/// (vitals 1/5 · CURB-65 2/5 · ICU 3/5 · resistance 4/5 · other 5/5).
 @Riverpod(keepAlive: true)
 class DiagnosisCriteriaController extends _$DiagnosisCriteriaController {
   @override
   DiagnosisCriteriaState build() => const DiagnosisCriteriaState();
 
-  void toggleCurb65(Curb65Criterion criterion) {
-    state = state.copyWith(
-      selectedCurb65Criteria: _toggled(state.selectedCurb65Criteria, criterion),
-    );
-  }
+  // ── Step 1/5 · Vitals ─────────────────────────────────────────────
+  void setHeightCm(String value) => state = state.copyWith(heightCm: value);
+
+  void setWeightKg(String value) => state = state.copyWith(weightKg: value);
+
+  void setSerumCreatinine(String value) =>
+      state = state.copyWith(serumCreatinine: value);
+
+  // ── Step 2/5 · CURB-65 ────────────────────────────────────────────
+  void toggleConfusion() =>
+      state = state.copyWith(confusion: !state.confusion);
+
+  void setUrea(String value) => state = state.copyWith(urea: value);
+
+  void setRespRate(String value) => state = state.copyWith(respRate: value);
+
+  void setSbp(String value) => state = state.copyWith(sbp: value);
+
+  void setDbp(String value) => state = state.copyWith(dbp: value);
+
+  void setAge(String value) => state = state.copyWith(age: value);
+
+  // ── Step 3/5 · ICU criteria ───────────────────────────────────────
+  void setPao2Fio2(String value) => state = state.copyWith(pao2Fio2: value);
 
   void toggleIcu(IcuCriterion criterion) {
     state = state.copyWith(
@@ -29,9 +48,6 @@ class DiagnosisCriteriaController extends _$DiagnosisCriteriaController {
           _toggled(state.selectedResistanceRisks, factor),
     );
   }
-
-  /// CURB-65 score: one point per met criterion (0–5).
-  int get curb65Score => state.selectedCurb65Criteria.length;
 
   Set<T> _toggled<T>(Set<T> current, T value) {
     final next = {...current};

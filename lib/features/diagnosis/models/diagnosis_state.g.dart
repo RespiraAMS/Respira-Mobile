@@ -9,20 +9,21 @@ part of 'diagnosis_state.dart';
 _$DiagnosisCriteriaStateImpl _$$DiagnosisCriteriaStateImplFromJson(
   Map<String, dynamic> json,
 ) => _$DiagnosisCriteriaStateImpl(
-  selectedCurb65Criteria:
-      (json['selectedCurb65Criteria'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$Curb65CriterionEnumMap, e))
-          .toSet() ??
-      const <Curb65Criterion>{
-        Curb65Criterion.confusion,
-        Curb65Criterion.highUrea,
-        Curb65Criterion.ageOver65,
-      },
+  heightCm: json['heightCm'] as String? ?? '',
+  weightKg: json['weightKg'] as String? ?? '',
+  serumCreatinine: json['serumCreatinine'] as String? ?? '',
+  confusion: json['confusion'] as bool? ?? true,
+  urea: json['urea'] as String? ?? '',
+  respRate: json['respRate'] as String? ?? '',
+  sbp: json['sbp'] as String? ?? '',
+  dbp: json['dbp'] as String? ?? '',
+  age: json['age'] as String? ?? '',
+  pao2Fio2: json['pao2Fio2'] as String? ?? '',
   selectedIcuCriteria:
       (json['selectedIcuCriteria'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$IcuCriterionEnumMap, e))
           .toSet() ??
-      const <IcuCriterion>{IcuCriterion.pao2fio2Low},
+      const <IcuCriterion>{IcuCriterion.septicShock},
   selectedResistanceRisks:
       (json['selectedResistanceRisks'] as List<dynamic>?)
           ?.map((e) => $enumDecode(_$ResistanceRiskFactorEnumMap, e))
@@ -33,9 +34,16 @@ _$DiagnosisCriteriaStateImpl _$$DiagnosisCriteriaStateImplFromJson(
 Map<String, dynamic> _$$DiagnosisCriteriaStateImplToJson(
   _$DiagnosisCriteriaStateImpl instance,
 ) => <String, dynamic>{
-  'selectedCurb65Criteria': instance.selectedCurb65Criteria
-      .map((e) => _$Curb65CriterionEnumMap[e]!)
-      .toList(),
+  'heightCm': instance.heightCm,
+  'weightKg': instance.weightKg,
+  'serumCreatinine': instance.serumCreatinine,
+  'confusion': instance.confusion,
+  'urea': instance.urea,
+  'respRate': instance.respRate,
+  'sbp': instance.sbp,
+  'dbp': instance.dbp,
+  'age': instance.age,
+  'pao2Fio2': instance.pao2Fio2,
   'selectedIcuCriteria': instance.selectedIcuCriteria
       .map((e) => _$IcuCriterionEnumMap[e]!)
       .toList(),
@@ -44,18 +52,9 @@ Map<String, dynamic> _$$DiagnosisCriteriaStateImplToJson(
       .toList(),
 };
 
-const _$Curb65CriterionEnumMap = {
-  Curb65Criterion.confusion: 'confusion',
-  Curb65Criterion.highUrea: 'highUrea',
-  Curb65Criterion.tachypnea: 'tachypnea',
-  Curb65Criterion.hypotension: 'hypotension',
-  Curb65Criterion.ageOver65: 'ageOver65',
-};
-
 const _$IcuCriterionEnumMap = {
   IcuCriterion.invasiveVentilation: 'invasiveVentilation',
   IcuCriterion.septicShock: 'septicShock',
-  IcuCriterion.pao2fio2Low: 'pao2fio2Low',
 };
 
 const _$ResistanceRiskFactorEnumMap = {

@@ -23,8 +23,19 @@ DiagnosisCriteriaState _$DiagnosisCriteriaStateFromJson(
 
 /// @nodoc
 mixin _$DiagnosisCriteriaState {
-  Set<Curb65Criterion> get selectedCurb65Criteria =>
-      throw _privateConstructorUsedError;
+  // ── Step 1/5 · Vitals ──────────────────────────────────────────
+  String get heightCm => throw _privateConstructorUsedError;
+  String get weightKg => throw _privateConstructorUsedError;
+  String get serumCreatinine =>
+      throw _privateConstructorUsedError; // ── Step 2/5 · CURB-65 ─────────────────────────────────────────
+  bool get confusion => throw _privateConstructorUsedError;
+  String get urea => throw _privateConstructorUsedError;
+  String get respRate => throw _privateConstructorUsedError;
+  String get sbp => throw _privateConstructorUsedError;
+  String get dbp => throw _privateConstructorUsedError;
+  String get age =>
+      throw _privateConstructorUsedError; // ── Step 3/5 · ICU criteria ────────────────────────────────────
+  String get pao2Fio2 => throw _privateConstructorUsedError;
   Set<IcuCriterion> get selectedIcuCriteria =>
       throw _privateConstructorUsedError;
   Set<ResistanceRiskFactor> get selectedResistanceRisks =>
@@ -48,7 +59,16 @@ abstract class $DiagnosisCriteriaStateCopyWith<$Res> {
   ) = _$DiagnosisCriteriaStateCopyWithImpl<$Res, DiagnosisCriteriaState>;
   @useResult
   $Res call({
-    Set<Curb65Criterion> selectedCurb65Criteria,
+    String heightCm,
+    String weightKg,
+    String serumCreatinine,
+    bool confusion,
+    String urea,
+    String respRate,
+    String sbp,
+    String dbp,
+    String age,
+    String pao2Fio2,
     Set<IcuCriterion> selectedIcuCriteria,
     Set<ResistanceRiskFactor> selectedResistanceRisks,
   });
@@ -72,16 +92,61 @@ class _$DiagnosisCriteriaStateCopyWithImpl<
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedCurb65Criteria = null,
+    Object? heightCm = null,
+    Object? weightKg = null,
+    Object? serumCreatinine = null,
+    Object? confusion = null,
+    Object? urea = null,
+    Object? respRate = null,
+    Object? sbp = null,
+    Object? dbp = null,
+    Object? age = null,
+    Object? pao2Fio2 = null,
     Object? selectedIcuCriteria = null,
     Object? selectedResistanceRisks = null,
   }) {
     return _then(
       _value.copyWith(
-            selectedCurb65Criteria: null == selectedCurb65Criteria
-                ? _value.selectedCurb65Criteria
-                : selectedCurb65Criteria // ignore: cast_nullable_to_non_nullable
-                      as Set<Curb65Criterion>,
+            heightCm: null == heightCm
+                ? _value.heightCm
+                : heightCm // ignore: cast_nullable_to_non_nullable
+                      as String,
+            weightKg: null == weightKg
+                ? _value.weightKg
+                : weightKg // ignore: cast_nullable_to_non_nullable
+                      as String,
+            serumCreatinine: null == serumCreatinine
+                ? _value.serumCreatinine
+                : serumCreatinine // ignore: cast_nullable_to_non_nullable
+                      as String,
+            confusion: null == confusion
+                ? _value.confusion
+                : confusion // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            urea: null == urea
+                ? _value.urea
+                : urea // ignore: cast_nullable_to_non_nullable
+                      as String,
+            respRate: null == respRate
+                ? _value.respRate
+                : respRate // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sbp: null == sbp
+                ? _value.sbp
+                : sbp // ignore: cast_nullable_to_non_nullable
+                      as String,
+            dbp: null == dbp
+                ? _value.dbp
+                : dbp // ignore: cast_nullable_to_non_nullable
+                      as String,
+            age: null == age
+                ? _value.age
+                : age // ignore: cast_nullable_to_non_nullable
+                      as String,
+            pao2Fio2: null == pao2Fio2
+                ? _value.pao2Fio2
+                : pao2Fio2 // ignore: cast_nullable_to_non_nullable
+                      as String,
             selectedIcuCriteria: null == selectedIcuCriteria
                 ? _value.selectedIcuCriteria
                 : selectedIcuCriteria // ignore: cast_nullable_to_non_nullable
@@ -106,7 +171,16 @@ abstract class _$$DiagnosisCriteriaStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    Set<Curb65Criterion> selectedCurb65Criteria,
+    String heightCm,
+    String weightKg,
+    String serumCreatinine,
+    bool confusion,
+    String urea,
+    String respRate,
+    String sbp,
+    String dbp,
+    String age,
+    String pao2Fio2,
     Set<IcuCriterion> selectedIcuCriteria,
     Set<ResistanceRiskFactor> selectedResistanceRisks,
   });
@@ -127,16 +201,61 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? selectedCurb65Criteria = null,
+    Object? heightCm = null,
+    Object? weightKg = null,
+    Object? serumCreatinine = null,
+    Object? confusion = null,
+    Object? urea = null,
+    Object? respRate = null,
+    Object? sbp = null,
+    Object? dbp = null,
+    Object? age = null,
+    Object? pao2Fio2 = null,
     Object? selectedIcuCriteria = null,
     Object? selectedResistanceRisks = null,
   }) {
     return _then(
       _$DiagnosisCriteriaStateImpl(
-        selectedCurb65Criteria: null == selectedCurb65Criteria
-            ? _value._selectedCurb65Criteria
-            : selectedCurb65Criteria // ignore: cast_nullable_to_non_nullable
-                  as Set<Curb65Criterion>,
+        heightCm: null == heightCm
+            ? _value.heightCm
+            : heightCm // ignore: cast_nullable_to_non_nullable
+                  as String,
+        weightKg: null == weightKg
+            ? _value.weightKg
+            : weightKg // ignore: cast_nullable_to_non_nullable
+                  as String,
+        serumCreatinine: null == serumCreatinine
+            ? _value.serumCreatinine
+            : serumCreatinine // ignore: cast_nullable_to_non_nullable
+                  as String,
+        confusion: null == confusion
+            ? _value.confusion
+            : confusion // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        urea: null == urea
+            ? _value.urea
+            : urea // ignore: cast_nullable_to_non_nullable
+                  as String,
+        respRate: null == respRate
+            ? _value.respRate
+            : respRate // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sbp: null == sbp
+            ? _value.sbp
+            : sbp // ignore: cast_nullable_to_non_nullable
+                  as String,
+        dbp: null == dbp
+            ? _value.dbp
+            : dbp // ignore: cast_nullable_to_non_nullable
+                  as String,
+        age: null == age
+            ? _value.age
+            : age // ignore: cast_nullable_to_non_nullable
+                  as String,
+        pao2Fio2: null == pao2Fio2
+            ? _value.pao2Fio2
+            : pao2Fio2 // ignore: cast_nullable_to_non_nullable
+                  as String,
         selectedIcuCriteria: null == selectedIcuCriteria
             ? _value._selectedIcuCriteria
             : selectedIcuCriteria // ignore: cast_nullable_to_non_nullable
@@ -154,33 +273,60 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
   const _$DiagnosisCriteriaStateImpl({
-    final Set<Curb65Criterion> selectedCurb65Criteria = const <Curb65Criterion>{
-      Curb65Criterion.confusion,
-      Curb65Criterion.highUrea,
-      Curb65Criterion.ageOver65,
-    },
+    this.heightCm = '',
+    this.weightKg = '',
+    this.serumCreatinine = '',
+    this.confusion = true,
+    this.urea = '',
+    this.respRate = '',
+    this.sbp = '',
+    this.dbp = '',
+    this.age = '',
+    this.pao2Fio2 = '',
     final Set<IcuCriterion> selectedIcuCriteria = const <IcuCriterion>{
-      IcuCriterion.pao2fio2Low,
+      IcuCriterion.septicShock,
     },
     final Set<ResistanceRiskFactor> selectedResistanceRisks =
         const <ResistanceRiskFactor>{ResistanceRiskFactor.recentAntibiotics},
-  }) : _selectedCurb65Criteria = selectedCurb65Criteria,
-       _selectedIcuCriteria = selectedIcuCriteria,
+  }) : _selectedIcuCriteria = selectedIcuCriteria,
        _selectedResistanceRisks = selectedResistanceRisks;
 
   factory _$DiagnosisCriteriaStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$DiagnosisCriteriaStateImplFromJson(json);
 
-  final Set<Curb65Criterion> _selectedCurb65Criteria;
+  // ── Step 1/5 · Vitals ──────────────────────────────────────────
   @override
   @JsonKey()
-  Set<Curb65Criterion> get selectedCurb65Criteria {
-    if (_selectedCurb65Criteria is EqualUnmodifiableSetView)
-      return _selectedCurb65Criteria;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(_selectedCurb65Criteria);
-  }
-
+  final String heightCm;
+  @override
+  @JsonKey()
+  final String weightKg;
+  @override
+  @JsonKey()
+  final String serumCreatinine;
+  // ── Step 2/5 · CURB-65 ─────────────────────────────────────────
+  @override
+  @JsonKey()
+  final bool confusion;
+  @override
+  @JsonKey()
+  final String urea;
+  @override
+  @JsonKey()
+  final String respRate;
+  @override
+  @JsonKey()
+  final String sbp;
+  @override
+  @JsonKey()
+  final String dbp;
+  @override
+  @JsonKey()
+  final String age;
+  // ── Step 3/5 · ICU criteria ────────────────────────────────────
+  @override
+  @JsonKey()
+  final String pao2Fio2;
   final Set<IcuCriterion> _selectedIcuCriteria;
   @override
   @JsonKey()
@@ -203,7 +349,7 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
 
   @override
   String toString() {
-    return 'DiagnosisCriteriaState(selectedCurb65Criteria: $selectedCurb65Criteria, selectedIcuCriteria: $selectedIcuCriteria, selectedResistanceRisks: $selectedResistanceRisks)';
+    return 'DiagnosisCriteriaState(heightCm: $heightCm, weightKg: $weightKg, serumCreatinine: $serumCreatinine, confusion: $confusion, urea: $urea, respRate: $respRate, sbp: $sbp, dbp: $dbp, age: $age, pao2Fio2: $pao2Fio2, selectedIcuCriteria: $selectedIcuCriteria, selectedResistanceRisks: $selectedResistanceRisks)';
   }
 
   @override
@@ -211,10 +357,22 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DiagnosisCriteriaStateImpl &&
-            const DeepCollectionEquality().equals(
-              other._selectedCurb65Criteria,
-              _selectedCurb65Criteria,
-            ) &&
+            (identical(other.heightCm, heightCm) ||
+                other.heightCm == heightCm) &&
+            (identical(other.weightKg, weightKg) ||
+                other.weightKg == weightKg) &&
+            (identical(other.serumCreatinine, serumCreatinine) ||
+                other.serumCreatinine == serumCreatinine) &&
+            (identical(other.confusion, confusion) ||
+                other.confusion == confusion) &&
+            (identical(other.urea, urea) || other.urea == urea) &&
+            (identical(other.respRate, respRate) ||
+                other.respRate == respRate) &&
+            (identical(other.sbp, sbp) || other.sbp == sbp) &&
+            (identical(other.dbp, dbp) || other.dbp == dbp) &&
+            (identical(other.age, age) || other.age == age) &&
+            (identical(other.pao2Fio2, pao2Fio2) ||
+                other.pao2Fio2 == pao2Fio2) &&
             const DeepCollectionEquality().equals(
               other._selectedIcuCriteria,
               _selectedIcuCriteria,
@@ -229,7 +387,16 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
   @override
   int get hashCode => Object.hash(
     runtimeType,
-    const DeepCollectionEquality().hash(_selectedCurb65Criteria),
+    heightCm,
+    weightKg,
+    serumCreatinine,
+    confusion,
+    urea,
+    respRate,
+    sbp,
+    dbp,
+    age,
+    pao2Fio2,
     const DeepCollectionEquality().hash(_selectedIcuCriteria),
     const DeepCollectionEquality().hash(_selectedResistanceRisks),
   );
@@ -254,7 +421,16 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
 
 abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
   const factory _DiagnosisCriteriaState({
-    final Set<Curb65Criterion> selectedCurb65Criteria,
+    final String heightCm,
+    final String weightKg,
+    final String serumCreatinine,
+    final bool confusion,
+    final String urea,
+    final String respRate,
+    final String sbp,
+    final String dbp,
+    final String age,
+    final String pao2Fio2,
     final Set<IcuCriterion> selectedIcuCriteria,
     final Set<ResistanceRiskFactor> selectedResistanceRisks,
   }) = _$DiagnosisCriteriaStateImpl;
@@ -262,8 +438,27 @@ abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
   factory _DiagnosisCriteriaState.fromJson(Map<String, dynamic> json) =
       _$DiagnosisCriteriaStateImpl.fromJson;
 
+  // ── Step 1/5 · Vitals ──────────────────────────────────────────
   @override
-  Set<Curb65Criterion> get selectedCurb65Criteria;
+  String get heightCm;
+  @override
+  String get weightKg;
+  @override
+  String get serumCreatinine; // ── Step 2/5 · CURB-65 ─────────────────────────────────────────
+  @override
+  bool get confusion;
+  @override
+  String get urea;
+  @override
+  String get respRate;
+  @override
+  String get sbp;
+  @override
+  String get dbp;
+  @override
+  String get age; // ── Step 3/5 · ICU criteria ────────────────────────────────────
+  @override
+  String get pao2Fio2;
   @override
   Set<IcuCriterion> get selectedIcuCriteria;
   @override
