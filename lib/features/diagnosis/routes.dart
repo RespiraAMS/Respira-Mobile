@@ -5,6 +5,7 @@ import 'screens/diagnosis_result_screen.dart';
 import 'screens/icu_criteria_screen.dart';
 import 'screens/other_criteria_screen.dart';
 import 'screens/resistance_risk_screen.dart';
+import 'screens/targeted_treatment_screen.dart';
 import 'screens/vitals_screen.dart';
 
 class DiagnosisRoutes {
@@ -14,6 +15,7 @@ class DiagnosisRoutes {
   static const resistanceRisk = '/resistance-risk';
   static const otherCriteria = '/other-criteria';
   static const diagnosisResult = '/diagnosis-result';
+  static const targetedTreatment = '/targeted-treatment';
 }
 
 final List<RouteBase> diagnosisRoutes = [
@@ -40,5 +42,9 @@ final List<RouteBase> diagnosisRoutes = [
   GoRoute(
     path: DiagnosisRoutes.diagnosisResult,
     builder: (c, s) => const DiagnosisResultScreen(),
+  ),
+  GoRoute(
+    path: DiagnosisRoutes.targetedTreatment,
+    builder: (c, s) => const TargetedTreatmentScreen(),
   ),
 ];

@@ -32,7 +32,7 @@ class VitalsScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kinh nghiệm',
-                        subtitle: 'Bước 1/5 · Thông số lâm sàng',
+                        subtitle: 'Bước 1/5 · Chỉ số nền',
                         onBack: () => context.goBackOr('/patient/progress'),
                       ),
                       const SizedBox(height: Spacing.section),
@@ -40,14 +40,17 @@ class VitalsScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(Spacing.control),
                         child: Column(
                           children: [
-                            const CriteriaBannerWidget('Thông số lâm sàng'),
+                            const CriteriaBannerWidget(
+                              'Chỉ số cơ thể và chức năng thận',
+                            ),
                             const SizedBox(height: Spacing.control),
                             Container(
                               padding: const EdgeInsets.all(Spacing.control),
                               decoration: BoxDecoration(
                                 borderRadius: AppRadius.sm,
-                                border:
-                                    Border.all(color: context.respiraColors.borderSubtle),
+                                border: Border.all(
+                                  color: context.respiraColors.borderSubtle,
+                                ),
                               ),
                               child: Column(
                                 children: [
@@ -86,8 +89,7 @@ class VitalsScreen extends ConsumerWidget {
                         child: AppButton(
                           label: 'Tiếp tục',
                           expand: true,
-                          onPressed: () =>
-                              context.push(DiagnosisRoutes.curb65),
+                          onPressed: () => context.push(DiagnosisRoutes.curb65),
                         ),
                       ),
                     ],
