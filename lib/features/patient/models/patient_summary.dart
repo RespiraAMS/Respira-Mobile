@@ -19,6 +19,7 @@ enum PatientStatus {
 @freezed
 class PatientSummary with _$PatientSummary {
   const factory PatientSummary({
+    required String id,
     required String name,
     required String code,
     required String genderLabel,

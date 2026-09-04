@@ -4,8 +4,10 @@ part 'diagnosis_state.freezed.dart';
 part 'diagnosis_state.g.dart';
 
 /// ICU admission criteria ("Tiêu chuẩn nhập ICU") of the diagnosis
-/// wizard, step 3/5. The PaO₂/FiO₂ ratio is *measured* on the same step
-/// rather than ticked, so it lives in the state's numeric fields.
+/// wizard, step 3/5. Criteria come from the disease-criteria API and are
+/// selected by ID.
+///
+/// The PaO₂/FiO₂ ratio is *measured* on the same step rather than ticked.
 enum IcuCriterion {
   invasiveVentilation('Cần thở máy xâm nhập', 'Tiêu chuẩn nặng.'),
   septicShock('Sốc nhiễm khuẩn', 'Cần vận mạch.');
@@ -16,8 +18,10 @@ enum IcuCriterion {
   final String description;
 }
 
-/// Antibiotic-resistance risk factors of the empirical treatment wizard,
-/// step 4/5 ("Nguy cơ kháng thuốc").
+/// Antibiotic-resistance risk factors of the diagnosis wizard,
+/// step 4/5 ("Nguy cơ kháng thuốc") — rendered from API criteria.
+///
+/// Static demo rows kept as fallback descriptions.
 enum ResistanceRiskFactor {
   recentAntibiotics(
     'Dùng kháng sinh 90 ngày gần đây',
@@ -33,9 +37,8 @@ enum ResistanceRiskFactor {
 
 /// Selections & measurements across the diagnosis wizard (5 steps).
 ///
-/// Step defaults mirror the Figma templates: confusion checked; the
-/// resistance step has "Dùng kháng sinh 90 ngày gần đây" pre-checked.
-/// Measured fields (vitals, CURB-65 parameters, PaO₂/FiO₂) start empty.
+/// Criteria selections hold **API criterion IDs** (GUIDs) required by
+/// `POST /diagnose/empirical`. Measured fields start empty.
 @freezed
 class DiagnosisCriteriaState with _$DiagnosisCriteriaState {
   const factory DiagnosisCriteriaState({
@@ -54,10 +57,13 @@ class DiagnosisCriteriaState with _$DiagnosisCriteriaState {
 
     // ── Step 3/5 · ICU criteria ────────────────────────────────────
     @Default('') String pao2Fio2,
-    @Default(<IcuCriterion>{IcuCriterion.septicShock})
-    Set<IcuCriterion> selectedIcuCriteria,
-    @Default(<ResistanceRiskFactor>{ResistanceRiskFactor.recentAntibiotics})
-    Set<ResistanceRiskFactor> selectedResistanceRisks,
+    @Default(<String>{}) Set<String> selectedIcuCriteriaIds,
+
+    // ── Step 4/5 · Resistance risks ────────────────────────────────
+    @Default(<String>{}) Set<String> selectedResistanceRiskIds,
+
+    // ── Step 5/5 · Other criteria ──────────────────────────────────
+    @Default(<String>{}) Set<String> selectedOtherCriteriaIds,
   }) = _DiagnosisCriteriaState;
 
   factory DiagnosisCriteriaState.fromJson(Map<String, dynamic> json) =>
@@ -88,13 +94,6 @@ extension DiagnosisCriteriaX on DiagnosisCriteriaState {
 
   bool get hasAgeOver65 => (_parse(age) ?? 0) >= 65;
 
-  /// Measured on step 3/5: the ratio meets the criterion when ≤ 250
-  /// (empty = not evaluated).
-  bool get hasPao2Fio2Low {
-    final ratio = _parse(pao2Fio2);
-    return ratio != null && ratio <= 250;
-  }
-
   /// CURB-65 score 0–5, one point per met criterion.
   int get curb65Score => [
         hasConfusion,
@@ -102,9 +101,9 @@ extension DiagnosisCriteriaX on DiagnosisCriteriaState {
         hasTachypnea,
         hasHypotension,
         hasAgeOver65,
-      ].whereType<bool>().where((met) => met).length;
+      ].where((met) => met).length;
 
-  /// Body-surface proxy for later steps / clinical display.
+  /// Body-mass index proxy for later steps / clinical display.
   double? get bmi {
     final height = _parse(heightCm);
     final weight = _parse(weightKg);

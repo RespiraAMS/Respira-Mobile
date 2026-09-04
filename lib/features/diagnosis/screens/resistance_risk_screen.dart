@@ -4,23 +4,23 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
-import '../routes.dart';
-import '../widgets/selection_row_widget.dart';
-import '../models/diagnosis_state.dart';
+import '../../patient/widgets/selection_row_widget.dart';
 import '../providers/diagnosis_controller.dart';
+import '../providers/diagnosis_flow_provider.dart';
+import '../routes.dart';
 import '../widgets/criteria_banner_widget.dart';
 
-/// Route `/diagnosis/resistance-risk` — empirical treatment wizard,
-/// step 3/4: "Nguy cơ kháng thuốc".
+/// Route `/resistance-risk` — diagnosis wizard, step 4/5: "Nguy cơ kháng
+/// thuốc". Criteria come from `GET /diseases/{id}/criteria`.
 class ResistanceRiskScreen extends ConsumerWidget {
   const ResistanceRiskScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final selected = ref
-        .watch(diagnosisCriteriaControllerProvider)
-        .selectedResistanceRisks;
+    final state = ref.watch(diagnosisCriteriaControllerProvider);
     final controller = ref.read(diagnosisCriteriaControllerProvider.notifier);
+    final criteria =
+        ref.watch(diagnosisFlowControllerProvider).criteria;
 
     return Scaffold(
       body: SafeArea(
@@ -46,20 +46,19 @@ class ResistanceRiskScreen extends ConsumerWidget {
                         child: Column(
                           children: [
                             const CriteriaBannerWidget(
-                              'Yếu tố nguy cơ kháng thuốc',
-                            ),
+                                'Yếu tố nguy cơ kháng thuốc'),
                             const SizedBox(height: Spacing.control),
-                            for (final factor
-                                in ResistanceRiskFactor.values) ...[
+                            for (final criterion
+                                in criteria.resistanceRiskFactorCriteria) ...[
                               SelectionRowWidget(
-                                title: factor.title,
-                                description: factor.description,
-                                selected: selected.contains(factor),
-                                onTap: () =>
-                                    controller.toggleResistanceRisk(factor),
+                                title: criterion.name,
+                                description: 'Yếu tố phơi nhiễm.',
+                                selected: state.selectedResistanceRiskIds
+                                    .contains(criterion.id),
+                                onTap: () => controller
+                                    .toggleResistanceRiskId(criterion.id),
                               ),
-                              if (factor != ResistanceRiskFactor.values.last)
-                                const SizedBox(height: Spacing.inline),
+                              const SizedBox(height: Spacing.inline),
                             ],
                           ],
                         ),
@@ -76,17 +75,16 @@ class ResistanceRiskScreen extends ConsumerWidget {
                               child: AppButton(
                                 label: 'Quay lại',
                                 type: AppButtonType.outline,
-                                onPressed: () => context.goBackOr(
-                                  DiagnosisRoutes.icuCriteria,
-                                ),
+                                onPressed: () => context
+                                    .goBackOr(DiagnosisRoutes.icuCriteria),
                               ),
                             ),
                             const SizedBox(width: Spacing.control),
                             Expanded(
                               child: AppButton(
                                 label: 'Tiếp tục',
-                                onPressed: () =>
-                                    context.push(DiagnosisRoutes.otherCriteria),
+                                onPressed: () => context
+                                    .push(DiagnosisRoutes.otherCriteria),
                               ),
                             ),
                           ],

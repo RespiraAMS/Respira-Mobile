@@ -1,28 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:respira_mobile/core/router/app_router.dart';
-import 'package:respira_mobile/features/patient/routes.dart';
-import 'package:respira_mobile/main.dart';
+import 'helpers/pump_test_app.dart';
 
-/// Targeted-treatment flow tests (ft/patient branch): switching the
-/// treatment-type tab on AddProgress, the targeted variant, the
-/// Chẩn đoán vi sinh screen and its selection chips.
+/// Targeted-treatment flow tests: switching the treatment-type tab, the
+/// targeted variant, the Chẩn đoán vi sinh screen and its selection chips.
 
-Future<void> _pumpProgress(WidgetTester tester) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        appRouterProvider.overrideWithValue(
-          buildAppRouter(initialLocation: PatientRoutes.progress),
-        ),
-      ],
-      child: const RespiraMobileApp(),
-    ),
-  );
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 100));
-}
+Future<void> _pumpProgress(WidgetTester tester) =>
+    pumpTestApp(tester, initialLocation: '/patient/progress');
 
 Future<void> _settleNavigation(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
@@ -63,21 +47,34 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Tiếp tục điều trị đích'));
     await _settleNavigation(tester);
+    for (var i = 0; i < 12; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
 
     expect(find.text('Chẩn đoán vi sinh'), findsOneWidget);
     expect(
-        find.text('Mỗi đường dùng là một lựa chọn thuốc riêng'), findsOneWidget);
-    // Template defaults: two pre-selected options → two chips.
-    expect(find.text('P1 · Meropenem · TM'), findsOneWidget);
-    expect(find.text('P2 · Amoxicillin · Uống'), findsOneWidget);
+        find.text('Mỗi đường dùng là một lựa chọn thuốc riêng'),
+        findsOneWidget);
+    // Recommendations from POST /diagnose/target (mock).
+    expect(find.text('Meropenem'), findsOneWidget);
     expect(find.text('Amikacin'), findsOneWidget);
 
-    // Toggle a third option on → chip P3 appears.
+    // Nothing selected initially → no chips. Select Meropenem → P1 chip.
+    expect(
+        find.text('P1 · Meropenem · TM', skipOffstage: false), findsNothing);
+    await tester.tap(find.text('Meropenem'));
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(
+        find.text('P1 · Meropenem · TM', skipOffstage: false), findsOneWidget);
+
+    // Select Amikacin → P2 chip appears.
     await tester.ensureVisible(find.text('Amikacin'));
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Amikacin'));
     await tester.pump(const Duration(milliseconds: 200));
-    expect(find.text('P3 · Amikacin · TM'), findsOneWidget);
+    expect(
+        find.text('P2 · Amikacin · TM', skipOffstage: false), findsOneWidget);
   });
 
   testWidgets('saving targeted treatment lands on patient detail',
@@ -90,12 +87,18 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Tiếp tục điều trị đích'));
     await _settleNavigation(tester);
+    for (var i = 0; i < 12; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
 
-    // 'Thống kê' nav label is unique here; 'Lưu điều trị đích' sits at
-    // the bottom of the scrollable content.
+    await tester.tap(find.text('Meropenem'));
+    await tester.pump(const Duration(milliseconds: 200));
+
     await tester.ensureVisible(find.text('Lưu điều trị đích'));
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Lưu điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 600));
     await _settleNavigation(tester);
 
     expect(find.text('Đã lưu điều trị đích.'), findsOneWidget);

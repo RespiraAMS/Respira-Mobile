@@ -18,14 +18,18 @@ class LoginScreen extends ConsumerWidget {
     final controller = ref.read(loginControllerProvider.notifier);
     final c = context.respiraColors;
 
-    void submit() {
+    Future<void> submit() async {
       if (!controller.canSubmit) {
         showAppToast(context, 'Vui lòng nhập email/mã nhân viên và mật khẩu.');
         return;
       }
-      // Repository-backed auth lands with the networking layer; the
-      // welcome screen is the post-login landing page.
-      context.go('/welcome');
+      final ok = await controller.submit();
+      if (!context.mounted) return;
+      if (ok) {
+        // Post-login landing page.
+        context.go(AuthenticationRoutes.welcome);
+      }
+      // Failure: errorMessage is rendered under the fields (text + color).
     }
 
     return Scaffold(
@@ -69,6 +73,24 @@ class LoginScreen extends ConsumerWidget {
                         textInputAction: TextInputAction.done,
                         hintText: '••••••••',
                       ),
+                      if (form.errorMessage != null) ...[
+                        const SizedBox(height: Spacing.inline),
+                        // Error = text + icon semantics, never color alone (§12).
+                        Row(
+                          children: [
+                            Icon(Icons.error_outline,
+                                size: 16, color: c.error),
+                            const SizedBox(width: Spacing.xxs),
+                            Expanded(
+                              child: Text(
+                                form.errorMessage!,
+                                style: TypographyTokens.caption(context)
+                                    .copyWith(color: c.error),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: Spacing.inline),
                       Align(
                         alignment: Alignment.centerRight,
@@ -82,7 +104,8 @@ class LoginScreen extends ConsumerWidget {
                       AppButton(
                         label: 'Đăng nhập',
                         expand: true,
-                        onPressed: submit,
+                        loading: form.submitting,
+                        onPressed: controller.canSubmit ? submit : null,
                       ),
                       const SizedBox(height: Spacing.section),
                       _DividerWithLabel(label: 'hoặc'),

@@ -7,7 +7,7 @@ part of 'diagnosis_controller.dart';
 // **************************************************************************
 
 String _$diagnosisCriteriaControllerHash() =>
-    r'430518886c4da83ae0b7968477f9da02867b7f78';
+    r'41ae5ce15cb1635726f4a4f51cf55dd51e0218cd';
 
 /// Holds the measurements & selections of the diagnosis wizard
 /// (vitals 1/5 · CURB-65 2/5 · ICU 3/5 · resistance 4/5 · other 5/5).

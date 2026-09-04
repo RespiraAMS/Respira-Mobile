@@ -1,25 +1,13 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:respira_mobile/design_system/design_system.dart';
 
-import 'package:respira_mobile/main.dart';
+import 'helpers/pump_test_app.dart';
 
-/// Pumps the app with its production router (auth-first entry).
-Future<void> _pumpProductionApp(WidgetTester tester) async {
-  await tester.pumpWidget(const ProviderScope(child: RespiraMobileApp()));
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 100));
-}
+Future<void> _pumpProductionApp(WidgetTester tester) =>
+    pumpTestApp(tester, initialLocation: '/splash');
 
-/// Advances past the splash auto-redirect (~2s) plus settle frames.
 Future<void> _skipSplash(WidgetTester tester) async {
   await tester.pump(const Duration(seconds: 2, milliseconds: 500));
   await tester.pump(const Duration(milliseconds: 300));
@@ -30,7 +18,6 @@ Future<void> _settleNavigation(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
   await tester.pump(const Duration(milliseconds: 400));
 }
-
 void main() {
   testWidgets('splash advances to the login screen', (tester) async {
     await _pumpProductionApp(tester);
@@ -63,8 +50,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     // Two 'Đăng nhập' texts exist (title + button) → target the button
-    // via its widget-type pairing.
+    // via its widget-type pairing. The API call is real-async now.
     await tester.tap(find.widgetWithText(AppButton, 'Đăng nhập'));
+    await pumpAsync(tester);
+    await pumpAsync(tester);
     await _settleNavigation(tester);
 
     // Post-login landing page.

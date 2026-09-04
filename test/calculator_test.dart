@@ -1,32 +1,20 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:respira_mobile/core/router/app_router.dart';
+
 import 'package:respira_mobile/design_system/design_system.dart';
-import 'package:respira_mobile/main.dart';
 
-/// Calculator tests (ft/calculator branch): Máy tính list, CURB-65 detail
-/// (inputs → Tính → result) and the Giải thích tab.
-
-Future<void> _pumpList(WidgetTester tester) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        appRouterProvider.overrideWithValue(
-          buildAppRouter(initialLocation: '/calculators'),
-        ),
-      ],
-      child: const RespiraMobileApp(),
-    ),
-  );
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 100));
-}
+import 'helpers/pump_test_app.dart';
 
 Future<void> _settleNavigation(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
   await tester.pump(const Duration(milliseconds: 400));
 }
+
+/// Calculator tests (ft/calculator branch): Máy tính list, CURB-65 detail
+/// (inputs → Tính → result) and the Giải thích tab.
+
+Future<void> _pumpList(WidgetTester tester) =>
+    pumpTestApp(tester, initialLocation: '/calculators');
 
 void main() {
   testWidgets('renders the calculator list with all five tools',

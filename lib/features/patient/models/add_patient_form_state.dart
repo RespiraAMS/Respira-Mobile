@@ -15,6 +15,8 @@ class AddPatientFormState with _$AddPatientFormState {
     @Default(Gender.nam) Gender gender,
     @Default('') String insurance,
     @Default('') String address,
+    @Default('') String city,
+    @Default('') String country,
   }) = _AddPatientFormState;
 
   factory AddPatientFormState.fromJson(Map<String, dynamic> json) =>

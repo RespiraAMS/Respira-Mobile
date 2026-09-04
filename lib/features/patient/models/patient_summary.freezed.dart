@@ -21,6 +21,7 @@ PatientSummary _$PatientSummaryFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$PatientSummary {
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
   String get genderLabel => throw _privateConstructorUsedError;
@@ -45,6 +46,7 @@ abstract class $PatientSummaryCopyWith<$Res> {
   ) = _$PatientSummaryCopyWithImpl<$Res, PatientSummary>;
   @useResult
   $Res call({
+    String id,
     String name,
     String code,
     String genderLabel,
@@ -68,6 +70,7 @@ class _$PatientSummaryCopyWithImpl<$Res, $Val extends PatientSummary>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? code = null,
     Object? genderLabel = null,
@@ -76,6 +79,10 @@ class _$PatientSummaryCopyWithImpl<$Res, $Val extends PatientSummary>
   }) {
     return _then(
       _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
             name: null == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
@@ -112,6 +119,7 @@ abstract class _$$PatientSummaryImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
+    String id,
     String name,
     String code,
     String genderLabel,
@@ -134,6 +142,7 @@ class __$$PatientSummaryImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? code = null,
     Object? genderLabel = null,
@@ -142,6 +151,10 @@ class __$$PatientSummaryImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$PatientSummaryImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
@@ -171,6 +184,7 @@ class __$$PatientSummaryImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PatientSummaryImpl implements _PatientSummary {
   const _$PatientSummaryImpl({
+    required this.id,
     required this.name,
     required this.code,
     required this.genderLabel,
@@ -181,6 +195,8 @@ class _$PatientSummaryImpl implements _PatientSummary {
   factory _$PatientSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$PatientSummaryImplFromJson(json);
 
+  @override
+  final String id;
   @override
   final String name;
   @override
@@ -194,7 +210,7 @@ class _$PatientSummaryImpl implements _PatientSummary {
 
   @override
   String toString() {
-    return 'PatientSummary(name: $name, code: $code, genderLabel: $genderLabel, age: $age, status: $status)';
+    return 'PatientSummary(id: $id, name: $name, code: $code, genderLabel: $genderLabel, age: $age, status: $status)';
   }
 
   @override
@@ -202,6 +218,7 @@ class _$PatientSummaryImpl implements _PatientSummary {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PatientSummaryImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.genderLabel, genderLabel) ||
@@ -213,7 +230,7 @@ class _$PatientSummaryImpl implements _PatientSummary {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, name, code, genderLabel, age, status);
+      Object.hash(runtimeType, id, name, code, genderLabel, age, status);
 
   /// Create a copy of PatientSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -234,6 +251,7 @@ class _$PatientSummaryImpl implements _PatientSummary {
 
 abstract class _PatientSummary implements PatientSummary {
   const factory _PatientSummary({
+    required final String id,
     required final String name,
     required final String code,
     required final String genderLabel,
@@ -244,6 +262,8 @@ abstract class _PatientSummary implements PatientSummary {
   factory _PatientSummary.fromJson(Map<String, dynamic> json) =
       _$PatientSummaryImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get name;
   @override

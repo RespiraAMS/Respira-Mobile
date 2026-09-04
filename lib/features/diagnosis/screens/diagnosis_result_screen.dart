@@ -5,8 +5,11 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../models/clinical_dtos.dart';
 import '../models/diagnosis_result.dart';
-import '../providers/diagnosis_result_provider.dart';
+import '../models/diagnosis_state.dart';
+import '../providers/diagnosis_controller.dart';
+import '../providers/diagnosis_flow_provider.dart';
 import '../providers/diagnosis_tab_controller.dart';
 import '../widgets/medicine_card_widget.dart';
 import '../widgets/reference_row_widget.dart';
@@ -16,33 +19,51 @@ import '../widgets/stat_tile_widget.dart';
 import '../routes.dart';
 
 /// Route `/diagnosis/result` — wizard output with three tabs
-/// (result summary · recommended medicines · guideline references).
+/// (result summary · recommended medicines · guideline references),
+/// rendered from the real `POST /diagnose/empirical` response.
 class DiagnosisResultScreen extends ConsumerWidget {
   const DiagnosisResultScreen({super.key});
 
-  Future<void> _confirmSave(BuildContext context, WidgetRef ref) async {
-    final result = ref.read(currentDiagnosisResultProvider);
-
+  Future<void> _confirmSave(
+    BuildContext context,
+    WidgetRef ref,
+    EmpiricalDiagnoseResultDto result,
+  ) async {
     final confirmed = await showAppConfirmDialog(
       context,
       icon: LucideIcons.save,
       title: 'Lưu kết quả chẩn đoán?',
       description:
           'Sau khi lưu, nội dung chỉ có thể xem và không được chỉnh sửa trực tiếp.',
-      infoLabel: result.confirmationSummaryLabel,
+      infoLabel:
+          'Đã chọn ${result.recommendations.length} thuốc · ${result.references.length} phác đồ',
       confirmLabel: 'Xác nhận lưu',
     );
 
     if (confirmed != true || !context.mounted) return;
-    showAppToast(context, 'Đã lưu kết quả chẩn đoán.');
-    context.go('/patient/detail');
+
+    final ok = await ref
+        .read(diagnosisFlowControllerProvider.notifier)
+        .saveEmpiricalTreatment();
+    if (!context.mounted) return;
+    showAppToast(
+      context,
+      ok ? 'Đã lưu kết quả chẩn đoán.' : 'Lưu thất bại. Vui lòng thử lại.',
+    );
+    if (ok) context.go('/patient/detail');
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final result = ref.watch(currentDiagnosisResultProvider);
+    final result = ref.watch(diagnosisFlowControllerProvider).empiricalResult;
     final tab = ref.watch(diagnosisTabControllerProvider);
     final tabController = ref.read(diagnosisTabControllerProvider.notifier);
+
+    if (result == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -58,8 +79,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kết quả chẩn đoán',
-                        subtitle:
-                            '${result.modeLabel} · ${result.diagnosisName}',
+                        subtitle: 'Kinh nghiệm · Viêm phổi cộng đồng',
                         onBack: () =>
                             context.goBackOr(DiagnosisRoutes.otherCriteria),
                       ),
@@ -74,12 +94,10 @@ class DiagnosisResultScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section),
                       switch (tab) {
                         DiagnosisTab.result => _ResultTab(result: result),
-                        DiagnosisTab.medicines => _MedicinesTab(
-                          medicines: result.medicines,
-                        ),
-                        DiagnosisTab.references => _ReferencesTab(
-                          references: result.references,
-                        ),
+                        DiagnosisTab.medicines =>
+                          _MedicinesTab(medicines: result.recommendations),
+                        DiagnosisTab.references =>
+                          _ReferencesTab(references: result.references),
                       },
                       const Spacer(),
                       Padding(
@@ -90,7 +108,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
                         child: AppButton(
                           label: 'Lưu kết quả',
                           expand: true,
-                          onPressed: () => _confirmSave(context, ref),
+                          onPressed: () => _confirmSave(context, ref, result),
                         ),
                       ),
                     ],
@@ -121,14 +139,22 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _ResultTab extends StatelessWidget {
+class _ResultTab extends ConsumerWidget {
   const _ResultTab({required this.result});
 
-  final DiagnosisResult result;
+  final EmpiricalDiagnoseResultDto result;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
+    final inputs = ref.watch(diagnosisCriteriaControllerProvider);
+    final severityIsHigh = result.severity == 'Severe';
+    final siteLabel = switch (result.treatmentSite) {
+      'Inpatient' => 'Nội trú',
+      'IntensiveCareUnit' => 'ICU',
+      _ => 'Ngoại trú',
+    };
+    final riskLabel = severityIsHigh ? 'Nguy cơ cao' : 'Nguy cơ thấp';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -144,16 +170,13 @@ class _ResultTab extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                result.diagnosisName,
+                'Viêm phổi cộng đồng',
                 style: TypographyTokens.h3(
                   context,
                 ).copyWith(color: c.textPrimary),
               ),
               const SizedBox(height: Spacing.xxxs),
-              AppText(
-                'Chẩn đoán ${result.modeLabel.toLowerCase()}',
-                type: AppTextType.caption,
-              ),
+              AppText('Chẩn đoán kinh nghiệm', type: AppTextType.caption),
             ],
           ),
         ),
@@ -165,31 +188,29 @@ class _ResultTab extends StatelessWidget {
             Expanded(
               child: StatTileWidget(
                 label: 'CURB-65',
-                value: '${result.curbScore}',
+                value: '${inputs.curb65Score}',
                 tone: StatTileTone.primary,
               ),
             ),
             const SizedBox(width: Spacing.group),
             Expanded(
               child: StatTileWidget(
-                label: 'Mức độ',
-                value: result.severityLabel,
-                tone: result.severityIsHigh
-                    ? StatTileTone.warning
-                    : StatTileTone.neutral,
+                label: 'CrCl',
+                value: result.crcl.toStringAsFixed(1),
+                tone: StatTileTone.neutral,
               ),
             ),
             const SizedBox(width: Spacing.group),
             Expanded(
               child: StatTileWidget(
                 label: 'Điều trị',
-                value: result.careSettingLabel,
+                value: siteLabel,
               ),
             ),
           ],
         ),
         const SizedBox(height: Spacing.block - 4),
-        RiskPillWidget(label: result.riskLabel, isHigh: result.severityIsHigh),
+        RiskPillWidget(label: riskLabel, isHigh: severityIsHigh),
         const SizedBox(height: Spacing.control + 4),
         AppText(
           'Kết quả cần được bác sĩ xác nhận trước khi áp dụng điều trị.',
@@ -203,50 +224,26 @@ class _ResultTab extends StatelessWidget {
 class _MedicinesTab extends StatelessWidget {
   const _MedicinesTab({required this.medicines});
 
-  final List<DiagnosisMedicine> medicines;
+  final List<AntibioticResultDto> medicines;
 
   @override
   Widget build(BuildContext context) {
-    // Plain rows instead of GridView: shrink-wrap viewports cannot live
-    // inside IntrinsicHeight (the pinned-bottom-CTA pattern).
-    final rows = <List<DiagnosisMedicine>>[
-      for (var i = 0; i < medicines.length; i += 2)
-        medicines.skip(i).take(2).toList(),
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _SectionTitle('Thuốc khuyến nghị'),
         const SizedBox(height: Spacing.control + 4),
-        AppText(
-          'Liều và đường dùng: theo phác đồ đã chọn.',
-          type: AppTextType.caption,
-        ),
+        AppText('Liều và đường dùng: theo phác đồ đã chọn.',
+            type: AppTextType.caption),
         const SizedBox(height: Spacing.block - 4),
-        for (var r = 0; r < rows.length; r++) ...[
-          Row(
-            // No stretch here: inside IntrinsicHeight it would pass an
-            // unbounded cross-axis to children.
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (var i = 0; i < rows[r].length; i++) ...[
-                if (i > 0) const SizedBox(width: Spacing.group),
-                Expanded(
-                  child: MedicineCardWidget(
-                    name: rows[r][i].name,
-                    regimenLine: rows[r][i].regimenLine,
-                  ),
-                ),
-              ],
-              // Keep card widths equal on incomplete rows.
-              if (rows[r].length == 1) ...[
-                const SizedBox(width: Spacing.group),
-                const Expanded(child: SizedBox.shrink()),
-              ],
-            ],
+        for (final medicine in medicines) ...[
+          MedicineCardWidget(
+            name: medicine.name,
+            regimenLine: medicine.dosages.isEmpty
+                ? medicine.antibioticGroupName
+                : '${medicine.dosages.first.routeOfAdministration} · ${medicine.dosages.first.dose}',
           ),
-          if (r != rows.length - 1) const SizedBox(height: Spacing.group),
+          if (medicine != medicines.last) const SizedBox(height: Spacing.group),
         ],
       ],
     );
@@ -256,7 +253,7 @@ class _MedicinesTab extends StatelessWidget {
 class _ReferencesTab extends StatelessWidget {
   const _ReferencesTab({required this.references});
 
-  final List<DiagnosisReference> references;
+  final List<ReferenceDto> references;
 
   @override
   Widget build(BuildContext context) {
@@ -268,15 +265,13 @@ class _ReferencesTab extends StatelessWidget {
         AppCard.divided([
           for (final reference in references)
             ReferenceRowWidget(
-              source: reference.source,
-              detail: reference.detail,
+              source: reference.name,
+              detail: reference.issuer,
             ),
         ]),
         const SizedBox(height: Spacing.section),
-        AppText(
-          'Nguồn tham khảo của phác đồ được đề xuất.',
-          type: AppTextType.caption,
-        ),
+        AppText('Nguồn tham khảo của phác đồ được đề xuất.',
+            type: AppTextType.caption),
       ],
     );
   }

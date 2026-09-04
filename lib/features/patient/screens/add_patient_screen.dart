@@ -4,8 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../../core/network/api_response.dart';
 import '../models/patient.dart';
 import '../providers/add_patient_controller.dart';
+import '../providers/add_patient_saving_provider.dart';
 import '../widgets/gender_option_widget.dart';
 import '../widgets/section_label_widget.dart';
 import '../routes.dart';
@@ -24,6 +26,21 @@ class AddPatientScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final form = ref.watch(addPatientControllerProvider);
     final controller = ref.read(addPatientControllerProvider.notifier);
+    final saving = ref.watch(addPatientSavingProvider);
+
+    Future<void> save(BuildContext context) async {
+      try {
+        await controller.save();
+        if (!context.mounted) return;
+        context.push(
+          diagnosisEntry ? PatientRoutes.progress : PatientRoutes.detail,
+        );
+      } on ApiException catch (e) {
+        showAppToast(context, e.message);
+      } catch (_) {
+        showAppToast(context, 'Không thể tạo bệnh nhân. Vui lòng thử lại.');
+      }
+    }
 
     return Scaffold(
       body: SafeArea(
@@ -87,20 +104,35 @@ class AddPatientScreen extends ConsumerWidget {
                         initialValue: form.address,
                         onChanged: controller.setAddress,
                       ),
+                      const SizedBox(height: Spacing.group),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: AppTextField(
+                              label: 'Tỉnh/Thành phố',
+                              initialValue: form.city,
+                              onChanged: controller.setCity,
+                            ),
+                          ),
+                          const SizedBox(width: Spacing.group),
+                          Expanded(
+                            child: AppTextField(
+                              label: 'Quốc gia',
+                              initialValue: form.country,
+                              onChanged: controller.setCountry,
+                            ),
+                          ),
+                        ],
+                      ),
                       const Spacer(),
                       Padding(
                         padding: const EdgeInsets.only(top: Spacing.block),
                         child: AppButton(
-                          label: 'Lưu hồ sơ',
+                          label: saving ? 'Đang lưu…' : 'Lưu hồ sơ',
                           expand: true,
-                          onPressed: () {
-                            controller.save();
-                            context.push(
-                              diagnosisEntry
-                                  ? PatientRoutes.progress
-                                  : PatientRoutes.detail,
-                            );
-                          },
+                          loading: saving,
+                          onPressed: saving ? null : () => save(context),
                         ),
                       ),
                     ],

@@ -27,6 +27,8 @@ mixin _$AddPatientFormState {
   Gender get gender => throw _privateConstructorUsedError;
   String get insurance => throw _privateConstructorUsedError;
   String get address => throw _privateConstructorUsedError;
+  String get city => throw _privateConstructorUsedError;
+  String get country => throw _privateConstructorUsedError;
 
   /// Serializes this AddPatientFormState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -52,6 +54,8 @@ abstract class $AddPatientFormStateCopyWith<$Res> {
     Gender gender,
     String insurance,
     String address,
+    String city,
+    String country,
   });
 }
 
@@ -76,6 +80,8 @@ class _$AddPatientFormStateCopyWithImpl<$Res, $Val extends AddPatientFormState>
     Object? gender = null,
     Object? insurance = null,
     Object? address = null,
+    Object? city = null,
+    Object? country = null,
   }) {
     return _then(
       _value.copyWith(
@@ -103,6 +109,14 @@ class _$AddPatientFormStateCopyWithImpl<$Res, $Val extends AddPatientFormState>
                 ? _value.address
                 : address // ignore: cast_nullable_to_non_nullable
                       as String,
+            city: null == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String,
+            country: null == country
+                ? _value.country
+                : country // ignore: cast_nullable_to_non_nullable
+                      as String,
           )
           as $Val,
     );
@@ -125,6 +139,8 @@ abstract class _$$AddPatientFormStateImplCopyWith<$Res>
     Gender gender,
     String insurance,
     String address,
+    String city,
+    String country,
   });
 }
 
@@ -148,6 +164,8 @@ class __$$AddPatientFormStateImplCopyWithImpl<$Res>
     Object? gender = null,
     Object? insurance = null,
     Object? address = null,
+    Object? city = null,
+    Object? country = null,
   }) {
     return _then(
       _$AddPatientFormStateImpl(
@@ -175,6 +193,14 @@ class __$$AddPatientFormStateImplCopyWithImpl<$Res>
             ? _value.address
             : address // ignore: cast_nullable_to_non_nullable
                   as String,
+        city: null == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String,
+        country: null == country
+            ? _value.country
+            : country // ignore: cast_nullable_to_non_nullable
+                  as String,
       ),
     );
   }
@@ -190,6 +216,8 @@ class _$AddPatientFormStateImpl implements _AddPatientFormState {
     this.gender = Gender.nam,
     this.insurance = '',
     this.address = '',
+    this.city = '',
+    this.country = '',
   });
 
   factory _$AddPatientFormStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -213,10 +241,16 @@ class _$AddPatientFormStateImpl implements _AddPatientFormState {
   @override
   @JsonKey()
   final String address;
+  @override
+  @JsonKey()
+  final String city;
+  @override
+  @JsonKey()
+  final String country;
 
   @override
   String toString() {
-    return 'AddPatientFormState(name: $name, code: $code, dob: $dob, gender: $gender, insurance: $insurance, address: $address)';
+    return 'AddPatientFormState(name: $name, code: $code, dob: $dob, gender: $gender, insurance: $insurance, address: $address, city: $city, country: $country)';
   }
 
   @override
@@ -230,13 +264,24 @@ class _$AddPatientFormStateImpl implements _AddPatientFormState {
             (identical(other.gender, gender) || other.gender == gender) &&
             (identical(other.insurance, insurance) ||
                 other.insurance == insurance) &&
-            (identical(other.address, address) || other.address == address));
+            (identical(other.address, address) || other.address == address) &&
+            (identical(other.city, city) || other.city == city) &&
+            (identical(other.country, country) || other.country == country));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, name, code, dob, gender, insurance, address);
+  int get hashCode => Object.hash(
+    runtimeType,
+    name,
+    code,
+    dob,
+    gender,
+    insurance,
+    address,
+    city,
+    country,
+  );
 
   /// Create a copy of AddPatientFormState
   /// with the given fields replaced by the non-null parameter values.
@@ -263,6 +308,8 @@ abstract class _AddPatientFormState implements AddPatientFormState {
     final Gender gender,
     final String insurance,
     final String address,
+    final String city,
+    final String country,
   }) = _$AddPatientFormStateImpl;
 
   factory _AddPatientFormState.fromJson(Map<String, dynamic> json) =
@@ -280,6 +327,10 @@ abstract class _AddPatientFormState implements AddPatientFormState {
   String get insurance;
   @override
   String get address;
+  @override
+  String get city;
+  @override
+  String get country;
 
   /// Create a copy of AddPatientFormState
   /// with the given fields replaced by the non-null parameter values.

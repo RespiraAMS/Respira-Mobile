@@ -31,7 +31,10 @@ final List<RouteBase> patientRoutes = [
   ),
   GoRoute(
     path: PatientRoutes.detail,
-    builder: (context, state) => const PatientDetailScreen(),
+    builder: (context, state) {
+      final id = state.uri.queryParameters['id'];
+      return PatientDetailScreen(patientId: id);
+    },
   ),
   GoRoute(
     path: PatientRoutes.progress,

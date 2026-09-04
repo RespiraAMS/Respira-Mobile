@@ -21,6 +21,7 @@ Patient _$PatientFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Patient {
+  String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String get code => throw _privateConstructorUsedError;
 
@@ -47,6 +48,7 @@ abstract class $PatientCopyWith<$Res> {
       _$PatientCopyWithImpl<$Res, Patient>;
   @useResult
   $Res call({
+    String id,
     String name,
     String code,
     String dob,
@@ -71,6 +73,7 @@ class _$PatientCopyWithImpl<$Res, $Val extends Patient>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? code = null,
     Object? dob = null,
@@ -80,6 +83,10 @@ class _$PatientCopyWithImpl<$Res, $Val extends Patient>
   }) {
     return _then(
       _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
             name: null == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
@@ -119,6 +126,7 @@ abstract class _$$PatientImplCopyWith<$Res> implements $PatientCopyWith<$Res> {
   @override
   @useResult
   $Res call({
+    String id,
     String name,
     String code,
     String dob,
@@ -142,6 +150,7 @@ class __$$PatientImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
+    Object? id = null,
     Object? name = null,
     Object? code = null,
     Object? dob = null,
@@ -151,6 +160,10 @@ class __$$PatientImplCopyWithImpl<$Res>
   }) {
     return _then(
       _$PatientImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
@@ -184,6 +197,7 @@ class __$$PatientImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PatientImpl implements _Patient {
   const _$PatientImpl({
+    this.id = '',
     required this.name,
     required this.code,
     required this.dob,
@@ -195,6 +209,9 @@ class _$PatientImpl implements _Patient {
   factory _$PatientImpl.fromJson(Map<String, dynamic> json) =>
       _$$PatientImplFromJson(json);
 
+  @override
+  @JsonKey()
+  final String id;
   @override
   final String name;
   @override
@@ -214,7 +231,7 @@ class _$PatientImpl implements _Patient {
 
   @override
   String toString() {
-    return 'Patient(name: $name, code: $code, dob: $dob, gender: $gender, insurance: $insurance, address: $address)';
+    return 'Patient(id: $id, name: $name, code: $code, dob: $dob, gender: $gender, insurance: $insurance, address: $address)';
   }
 
   @override
@@ -222,6 +239,7 @@ class _$PatientImpl implements _Patient {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PatientImpl &&
+            (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
             (identical(other.code, code) || other.code == code) &&
             (identical(other.dob, dob) || other.dob == dob) &&
@@ -234,7 +252,7 @@ class _$PatientImpl implements _Patient {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
-      Object.hash(runtimeType, name, code, dob, gender, insurance, address);
+      Object.hash(runtimeType, id, name, code, dob, gender, insurance, address);
 
   /// Create a copy of Patient
   /// with the given fields replaced by the non-null parameter values.
@@ -252,6 +270,7 @@ class _$PatientImpl implements _Patient {
 
 abstract class _Patient implements Patient {
   const factory _Patient({
+    final String id,
     required final String name,
     required final String code,
     required final String dob,
@@ -262,6 +281,8 @@ abstract class _Patient implements Patient {
 
   factory _Patient.fromJson(Map<String, dynamic> json) = _$PatientImpl.fromJson;
 
+  @override
+  String get id;
   @override
   String get name;
   @override

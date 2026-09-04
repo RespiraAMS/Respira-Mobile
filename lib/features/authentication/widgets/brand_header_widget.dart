@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../design_system/design_system.dart';
 
@@ -28,7 +27,8 @@ class RespiraLogoMarkWidget extends StatelessWidget {
       ),
       child: Text(
         'R.',
-        style: GoogleFonts.playfairDisplay(
+        style: TextStyle(
+          fontFamily: 'Playfair Display',
           color: c.onPrimary,
           fontSize: size * 0.56,
           fontWeight: FontWeight.w900,

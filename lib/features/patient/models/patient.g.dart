@@ -8,6 +8,7 @@ part of 'patient.dart';
 
 _$PatientImpl _$$PatientImplFromJson(Map<String, dynamic> json) =>
     _$PatientImpl(
+      id: json['id'] as String? ?? '',
       name: json['name'] as String,
       code: json['code'] as String,
       dob: json['dob'] as String,
@@ -18,6 +19,7 @@ _$PatientImpl _$$PatientImplFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$$PatientImplToJson(_$PatientImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'code': instance.code,
       'dob': instance.dob,

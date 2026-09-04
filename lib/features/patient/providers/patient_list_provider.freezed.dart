@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'patient_list_controller.dart';
+part of 'patient_list_provider.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -19,9 +19,13 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$PatientListState {
   String get query => throw _privateConstructorUsedError;
   PatientListFilter get filter => throw _privateConstructorUsedError;
-
-  /// "Ưu tiên" toggle: clinical priority order (critical first, §01).
   bool get prioritySort => throw _privateConstructorUsedError;
+  bool get loading => throw _privateConstructorUsedError;
+  bool get loadingMore => throw _privateConstructorUsedError;
+  bool get hasMore => throw _privateConstructorUsedError;
+  String? get errorMessage => throw _privateConstructorUsedError;
+  List<PatientSummary> get patients => throw _privateConstructorUsedError;
+  int get page => throw _privateConstructorUsedError;
 
   /// Create a copy of PatientListState
   /// with the given fields replaced by the non-null parameter values.
@@ -37,7 +41,17 @@ abstract class $PatientListStateCopyWith<$Res> {
     $Res Function(PatientListState) then,
   ) = _$PatientListStateCopyWithImpl<$Res, PatientListState>;
   @useResult
-  $Res call({String query, PatientListFilter filter, bool prioritySort});
+  $Res call({
+    String query,
+    PatientListFilter filter,
+    bool prioritySort,
+    bool loading,
+    bool loadingMore,
+    bool hasMore,
+    String? errorMessage,
+    List<PatientSummary> patients,
+    int page,
+  });
 }
 
 /// @nodoc
@@ -58,6 +72,12 @@ class _$PatientListStateCopyWithImpl<$Res, $Val extends PatientListState>
     Object? query = null,
     Object? filter = null,
     Object? prioritySort = null,
+    Object? loading = null,
+    Object? loadingMore = null,
+    Object? hasMore = null,
+    Object? errorMessage = freezed,
+    Object? patients = null,
+    Object? page = null,
   }) {
     return _then(
       _value.copyWith(
@@ -73,6 +93,30 @@ class _$PatientListStateCopyWithImpl<$Res, $Val extends PatientListState>
                 ? _value.prioritySort
                 : prioritySort // ignore: cast_nullable_to_non_nullable
                       as bool,
+            loading: null == loading
+                ? _value.loading
+                : loading // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            loadingMore: null == loadingMore
+                ? _value.loadingMore
+                : loadingMore // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            hasMore: null == hasMore
+                ? _value.hasMore
+                : hasMore // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            patients: null == patients
+                ? _value.patients
+                : patients // ignore: cast_nullable_to_non_nullable
+                      as List<PatientSummary>,
+            page: null == page
+                ? _value.page
+                : page // ignore: cast_nullable_to_non_nullable
+                      as int,
           )
           as $Val,
     );
@@ -88,7 +132,17 @@ abstract class _$$PatientListStateImplCopyWith<$Res>
   ) = __$$PatientListStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String query, PatientListFilter filter, bool prioritySort});
+  $Res call({
+    String query,
+    PatientListFilter filter,
+    bool prioritySort,
+    bool loading,
+    bool loadingMore,
+    bool hasMore,
+    String? errorMessage,
+    List<PatientSummary> patients,
+    int page,
+  });
 }
 
 /// @nodoc
@@ -108,6 +162,12 @@ class __$$PatientListStateImplCopyWithImpl<$Res>
     Object? query = null,
     Object? filter = null,
     Object? prioritySort = null,
+    Object? loading = null,
+    Object? loadingMore = null,
+    Object? hasMore = null,
+    Object? errorMessage = freezed,
+    Object? patients = null,
+    Object? page = null,
   }) {
     return _then(
       _$PatientListStateImpl(
@@ -123,6 +183,30 @@ class __$$PatientListStateImplCopyWithImpl<$Res>
             ? _value.prioritySort
             : prioritySort // ignore: cast_nullable_to_non_nullable
                   as bool,
+        loading: null == loading
+            ? _value.loading
+            : loading // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        loadingMore: null == loadingMore
+            ? _value.loadingMore
+            : loadingMore // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        hasMore: null == hasMore
+            ? _value.hasMore
+            : hasMore // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        patients: null == patients
+            ? _value._patients
+            : patients // ignore: cast_nullable_to_non_nullable
+                  as List<PatientSummary>,
+        page: null == page
+            ? _value.page
+            : page // ignore: cast_nullable_to_non_nullable
+                  as int,
       ),
     );
   }
@@ -135,7 +219,13 @@ class _$PatientListStateImpl implements _PatientListState {
     this.query = '',
     this.filter = PatientListFilter.all,
     this.prioritySort = false,
-  });
+    this.loading = false,
+    this.loadingMore = false,
+    this.hasMore = false,
+    this.errorMessage,
+    final List<PatientSummary> patients = const [],
+    this.page = 1,
+  }) : _patients = patients;
 
   @override
   @JsonKey()
@@ -143,15 +233,36 @@ class _$PatientListStateImpl implements _PatientListState {
   @override
   @JsonKey()
   final PatientListFilter filter;
-
-  /// "Ưu tiên" toggle: clinical priority order (critical first, §01).
   @override
   @JsonKey()
   final bool prioritySort;
+  @override
+  @JsonKey()
+  final bool loading;
+  @override
+  @JsonKey()
+  final bool loadingMore;
+  @override
+  @JsonKey()
+  final bool hasMore;
+  @override
+  final String? errorMessage;
+  final List<PatientSummary> _patients;
+  @override
+  @JsonKey()
+  List<PatientSummary> get patients {
+    if (_patients is EqualUnmodifiableListView) return _patients;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_patients);
+  }
+
+  @override
+  @JsonKey()
+  final int page;
 
   @override
   String toString() {
-    return 'PatientListState(query: $query, filter: $filter, prioritySort: $prioritySort)';
+    return 'PatientListState(query: $query, filter: $filter, prioritySort: $prioritySort, loading: $loading, loadingMore: $loadingMore, hasMore: $hasMore, errorMessage: $errorMessage, patients: $patients, page: $page)';
   }
 
   @override
@@ -162,11 +273,30 @@ class _$PatientListStateImpl implements _PatientListState {
             (identical(other.query, query) || other.query == query) &&
             (identical(other.filter, filter) || other.filter == filter) &&
             (identical(other.prioritySort, prioritySort) ||
-                other.prioritySort == prioritySort));
+                other.prioritySort == prioritySort) &&
+            (identical(other.loading, loading) || other.loading == loading) &&
+            (identical(other.loadingMore, loadingMore) ||
+                other.loadingMore == loadingMore) &&
+            (identical(other.hasMore, hasMore) || other.hasMore == hasMore) &&
+            (identical(other.errorMessage, errorMessage) ||
+                other.errorMessage == errorMessage) &&
+            const DeepCollectionEquality().equals(other._patients, _patients) &&
+            (identical(other.page, page) || other.page == page));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, query, filter, prioritySort);
+  int get hashCode => Object.hash(
+    runtimeType,
+    query,
+    filter,
+    prioritySort,
+    loading,
+    loadingMore,
+    hasMore,
+    errorMessage,
+    const DeepCollectionEquality().hash(_patients),
+    page,
+  );
 
   /// Create a copy of PatientListState
   /// with the given fields replaced by the non-null parameter values.
@@ -185,16 +315,32 @@ abstract class _PatientListState implements PatientListState {
     final String query,
     final PatientListFilter filter,
     final bool prioritySort,
+    final bool loading,
+    final bool loadingMore,
+    final bool hasMore,
+    final String? errorMessage,
+    final List<PatientSummary> patients,
+    final int page,
   }) = _$PatientListStateImpl;
 
   @override
   String get query;
   @override
   PatientListFilter get filter;
-
-  /// "Ưu tiên" toggle: clinical priority order (critical first, §01).
   @override
   bool get prioritySort;
+  @override
+  bool get loading;
+  @override
+  bool get loadingMore;
+  @override
+  bool get hasMore;
+  @override
+  String? get errorMessage;
+  @override
+  List<PatientSummary> get patients;
+  @override
+  int get page;
 
   /// Create a copy of PatientListState
   /// with the given fields replaced by the non-null parameter values.

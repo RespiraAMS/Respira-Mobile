@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:respira_mobile/core/router/app_router.dart';
-import 'package:respira_mobile/features/patient/routes.dart';
-import 'package:respira_mobile/main.dart';
+import 'helpers/pump_test_app.dart';
 
-/// Patient-list tests (ft/patient branch): roster render, filters, search,
-/// navigation to detail.
+/// Patient-list tests: roster render, filters, search, navigation.
 
 Future<void> _pumpList(WidgetTester tester) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        appRouterProvider
-            .overrideWithValue(buildAppRouter(initialLocation: PatientRoutes.list)),
-      ],
-      child: const RespiraMobileApp(),
-    ),
-  );
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 100));
+  await pumpTestApp(tester, initialLocation: '/');
+  // Let the async roster load complete (Dio needs real async time).
+  await pumpAsync(tester);
+  await pumpAsync(tester);
 }
 
 Future<void> _settleNavigation(WidgetTester tester) async {
@@ -29,50 +18,38 @@ Future<void> _settleNavigation(WidgetTester tester) async {
 }
 
 void main() {
-  testWidgets('renders the roster with derived counts', (tester) async {
+  testWidgets('renders the roster from the API', (tester) async {
     await _pumpList(tester);
 
     expect(find.text('Danh sách bệnh nhân'), findsOneWidget);
-    expect(find.text('12 bệnh nhân đang theo dõi'), findsOneWidget);
-    // Counts derived from the seeded roster, not hardcoded.
-    expect(find.text('Tất cả · 12'), findsOneWidget);
-    expect(find.text('Cần chú ý · 3'), findsOneWidget);
-    expect(find.text('Nguy cơ cao · 1'), findsOneWidget);
-    expect(find.text('12 bệnh nhân'), findsOneWidget);
+    // Counts derive from the loaded page (mock returns 2 patients: both
+    // in treatment).
+    expect(find.text('Tất cả · 2'), findsOneWidget);
+    expect(find.text('Cần chú ý · 2'), findsOneWidget);
+    expect(find.text('Nguy cơ cao · 0'), findsOneWidget);
+    expect(find.text('2 bệnh nhân'), findsOneWidget);
 
-    expect(find.text('Nguyễn Văn An'), findsOneWidget);
+    expect(find.text('Khoa'), findsOneWidget);
     expect(find.text('Đang điều trị'), findsWidgets);
-    expect(find.text('Tử vong'), findsOneWidget);
-    expect(find.text('Hồi phục'), findsWidgets);
   });
 
-  testWidgets('filter chip narrows the roster', (tester) async {
+  testWidgets('search narrows the roster by code', (tester) async {
     await _pumpList(tester);
 
-    await tester.tap(find.text('Cần chú ý · 3'));
-    await tester.pump(const Duration(milliseconds: 200));
+    await tester.enterText(find.byType(TextField).first, '0002');
+    // setQuery triggers a fresh API call — give it real async time.
+    await pumpAsync(tester);
+    await pumpAsync(tester);
 
-    expect(find.text('3 bệnh nhân'), findsOneWidget);
-    expect(find.text('Nguyễn Văn An'), findsOneWidget);
-    expect(find.text('Lê Thu Hà'), findsNothing);
-  });
-
-  testWidgets('search matches name or record code', (tester) async {
-    await _pumpList(tester);
-
-    await tester.enterText(find.byType(TextField).first, '0208');
-    await tester.pump(const Duration(milliseconds: 200));
-
-    expect(find.text('1 bệnh nhân'), findsOneWidget);
-    expect(find.text('Lê Thu Hà'), findsOneWidget);
-    expect(find.text('Nguyễn Văn An'), findsNothing);
+    expect(find.text('Khoa'), findsNothing);
+    expect(find.text('An'), findsOneWidget);
   });
 
   testWidgets('tapping a card opens the patient detail screen',
       (tester) async {
     await _pumpList(tester);
 
-    await tester.tap(find.text('Nguyễn Văn An'));
+    await tester.tap(find.text('Khoa'));
     await _settleNavigation(tester);
 
     expect(find.text('Chi tiết bệnh nhân'), findsOneWidget);

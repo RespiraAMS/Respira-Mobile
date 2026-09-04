@@ -4,22 +4,23 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../../patient/widgets/selection_row_widget.dart';
+import '../providers/diagnosis_controller.dart';
+import '../providers/diagnosis_flow_provider.dart';
+import '../routes.dart';
 import '../widgets/criteria_banner_widget.dart';
 
-import '../routes.dart';
-
-/// Route `/diagnosis/other-criteria` — empirical treatment wizard,
-/// step 4/4: "Tiêu chí khác".
-///
-/// The template defines no selectable criteria yet — only the informational
-/// "Tiêu chí bổ sung" panel. Wire checklist rows here when the clinical
-/// workflow specifies them.
+/// Route `/other-criteria` — diagnosis wizard, step 5/5: "Tiêu chí khác".
+/// Criteria come from `GET /diseases/{id}/criteria` (other-criteria list).
 class OtherCriteriaScreen extends ConsumerWidget {
   const OtherCriteriaScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final c = context.respiraColors;
+    final state = ref.watch(diagnosisCriteriaControllerProvider);
+    final controller = ref.read(diagnosisCriteriaControllerProvider.notifier);
+    final criteria =
+        ref.watch(diagnosisFlowControllerProvider).criteria;
 
     return Scaffold(
       body: SafeArea(
@@ -43,45 +44,21 @@ class OtherCriteriaScreen extends ConsumerWidget {
                       AppCard(
                         padding: const EdgeInsets.all(Spacing.control),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Center(
-                              child: CriteriaBannerWidget('Tiêu chí khác'),
-                            ),
+                            const CriteriaBannerWidget('Tiêu chí khác'),
                             const SizedBox(height: Spacing.control),
-                            Container(
-                              width: double.infinity,
-                              constraints: const BoxConstraints(
-                                minHeight: ControlSize.rowHeight * 3,
+                            for (final criterion
+                                in criteria.otherCriteria) ...[
+                              SelectionRowWidget(
+                                title: criterion.name,
+                                description: 'Tiêu chí bổ sung.',
+                                selected: state.selectedOtherCriteriaIds
+                                    .contains(criterion.id),
+                                onTap: () => controller
+                                    .toggleOtherCriterionId(criterion.id),
                               ),
-                              padding: const EdgeInsets.all(Spacing.group),
-                              decoration: BoxDecoration(
-                                color: c.primarySoft,
-                                borderRadius: AppRadius.sm,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Tiêu chí bổ sung',
-                                    style: TypographyTokens.label(
-                                      context,
-                                    ).copyWith(color: c.textSecondary),
-                                  ),
-                                  const SizedBox(height: Spacing.xxxs),
-                                  Text(
-                                    'Chọn các tiêu chí bổ sung nếu có theo '
-                                    'quy trình chuyên môn.',
-                                    style: TypographyTokens.caption(context)
-                                        .copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: c.textPrimary,
-                                        ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                              const SizedBox(height: Spacing.inline),
+                            ],
                           ],
                         ),
                       ),
@@ -97,18 +74,24 @@ class OtherCriteriaScreen extends ConsumerWidget {
                               child: AppButton(
                                 label: 'Quay lại',
                                 type: AppButtonType.outline,
-                                onPressed: () => context.goBackOr(
-                                  DiagnosisRoutes.resistanceRisk,
-                                ),
+                                onPressed: () => context
+                                    .goBackOr(DiagnosisRoutes.resistanceRisk),
                               ),
                             ),
                             const SizedBox(width: Spacing.control),
                             Expanded(
                               child: AppButton(
                                 label: 'Chẩn đoán',
-                                onPressed: () => context.push(
-                                  DiagnosisRoutes.diagnosisResult,
-                                ),
+                                onPressed: () async {
+                                  await ref
+                                      .read(diagnosisFlowControllerProvider
+                                          .notifier)
+                                      .runEmpiricalDiagnosis();
+                                  if (!context.mounted) return;
+                                  await context.push(
+                                    DiagnosisRoutes.diagnosisResult,
+                                  );
+                                },
                               ),
                             ),
                           ],

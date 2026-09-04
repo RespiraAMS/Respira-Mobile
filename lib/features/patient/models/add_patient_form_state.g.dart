@@ -15,6 +15,8 @@ _$AddPatientFormStateImpl _$$AddPatientFormStateImplFromJson(
   gender: $enumDecodeNullable(_$GenderEnumMap, json['gender']) ?? Gender.nam,
   insurance: json['insurance'] as String? ?? '',
   address: json['address'] as String? ?? '',
+  city: json['city'] as String? ?? '',
+  country: json['country'] as String? ?? '',
 );
 
 Map<String, dynamic> _$$AddPatientFormStateImplToJson(
@@ -26,6 +28,8 @@ Map<String, dynamic> _$$AddPatientFormStateImplToJson(
   'gender': _$GenderEnumMap[instance.gender]!,
   'insurance': instance.insurance,
   'address': instance.address,
+  'city': instance.city,
+  'country': instance.country,
 };
 
 const _$GenderEnumMap = {Gender.nam: 'nam', Gender.nu: 'nu'};

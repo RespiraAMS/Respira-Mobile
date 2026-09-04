@@ -36,9 +36,11 @@ mixin _$DiagnosisCriteriaState {
   String get age =>
       throw _privateConstructorUsedError; // ── Step 3/5 · ICU criteria ────────────────────────────────────
   String get pao2Fio2 => throw _privateConstructorUsedError;
-  Set<IcuCriterion> get selectedIcuCriteria =>
-      throw _privateConstructorUsedError;
-  Set<ResistanceRiskFactor> get selectedResistanceRisks =>
+  Set<String> get selectedIcuCriteriaIds =>
+      throw _privateConstructorUsedError; // ── Step 4/5 · Resistance risks ────────────────────────────────
+  Set<String> get selectedResistanceRiskIds =>
+      throw _privateConstructorUsedError; // ── Step 5/5 · Other criteria ──────────────────────────────────
+  Set<String> get selectedOtherCriteriaIds =>
       throw _privateConstructorUsedError;
 
   /// Serializes this DiagnosisCriteriaState to a JSON map.
@@ -69,8 +71,9 @@ abstract class $DiagnosisCriteriaStateCopyWith<$Res> {
     String dbp,
     String age,
     String pao2Fio2,
-    Set<IcuCriterion> selectedIcuCriteria,
-    Set<ResistanceRiskFactor> selectedResistanceRisks,
+    Set<String> selectedIcuCriteriaIds,
+    Set<String> selectedResistanceRiskIds,
+    Set<String> selectedOtherCriteriaIds,
   });
 }
 
@@ -102,8 +105,9 @@ class _$DiagnosisCriteriaStateCopyWithImpl<
     Object? dbp = null,
     Object? age = null,
     Object? pao2Fio2 = null,
-    Object? selectedIcuCriteria = null,
-    Object? selectedResistanceRisks = null,
+    Object? selectedIcuCriteriaIds = null,
+    Object? selectedResistanceRiskIds = null,
+    Object? selectedOtherCriteriaIds = null,
   }) {
     return _then(
       _value.copyWith(
@@ -147,14 +151,18 @@ class _$DiagnosisCriteriaStateCopyWithImpl<
                 ? _value.pao2Fio2
                 : pao2Fio2 // ignore: cast_nullable_to_non_nullable
                       as String,
-            selectedIcuCriteria: null == selectedIcuCriteria
-                ? _value.selectedIcuCriteria
-                : selectedIcuCriteria // ignore: cast_nullable_to_non_nullable
-                      as Set<IcuCriterion>,
-            selectedResistanceRisks: null == selectedResistanceRisks
-                ? _value.selectedResistanceRisks
-                : selectedResistanceRisks // ignore: cast_nullable_to_non_nullable
-                      as Set<ResistanceRiskFactor>,
+            selectedIcuCriteriaIds: null == selectedIcuCriteriaIds
+                ? _value.selectedIcuCriteriaIds
+                : selectedIcuCriteriaIds // ignore: cast_nullable_to_non_nullable
+                      as Set<String>,
+            selectedResistanceRiskIds: null == selectedResistanceRiskIds
+                ? _value.selectedResistanceRiskIds
+                : selectedResistanceRiskIds // ignore: cast_nullable_to_non_nullable
+                      as Set<String>,
+            selectedOtherCriteriaIds: null == selectedOtherCriteriaIds
+                ? _value.selectedOtherCriteriaIds
+                : selectedOtherCriteriaIds // ignore: cast_nullable_to_non_nullable
+                      as Set<String>,
           )
           as $Val,
     );
@@ -181,8 +189,9 @@ abstract class _$$DiagnosisCriteriaStateImplCopyWith<$Res>
     String dbp,
     String age,
     String pao2Fio2,
-    Set<IcuCriterion> selectedIcuCriteria,
-    Set<ResistanceRiskFactor> selectedResistanceRisks,
+    Set<String> selectedIcuCriteriaIds,
+    Set<String> selectedResistanceRiskIds,
+    Set<String> selectedOtherCriteriaIds,
   });
 }
 
@@ -211,8 +220,9 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
     Object? dbp = null,
     Object? age = null,
     Object? pao2Fio2 = null,
-    Object? selectedIcuCriteria = null,
-    Object? selectedResistanceRisks = null,
+    Object? selectedIcuCriteriaIds = null,
+    Object? selectedResistanceRiskIds = null,
+    Object? selectedOtherCriteriaIds = null,
   }) {
     return _then(
       _$DiagnosisCriteriaStateImpl(
@@ -256,14 +266,18 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
             ? _value.pao2Fio2
             : pao2Fio2 // ignore: cast_nullable_to_non_nullable
                   as String,
-        selectedIcuCriteria: null == selectedIcuCriteria
-            ? _value._selectedIcuCriteria
-            : selectedIcuCriteria // ignore: cast_nullable_to_non_nullable
-                  as Set<IcuCriterion>,
-        selectedResistanceRisks: null == selectedResistanceRisks
-            ? _value._selectedResistanceRisks
-            : selectedResistanceRisks // ignore: cast_nullable_to_non_nullable
-                  as Set<ResistanceRiskFactor>,
+        selectedIcuCriteriaIds: null == selectedIcuCriteriaIds
+            ? _value._selectedIcuCriteriaIds
+            : selectedIcuCriteriaIds // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
+        selectedResistanceRiskIds: null == selectedResistanceRiskIds
+            ? _value._selectedResistanceRiskIds
+            : selectedResistanceRiskIds // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
+        selectedOtherCriteriaIds: null == selectedOtherCriteriaIds
+            ? _value._selectedOtherCriteriaIds
+            : selectedOtherCriteriaIds // ignore: cast_nullable_to_non_nullable
+                  as Set<String>,
       ),
     );
   }
@@ -283,13 +297,12 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
     this.dbp = '',
     this.age = '',
     this.pao2Fio2 = '',
-    final Set<IcuCriterion> selectedIcuCriteria = const <IcuCriterion>{
-      IcuCriterion.septicShock,
-    },
-    final Set<ResistanceRiskFactor> selectedResistanceRisks =
-        const <ResistanceRiskFactor>{ResistanceRiskFactor.recentAntibiotics},
-  }) : _selectedIcuCriteria = selectedIcuCriteria,
-       _selectedResistanceRisks = selectedResistanceRisks;
+    final Set<String> selectedIcuCriteriaIds = const <String>{},
+    final Set<String> selectedResistanceRiskIds = const <String>{},
+    final Set<String> selectedOtherCriteriaIds = const <String>{},
+  }) : _selectedIcuCriteriaIds = selectedIcuCriteriaIds,
+       _selectedResistanceRiskIds = selectedResistanceRiskIds,
+       _selectedOtherCriteriaIds = selectedOtherCriteriaIds;
 
   factory _$DiagnosisCriteriaStateImpl.fromJson(Map<String, dynamic> json) =>
       _$$DiagnosisCriteriaStateImplFromJson(json);
@@ -327,29 +340,43 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
   @override
   @JsonKey()
   final String pao2Fio2;
-  final Set<IcuCriterion> _selectedIcuCriteria;
+  final Set<String> _selectedIcuCriteriaIds;
   @override
   @JsonKey()
-  Set<IcuCriterion> get selectedIcuCriteria {
-    if (_selectedIcuCriteria is EqualUnmodifiableSetView)
-      return _selectedIcuCriteria;
+  Set<String> get selectedIcuCriteriaIds {
+    if (_selectedIcuCriteriaIds is EqualUnmodifiableSetView)
+      return _selectedIcuCriteriaIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(_selectedIcuCriteria);
+    return EqualUnmodifiableSetView(_selectedIcuCriteriaIds);
   }
 
-  final Set<ResistanceRiskFactor> _selectedResistanceRisks;
+  // ── Step 4/5 · Resistance risks ────────────────────────────────
+  final Set<String> _selectedResistanceRiskIds;
+  // ── Step 4/5 · Resistance risks ────────────────────────────────
   @override
   @JsonKey()
-  Set<ResistanceRiskFactor> get selectedResistanceRisks {
-    if (_selectedResistanceRisks is EqualUnmodifiableSetView)
-      return _selectedResistanceRisks;
+  Set<String> get selectedResistanceRiskIds {
+    if (_selectedResistanceRiskIds is EqualUnmodifiableSetView)
+      return _selectedResistanceRiskIds;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableSetView(_selectedResistanceRisks);
+    return EqualUnmodifiableSetView(_selectedResistanceRiskIds);
+  }
+
+  // ── Step 5/5 · Other criteria ──────────────────────────────────
+  final Set<String> _selectedOtherCriteriaIds;
+  // ── Step 5/5 · Other criteria ──────────────────────────────────
+  @override
+  @JsonKey()
+  Set<String> get selectedOtherCriteriaIds {
+    if (_selectedOtherCriteriaIds is EqualUnmodifiableSetView)
+      return _selectedOtherCriteriaIds;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableSetView(_selectedOtherCriteriaIds);
   }
 
   @override
   String toString() {
-    return 'DiagnosisCriteriaState(heightCm: $heightCm, weightKg: $weightKg, serumCreatinine: $serumCreatinine, confusion: $confusion, urea: $urea, respRate: $respRate, sbp: $sbp, dbp: $dbp, age: $age, pao2Fio2: $pao2Fio2, selectedIcuCriteria: $selectedIcuCriteria, selectedResistanceRisks: $selectedResistanceRisks)';
+    return 'DiagnosisCriteriaState(heightCm: $heightCm, weightKg: $weightKg, serumCreatinine: $serumCreatinine, confusion: $confusion, urea: $urea, respRate: $respRate, sbp: $sbp, dbp: $dbp, age: $age, pao2Fio2: $pao2Fio2, selectedIcuCriteriaIds: $selectedIcuCriteriaIds, selectedResistanceRiskIds: $selectedResistanceRiskIds, selectedOtherCriteriaIds: $selectedOtherCriteriaIds)';
   }
 
   @override
@@ -374,12 +401,16 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
             (identical(other.pao2Fio2, pao2Fio2) ||
                 other.pao2Fio2 == pao2Fio2) &&
             const DeepCollectionEquality().equals(
-              other._selectedIcuCriteria,
-              _selectedIcuCriteria,
+              other._selectedIcuCriteriaIds,
+              _selectedIcuCriteriaIds,
             ) &&
             const DeepCollectionEquality().equals(
-              other._selectedResistanceRisks,
-              _selectedResistanceRisks,
+              other._selectedResistanceRiskIds,
+              _selectedResistanceRiskIds,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._selectedOtherCriteriaIds,
+              _selectedOtherCriteriaIds,
             ));
   }
 
@@ -397,8 +428,9 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
     dbp,
     age,
     pao2Fio2,
-    const DeepCollectionEquality().hash(_selectedIcuCriteria),
-    const DeepCollectionEquality().hash(_selectedResistanceRisks),
+    const DeepCollectionEquality().hash(_selectedIcuCriteriaIds),
+    const DeepCollectionEquality().hash(_selectedResistanceRiskIds),
+    const DeepCollectionEquality().hash(_selectedOtherCriteriaIds),
   );
 
   /// Create a copy of DiagnosisCriteriaState
@@ -431,8 +463,9 @@ abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
     final String dbp,
     final String age,
     final String pao2Fio2,
-    final Set<IcuCriterion> selectedIcuCriteria,
-    final Set<ResistanceRiskFactor> selectedResistanceRisks,
+    final Set<String> selectedIcuCriteriaIds,
+    final Set<String> selectedResistanceRiskIds,
+    final Set<String> selectedOtherCriteriaIds,
   }) = _$DiagnosisCriteriaStateImpl;
 
   factory _DiagnosisCriteriaState.fromJson(Map<String, dynamic> json) =
@@ -460,9 +493,11 @@ abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
   @override
   String get pao2Fio2;
   @override
-  Set<IcuCriterion> get selectedIcuCriteria;
+  Set<String> get selectedIcuCriteriaIds; // ── Step 4/5 · Resistance risks ────────────────────────────────
   @override
-  Set<ResistanceRiskFactor> get selectedResistanceRisks;
+  Set<String> get selectedResistanceRiskIds; // ── Step 5/5 · Other criteria ──────────────────────────────────
+  @override
+  Set<String> get selectedOtherCriteriaIds;
 
   /// Create a copy of DiagnosisCriteriaState
   /// with the given fields replaced by the non-null parameter values.

@@ -1,32 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:respira_mobile/core/router/app_router.dart';
-import 'package:respira_mobile/features/statistics/routes.dart';
-import 'package:respira_mobile/main.dart';
 
-/// Statistics tests (ft/statistics branch): overview render, period
-/// switching, bottom-nav navigation both ways.
-
-Future<void> _pumpStatistics(WidgetTester tester) async {
-  await tester.pumpWidget(
-    ProviderScope(
-      overrides: [
-        appRouterProvider.overrideWithValue(
-          buildAppRouter(initialLocation: StatisticsRoutes.overview),
-        ),
-      ],
-      child: const RespiraMobileApp(),
-    ),
-  );
-  await tester.pump(const Duration(milliseconds: 100));
-  await tester.pump(const Duration(milliseconds: 100));
-}
+import 'helpers/pump_test_app.dart';
 
 Future<void> _settleNavigation(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
   await tester.pump(const Duration(milliseconds: 400));
 }
+
+/// Statistics tests (ft/statistics branch): overview render, period
+/// switching, bottom-nav navigation both ways.
+
+Future<void> _pumpStatistics(WidgetTester tester) =>
+    pumpTestApp(tester, initialLocation: '/statistics');
 
 void main() {
   testWidgets('renders the overview with KPIs, chart and pathogens',

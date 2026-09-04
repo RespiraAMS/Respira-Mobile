@@ -19,16 +19,21 @@ _$DiagnosisCriteriaStateImpl _$$DiagnosisCriteriaStateImplFromJson(
   dbp: json['dbp'] as String? ?? '',
   age: json['age'] as String? ?? '',
   pao2Fio2: json['pao2Fio2'] as String? ?? '',
-  selectedIcuCriteria:
-      (json['selectedIcuCriteria'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$IcuCriterionEnumMap, e))
+  selectedIcuCriteriaIds:
+      (json['selectedIcuCriteriaIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toSet() ??
-      const <IcuCriterion>{IcuCriterion.septicShock},
-  selectedResistanceRisks:
-      (json['selectedResistanceRisks'] as List<dynamic>?)
-          ?.map((e) => $enumDecode(_$ResistanceRiskFactorEnumMap, e))
+      const <String>{},
+  selectedResistanceRiskIds:
+      (json['selectedResistanceRiskIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
           .toSet() ??
-      const <ResistanceRiskFactor>{ResistanceRiskFactor.recentAntibiotics},
+      const <String>{},
+  selectedOtherCriteriaIds:
+      (json['selectedOtherCriteriaIds'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toSet() ??
+      const <String>{},
 );
 
 Map<String, dynamic> _$$DiagnosisCriteriaStateImplToJson(
@@ -44,20 +49,7 @@ Map<String, dynamic> _$$DiagnosisCriteriaStateImplToJson(
   'dbp': instance.dbp,
   'age': instance.age,
   'pao2Fio2': instance.pao2Fio2,
-  'selectedIcuCriteria': instance.selectedIcuCriteria
-      .map((e) => _$IcuCriterionEnumMap[e]!)
-      .toList(),
-  'selectedResistanceRisks': instance.selectedResistanceRisks
-      .map((e) => _$ResistanceRiskFactorEnumMap[e]!)
-      .toList(),
-};
-
-const _$IcuCriterionEnumMap = {
-  IcuCriterion.invasiveVentilation: 'invasiveVentilation',
-  IcuCriterion.septicShock: 'septicShock',
-};
-
-const _$ResistanceRiskFactorEnumMap = {
-  ResistanceRiskFactor.recentAntibiotics: 'recentAntibiotics',
-  ResistanceRiskFactor.prolongedHospitalization: 'prolongedHospitalization',
+  'selectedIcuCriteriaIds': instance.selectedIcuCriteriaIds.toList(),
+  'selectedResistanceRiskIds': instance.selectedResistanceRiskIds.toList(),
+  'selectedOtherCriteriaIds': instance.selectedOtherCriteriaIds.toList(),
 };

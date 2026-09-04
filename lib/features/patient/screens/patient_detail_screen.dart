@@ -11,8 +11,14 @@ import '../widgets/timeline_widget.dart';
 import '../routes.dart';
 
 /// Route `/patient/detail` — read-only profile and treatment timeline.
+///
+/// [patientId] identifies the record for future direct API loads; the
+/// screen currently renders the active patient (set right after creation
+/// or selection), which keeps the flow consistent offline.
 class PatientDetailScreen extends ConsumerWidget {
-  const PatientDetailScreen({super.key});
+  const PatientDetailScreen({super.key, this.patientId});
+
+  final String? patientId;
 
   static const _timelineEntries = [
     TreatmentTimelineEntry(

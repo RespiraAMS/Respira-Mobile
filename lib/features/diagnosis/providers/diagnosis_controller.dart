@@ -36,24 +36,29 @@ class DiagnosisCriteriaController extends _$DiagnosisCriteriaController {
   // ── Step 3/5 · ICU criteria ───────────────────────────────────────
   void setPao2Fio2(String value) => state = state.copyWith(pao2Fio2: value);
 
-  void toggleIcu(IcuCriterion criterion) {
-    state = state.copyWith(
-      selectedIcuCriteria: _toggled(state.selectedIcuCriteria, criterion),
-    );
-  }
-
-  void toggleResistanceRisk(ResistanceRiskFactor factor) {
-    state = state.copyWith(
-      selectedResistanceRisks:
-          _toggled(state.selectedResistanceRisks, factor),
-    );
-  }
-
-  Set<T> _toggled<T>(Set<T> current, T value) {
-    final next = {...current};
-    if (!next.remove(value)) {
-      next.add(value);
+  void toggleIcuCriterionId(String criterionId) {
+    final next = {...state.selectedIcuCriteriaIds};
+    if (!next.remove(criterionId)) {
+      next.add(criterionId);
     }
-    return next;
+    state = state.copyWith(selectedIcuCriteriaIds: next);
+  }
+
+  // ── Step 4/5 · Resistance risks ───────────────────────────────────
+  void toggleResistanceRiskId(String criterionId) {
+    final next = {...state.selectedResistanceRiskIds};
+    if (!next.remove(criterionId)) {
+      next.add(criterionId);
+    }
+    state = state.copyWith(selectedResistanceRiskIds: next);
+  }
+
+  // ── Step 5/5 · Other criteria ─────────────────────────────────────
+  void toggleOtherCriterionId(String criterionId) {
+    final next = {...state.selectedOtherCriteriaIds};
+    if (!next.remove(criterionId)) {
+      next.add(criterionId);
+    }
+    state = state.copyWith(selectedOtherCriteriaIds: next);
   }
 }

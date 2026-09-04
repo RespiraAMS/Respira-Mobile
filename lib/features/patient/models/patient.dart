@@ -16,6 +16,7 @@ enum Gender {
 @freezed
 class Patient with _$Patient {
   const factory Patient({
+    @Default('') String id,
     required String name,
     required String code,
     /// Date of birth, formatted dd/MM/yyyy.

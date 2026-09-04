@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import 'package:respira_mobile/features/diagnosis/models/microbiology_result.dart';
+import 'package:respira_mobile/features/diagnosis/providers/diagnosis_flow_provider.dart';
 import 'package:respira_mobile/features/diagnosis/providers/microbiology_provider.dart';
 import 'package:respira_mobile/features/diagnosis/routes.dart';
 import 'package:respira_mobile/features/diagnosis/widgets/microbiology_banner.dart';
@@ -18,11 +19,25 @@ import '../widgets/selection_row_widget.dart';
 /// Route `/patient/progress` — record a treatment change. The form
 /// switches between the empirical variant (reason checkboxes) and the
 /// targeted variant (microbiology-based) via the treatment-type tabs.
-class AddProgressScreen extends ConsumerWidget {
+class AddProgressScreen extends ConsumerStatefulWidget {
   const AddProgressScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AddProgressScreen> createState() => _AddProgressScreenState();
+}
+
+class _AddProgressScreenState extends ConsumerState<AddProgressScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Load disease + criteria for the wizard steps (steps 3–5 render them).
+    Future.microtask(
+      () => ref.read(diagnosisFlowControllerProvider.notifier).loadDiseaseContext(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final form = ref.watch(addProgressControllerProvider);
     final controller = ref.read(addProgressControllerProvider.notifier);
     final patient = ref.watch(currentPatientProvider);
