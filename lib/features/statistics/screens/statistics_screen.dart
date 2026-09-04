@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../design_system/design_system.dart';
+import '../../../../features/calculator/routes.dart';
 import '../../../../features/patient/routes.dart';
 import '../models/statistics_view.dart';
 import '../providers/statistics_provider.dart';
@@ -127,6 +128,8 @@ class StatisticsScreen extends ConsumerWidget {
                     // Diagnosis entry: create a patient, then continue with
                     // the empirical-treatment flow for them.
                     context.push(PatientRoutes.addPatientForDiagnosis);
+                  } else if (index == 3) {
+                    context.push(CalculatorRoutes.list);
                   } else if (index != 4) {
                     _showTabPlaceholder(context, navItems[index].label);
                   }

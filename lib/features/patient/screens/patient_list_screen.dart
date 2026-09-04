@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:respira_mobile/features/calculator/routes.dart';
 import 'package:respira_mobile/features/statistics/routes.dart';
 
 import '../../../../design_system/design_system.dart';
@@ -156,6 +157,8 @@ class PatientListScreen extends ConsumerWidget {
                     // Diagnosis entry: create a patient, then continue with
                     // the empirical-treatment flow for them.
                     context.push(PatientRoutes.addPatientForDiagnosis);
+                  } else if (index == 3) {
+                    context.push(CalculatorRoutes.list);
                   } else if (index == 4) {
                     context.push(StatisticsRoutes.overview);
                   } else if (index != 0) {
