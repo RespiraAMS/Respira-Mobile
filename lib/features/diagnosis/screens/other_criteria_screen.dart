@@ -88,6 +88,19 @@ class OtherCriteriaScreen extends ConsumerWidget {
                                           .notifier)
                                       .runEmpiricalDiagnosis();
                                   if (!context.mounted) return;
+                                  final flow = ref.watch(
+                                      diagnosisFlowControllerProvider);
+                                  // Only open the result screen with a
+                                  // real result — otherwise the route
+                                  // would spin forever on a failed call.
+                                  if (flow.empiricalResult == null) {
+                                    showAppToast(
+                                      context,
+                                      flow.errorMessage ??
+                                          'Không thể tạo kết quả chẩn đoán.',
+                                    );
+                                    return;
+                                  }
                                   await context.push(
                                     DiagnosisRoutes.diagnosisResult,
                                   );

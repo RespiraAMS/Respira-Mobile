@@ -23,6 +23,18 @@ class CriterionItemDto with _$CriterionItemDto {
       _$CriterionItemDtoFromJson(json);
 }
 
+/// `{id, name}` reference to an entity (`Pathogen` inside infection
+/// probabilities, `AntibioticGroup` inside medicines — the API embeds the
+/// full entity, extra keys are ignored).
+@freezed
+class EntityRefDto with _$EntityRefDto {
+  const factory EntityRefDto({required String id, required String name}) =
+      _EntityRefDto;
+
+  factory EntityRefDto.fromJson(Map<String, dynamic> json) =>
+      _$EntityRefDtoFromJson(json);
+}
+
 /// `GET /diseases/{id}/criteria` — the three wizard check-lists.
 @freezed
 class DiseaseCriteriaDto with _$DiseaseCriteriaDto {
@@ -46,14 +58,14 @@ class PathogenItemDto with _$PathogenItemDto {
       _$PathogenItemDtoFromJson(json);
 }
 
-/// One recommended antibiotic (`AntibioticResult`).
+/// One recommended antibiotic (`Antibiotic`).
 @freezed
 class AntibioticResultDto with _$AntibioticResultDto {
   const factory AntibioticResultDto({
     required String id,
     required String name,
-    required String antibioticGroupName,
-    required String classification,
+    @Default(EntityRefDto(id: '', name: '')) EntityRefDto antibioticGroup,
+    @Default('') String classification,
     @Default([]) List<DosageDto> dosages,
   }) = _AntibioticResultDto;
 
@@ -73,13 +85,12 @@ class DosageDto with _$DosageDto {
       _$DosageDtoFromJson(json);
 }
 
-/// Infection probability (`InfectionProbability`).
+/// Infection probability (`InfectionProbability` — nested pathogen).
 @freezed
 class InfectionProbabilityDto with _$InfectionProbabilityDto {
   const factory InfectionProbabilityDto({
-    required String pathogenId,
-    required String pathogenName,
-    required double probability,
+    @Default(EntityRefDto(id: '', name: '')) EntityRefDto pathogen,
+    @Default(0) double probability,
   }) = _InfectionProbabilityDto;
 
   factory InfectionProbabilityDto.fromJson(Map<String, dynamic> json) =>
@@ -100,14 +111,14 @@ class ReferenceDto with _$ReferenceDto {
       _$ReferenceDtoFromJson(json);
 }
 
-/// `POST /diagnose/empirical` response.
+/// `POST /diagnose/empirical` response (`EmpiricalDiagnoseResult` — the
+/// API exposes a single `medicines` list, no `recommendations`).
 @freezed
 class EmpiricalDiagnoseResultDto with _$EmpiricalDiagnoseResultDto {
   const factory EmpiricalDiagnoseResultDto({
     required double crcl,
     required String severity, // Mild | Moderate | Severe
     required String treatmentSite, // Outpatient | Inpatient | IntensiveCareUnit
-    @Default([]) List<AntibioticResultDto> recommendations,
     @Default([]) List<AntibioticResultDto> medicines,
     @Default([]) List<InfectionProbabilityDto> infectionProbabilities,
     @Default([]) List<ReferenceDto> references,
@@ -117,12 +128,13 @@ class EmpiricalDiagnoseResultDto with _$EmpiricalDiagnoseResultDto {
       _$EmpiricalDiagnoseResultDtoFromJson(json);
 }
 
-/// `POST /diagnose/target` response.
+/// `POST /diagnose/target` response (`TargetedDiagnoseResult` — also a
+/// single `medicines` list).
 @freezed
 class TargetedDiagnoseResultDto with _$TargetedDiagnoseResultDto {
   const factory TargetedDiagnoseResultDto({
     required double crcl,
-    @Default([]) List<AntibioticResultDto> recommendations,
+    @Default([]) List<AntibioticResultDto> medicines,
   }) = _TargetedDiagnoseResultDto;
 
   factory TargetedDiagnoseResultDto.fromJson(Map<String, dynamic> json) =>

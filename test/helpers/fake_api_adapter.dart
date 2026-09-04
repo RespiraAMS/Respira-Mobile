@@ -9,9 +9,7 @@ class MockedResponse {
 
   final int status;
   final Map<String, dynamic> body;
-}
-
-/// Offline [HttpClientAdapter] for widget tests: matches requests by
+}/// Offline [HttpClientAdapter] for widget tests: matches requests by
 /// method + path (substring) against canned JSON envelopes, so flow tests
 /// never touch the network (CI-safe).
 class FakeApiAdapter implements HttpClientAdapter {
@@ -62,6 +60,16 @@ class FakeApiAdapter implements HttpClientAdapter {
   };
 
   static Map<String, dynamic> envelope(Map<String, dynamic> data,
+      {int code = 200}) =>
+      {
+        'statusCode': code,
+        'success': true,
+        'data': data,
+      };
+
+  /// Envelope with an array payload — mirrors list endpoints, which
+  /// answer `data: [...]` directly (no wrapping key).
+  static Map<String, dynamic> envelopeList(List<dynamic> data,
       {int code = 200}) =>
       {
         'statusCode': code,
@@ -136,11 +144,9 @@ class FakeApiAdapter implements HttpClientAdapter {
     ),
     'GET /api/1/diseases/list': MockedResponse(
       200,
-      envelope({
-        'diseases': [
-          {'id': 'disease-1', 'name': 'Viêm phổi cộng đồng'},
-        ],
-      }),
+      envelopeList([
+        {'id': 'disease-1', 'name': 'Viêm phổi cộng đồng'},
+      ]),
     ),
     'GET /api/1/diseases/disease-1/criteria': MockedResponse(
       200,
@@ -174,7 +180,7 @@ class FakeApiAdapter implements HttpClientAdapter {
       200,
       envelope({
         'crcl': 92.5,
-        'recommendations': [
+        'medicines': [
           _medicine('Meropenem', 'Intravenous'),
           _medicine('Amoxicillin', 'Oral'),
           _medicine('Amikacin', 'Intravenous'),
@@ -183,11 +189,9 @@ class FakeApiAdapter implements HttpClientAdapter {
     ),
     'GET /api/1/pathogens/list': MockedResponse(
       200,
-      envelope({
-        'pathogens': [
-          {'id': 'k-pneumoniae-id', 'name': 'Klebsiella pneumoniae'},
-        ],
-      }),
+      envelopeList([
+        {'id': 'k-pneumoniae-id', 'name': 'Klebsiella pneumoniae'},
+      ]),
     ),
   };
 
@@ -214,7 +218,7 @@ class FakeApiAdapter implements HttpClientAdapter {
         'id': 'med-$name',
         'name': name,
         'antibioticGroupId': 'group-1',
-        'antibioticGroupName': 'Beta-lactam',
+        'antibioticGroup': {'id': 'group-1', 'name': 'Beta-lactam'},
         'classification': 'Access',
         'dosages': [
           {'routeOfAdministration': route, 'dose': '1 g mỗi 8 giờ'},
@@ -229,13 +233,12 @@ class FakeApiAdapter implements HttpClientAdapter {
           _medicine('Meropenem', 'Intravenous'),
           _medicine('Amoxicillin', 'Oral'),
         ],
-        'recommendations': [
-          _medicine('Meropenem', 'Intravenous'),
-        ],
         'infectionProbabilities': [
           {
-            'pathogenId': 'k-pneumoniae-id',
-            'pathogenName': 'Klebsiella pneumoniae',
+            'pathogen': {
+              'id': 'k-pneumoniae-id',
+              'name': 'Klebsiella pneumoniae',
+            },
             'probability': 0.72,
           },
         ],

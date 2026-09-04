@@ -36,7 +36,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
       description:
           'Sau khi lưu, nội dung chỉ có thể xem và không được chỉnh sửa trực tiếp.',
       infoLabel:
-          'Đã chọn ${result.recommendations.length} thuốc · ${result.references.length} phác đồ',
+          'Đã chọn ${result.medicines.length} thuốc · ${result.references.length} phác đồ',
       confirmLabel: 'Xác nhận lưu',
     );
 
@@ -46,9 +46,12 @@ class DiagnosisResultScreen extends ConsumerWidget {
         .read(diagnosisFlowControllerProvider.notifier)
         .saveEmpiricalTreatment();
     if (!context.mounted) return;
+    final flow = ref.read(diagnosisFlowControllerProvider);
     showAppToast(
       context,
-      ok ? 'Đã lưu kết quả chẩn đoán.' : 'Lưu thất bại. Vui lòng thử lại.',
+      ok
+          ? 'Đã lưu kết quả chẩn đoán.'
+          : (flow.errorMessage ?? 'Lưu thất bại. Vui lòng thử lại.'),
     );
     if (ok) context.go('/patient/detail');
   }
@@ -60,8 +63,23 @@ class DiagnosisResultScreen extends ConsumerWidget {
     final tabController = ref.read(diagnosisTabControllerProvider.notifier);
 
     if (result == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+      // The flow controller records the failure — show it instead of a
+      // spinner that would otherwise never resolve.
+      final error = ref.watch(diagnosisFlowControllerProvider).errorMessage;
+      return Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(Spacing.section),
+              child: Text(
+                error ?? 'Không thể tải kết quả chẩn đoán. Vui lòng thử lại.',
+                textAlign: TextAlign.center,
+                style: TypographyTokens.body(context)
+                    .copyWith(color: context.respiraColors.error),
+              ),
+            ),
+          ),
+        ),
       );
     }
 
@@ -95,7 +113,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
                       switch (tab) {
                         DiagnosisTab.result => _ResultTab(result: result),
                         DiagnosisTab.medicines =>
-                          _MedicinesTab(medicines: result.recommendations),
+                          _MedicinesTab(medicines: result.medicines),
                         DiagnosisTab.references =>
                           _ReferencesTab(references: result.references),
                       },
@@ -240,7 +258,7 @@ class _MedicinesTab extends StatelessWidget {
           MedicineCardWidget(
             name: medicine.name,
             regimenLine: medicine.dosages.isEmpty
-                ? medicine.antibioticGroupName
+                ? medicine.antibioticGroup.name
                 : '${medicine.dosages.first.routeOfAdministration} · ${medicine.dosages.first.dose}',
           ),
           if (medicine != medicines.last) const SizedBox(height: Spacing.group),

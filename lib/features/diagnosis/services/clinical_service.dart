@@ -13,7 +13,7 @@ class ClinicalService {
   /// `GET /diseases/list`.
   Future<List<DiseaseItemDto>> getDiseases() async {
     final res = await _dio.get('/api/1/diseases/list');
-    final data = unwrapEnvelope(res)['diseases'] as List<dynamic>? ?? [];
+    final data = unwrapDataField(res) as List<dynamic>? ?? [];
     return data
         .map((e) => DiseaseItemDto.fromJson(e as Map<String, dynamic>))
         .toList();
@@ -31,7 +31,7 @@ class ClinicalService {
   /// `GET /pathogens/list`.
   Future<List<PathogenItemDto>> getPathogens() async {
     final res = await _dio.get('/api/1/pathogens/list');
-    final data = unwrapEnvelope(res)['pathogens'] as List<dynamic>? ?? [];
+    final data = unwrapDataField(res) as List<dynamic>? ?? [];
     return data
         .map((e) => PathogenItemDto.fromJson(e as Map<String, dynamic>))
         .toList();

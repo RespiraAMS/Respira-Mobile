@@ -59,6 +59,21 @@ T unwrapData<T>(
   return fromJson(data as Map<String, dynamic>);
 }
 
+/// Extracts the envelope's `data` field uncast (list endpoints answer
+/// with a JSON array, object endpoints with a map). Throws [ApiException]
+/// on failure envelopes.
+Object? unwrapDataField(Response<dynamic> res) {
+  final json = res.data as Map<String, dynamic>;
+  final success = json['success'] as bool? ?? false;
+  if (!success) {
+    throw ApiException(
+      (json['statusCode'] as num?)?.toInt() ?? res.statusCode ?? 500,
+      (json['message'] as String?) ?? 'Request failed',
+    );
+  }
+  return json['data'];
+}
+
 /// Extracts the whole envelope's `data` field (for non-single-object
 /// payloads such as lists or tokens maps).
 Map<String, dynamic> unwrapEnvelope(Response<dynamic> res) {

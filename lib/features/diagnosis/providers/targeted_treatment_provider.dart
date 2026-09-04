@@ -2,7 +2,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/api_client.dart';
 import '../../../../core/network/api_response.dart';
-import '../../../../features/authentication/providers/session_provider.dart';
 import '../../patient/models/patient.dart';
 import '../../patient/models/patient_dtos.dart';
 import '../../patient/providers/active_patient_provider.dart';
@@ -61,7 +60,8 @@ class TargetedSelectionController extends _$TargetedSelectionController {
 }
 
 /// Persists the targeted treatment via
-/// `POST /patients/{id}/treatments` (TargetedTherapy).
+/// `POST /patients/{id}/treatments` (TargetedTherapy). The doctor
+/// identity comes from the gateway-injected `X-ID` header.
 Future<bool> saveTargetedTreatment(
   dynamic ref, {
   required String pathogenId,
@@ -69,14 +69,12 @@ Future<bool> saveTargetedTreatment(
   required double crcl,
   required List<MedicineRecordDto> medicines,
 }) async {
-  final session = ref.read(sessionControllerProvider);
   final patient = ref.read(activePatientControllerProvider);
 
   try {
     await PatientService(ref.read(apiClientProvider)).createTreatment(
       patient.id,
       CreateTreatmentRequest(
-        doctorId: session?.id ?? '',
         treatmentType: 'TargetedTherapy',
         crcl: crcl,
         systemRecommendedMedicines:

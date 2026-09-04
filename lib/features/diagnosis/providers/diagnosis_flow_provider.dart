@@ -2,11 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import 'package:respira_mobile/features/authentication/providers/session_provider.dart';
-
 import '../../../core/network/api_client.dart';
 import '../../../core/network/api_response.dart';
-import '../../../core/utils/list_extensions.dart';
 import '../../patient/models/patient_dtos.dart';
 import '../../patient/models/patient.dart';
 import '../../patient/providers/active_patient_provider.dart';
@@ -60,7 +57,7 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       final disease = diseases.first;
       final criteria = await _clinical.getDiseaseCriteria(disease.id);
       state = state.copyWith(disease: disease, criteria: criteria);
-    } on Exception catch (e) {
+    } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
   }
@@ -108,33 +105,47 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       state = state.copyWith(errorMessage: e.message);
     } on DioException {
       state = state.copyWith(errorMessage: 'Không thể kết nối máy chủ.');
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
     }
   }
 
   /// Persists the empirical treatment via
   /// `POST /patients/{id}/treatments` and flags completion.
+  ///
+  /// The backend (`CreateTreatmentValidator`) requires identical
+  /// medicine lists to carry a null `ReasonForDifferentChoice`, and
+  /// infection probabilities to embed a nested `{pathogen, probability}`
+  /// record — both honored here.
   Future<bool> saveEmpiricalTreatment() async {
     final patient = ref.read(activePatientControllerProvider);
     final result = state.empiricalResult;
     if (result == null) return false;
 
-    final doctor = ref.read(sessionControllerProvider);
-    final medicines = result.recommendations
+    // Only medicines with an adjusted dosage can be persisted — the
+    // backend rejects records with an empty route or dose.
+    final medicines = result.medicines
+        .where((m) => m.dosages.isNotEmpty)
         .map((m) => MedicineRecordDto(
               id: m.id,
               name: m.name,
               classification: m.classification,
-              routeOfAdministration:
-                  m.dosages.firstOrNull?.routeOfAdministration ?? 'Oral',
-              dose: m.dosages.firstOrNull?.dose ?? '',
+              routeOfAdministration: m.dosages.first.routeOfAdministration,
+              dose: m.dosages.first.dose,
             ).toJson())
         .toList();
+
+    if (medicines.isEmpty) {
+      state = state.copyWith(
+        errorMessage: 'Không có thuốc phù hợp với CrCl của bệnh nhân.',
+      );
+      return false;
+    }
 
     try {
       await _patientService.createTreatment(
         patient.id,
         CreateTreatmentRequest(
-          doctorId: doctor?.id ?? '',
           treatmentType: 'EmpiricalTherapy',
           crcl: result.crcl,
           systemRecommendedMedicines: medicines,
@@ -143,8 +154,10 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
           treatmentSite: result.treatmentSite,
           infectionProbabilityRecords: result.infectionProbabilities
               .map((p) => {
-                    'pathogenId': p.pathogenId,
-                    'pathogenName': p.pathogenName,
+                    'pathogen': {
+                      'id': p.pathogen.id,
+                      'name': p.pathogen.name,
+                    },
                     'probability': p.probability,
                   })
               .toList(),
@@ -157,6 +170,9 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       return false;
     } on DioException {
       state = state.copyWith(errorMessage: 'Không thể kết nối máy chủ.');
+      return false;
+    } catch (e) {
+      state = state.copyWith(errorMessage: e.toString());
       return false;
     }
   }

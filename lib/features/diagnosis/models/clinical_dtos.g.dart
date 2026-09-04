@@ -27,6 +27,12 @@ Map<String, dynamic> _$$CriterionItemDtoImplToJson(
   _$CriterionItemDtoImpl instance,
 ) => <String, dynamic>{'id': instance.id, 'name': instance.name};
 
+_$EntityRefDtoImpl _$$EntityRefDtoImplFromJson(Map<String, dynamic> json) =>
+    _$EntityRefDtoImpl(id: json['id'] as String, name: json['name'] as String);
+
+Map<String, dynamic> _$$EntityRefDtoImplToJson(_$EntityRefDtoImpl instance) =>
+    <String, dynamic>{'id': instance.id, 'name': instance.name};
+
 _$DiseaseCriteriaDtoImpl _$$DiseaseCriteriaDtoImplFromJson(
   Map<String, dynamic> json,
 ) => _$DiseaseCriteriaDtoImpl(
@@ -71,8 +77,10 @@ _$AntibioticResultDtoImpl _$$AntibioticResultDtoImplFromJson(
 ) => _$AntibioticResultDtoImpl(
   id: json['id'] as String,
   name: json['name'] as String,
-  antibioticGroupName: json['antibioticGroupName'] as String,
-  classification: json['classification'] as String,
+  antibioticGroup: json['antibioticGroup'] == null
+      ? const EntityRefDto(id: '', name: '')
+      : EntityRefDto.fromJson(json['antibioticGroup'] as Map<String, dynamic>),
+  classification: json['classification'] as String? ?? '',
   dosages:
       (json['dosages'] as List<dynamic>?)
           ?.map((e) => DosageDto.fromJson(e as Map<String, dynamic>))
@@ -85,7 +93,7 @@ Map<String, dynamic> _$$AntibioticResultDtoImplToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'antibioticGroupName': instance.antibioticGroupName,
+  'antibioticGroup': instance.antibioticGroup,
   'classification': instance.classification,
   'dosages': instance.dosages,
 };
@@ -105,16 +113,16 @@ Map<String, dynamic> _$$DosageDtoImplToJson(_$DosageDtoImpl instance) =>
 _$InfectionProbabilityDtoImpl _$$InfectionProbabilityDtoImplFromJson(
   Map<String, dynamic> json,
 ) => _$InfectionProbabilityDtoImpl(
-  pathogenId: json['pathogenId'] as String,
-  pathogenName: json['pathogenName'] as String,
-  probability: (json['probability'] as num).toDouble(),
+  pathogen: json['pathogen'] == null
+      ? const EntityRefDto(id: '', name: '')
+      : EntityRefDto.fromJson(json['pathogen'] as Map<String, dynamic>),
+  probability: (json['probability'] as num?)?.toDouble() ?? 0,
 );
 
 Map<String, dynamic> _$$InfectionProbabilityDtoImplToJson(
   _$InfectionProbabilityDtoImpl instance,
 ) => <String, dynamic>{
-  'pathogenId': instance.pathogenId,
-  'pathogenName': instance.pathogenName,
+  'pathogen': instance.pathogen,
   'probability': instance.probability,
 };
 
@@ -140,11 +148,6 @@ _$EmpiricalDiagnoseResultDtoImpl _$$EmpiricalDiagnoseResultDtoImplFromJson(
   crcl: (json['crcl'] as num).toDouble(),
   severity: json['severity'] as String,
   treatmentSite: json['treatmentSite'] as String,
-  recommendations:
-      (json['recommendations'] as List<dynamic>?)
-          ?.map((e) => AntibioticResultDto.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
   medicines:
       (json['medicines'] as List<dynamic>?)
           ?.map((e) => AntibioticResultDto.fromJson(e as Map<String, dynamic>))
@@ -170,7 +173,6 @@ Map<String, dynamic> _$$EmpiricalDiagnoseResultDtoImplToJson(
   'crcl': instance.crcl,
   'severity': instance.severity,
   'treatmentSite': instance.treatmentSite,
-  'recommendations': instance.recommendations,
   'medicines': instance.medicines,
   'infectionProbabilities': instance.infectionProbabilities,
   'references': instance.references,
@@ -180,8 +182,8 @@ _$TargetedDiagnoseResultDtoImpl _$$TargetedDiagnoseResultDtoImplFromJson(
   Map<String, dynamic> json,
 ) => _$TargetedDiagnoseResultDtoImpl(
   crcl: (json['crcl'] as num).toDouble(),
-  recommendations:
-      (json['recommendations'] as List<dynamic>?)
+  medicines:
+      (json['medicines'] as List<dynamic>?)
           ?.map((e) => AntibioticResultDto.fromJson(e as Map<String, dynamic>))
           .toList() ??
       const [],
@@ -189,7 +191,4 @@ _$TargetedDiagnoseResultDtoImpl _$$TargetedDiagnoseResultDtoImplFromJson(
 
 Map<String, dynamic> _$$TargetedDiagnoseResultDtoImplToJson(
   _$TargetedDiagnoseResultDtoImpl instance,
-) => <String, dynamic>{
-  'crcl': instance.crcl,
-  'recommendations': instance.recommendations,
-};
+) => <String, dynamic>{'crcl': instance.crcl, 'medicines': instance.medicines};

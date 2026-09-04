@@ -33,7 +33,7 @@ class TargetedTreatmentScreen extends ConsumerWidget {
     final selection = ref.watch(targetedSelectionControllerProvider);
     final selectedDrugs = result == null
         ? const []
-        : result.recommendations
+        : result.medicines
             .where((r) => selection.contains(r.id))
             .toList();
     String abbrev(String route) =>
@@ -122,7 +122,7 @@ class TargetedTreatmentScreen extends ConsumerWidget {
                                 const SizedBox(height: Spacing.inline),
                                 if (result != null)
                                   for (final recommendation
-                                      in result.recommendations) ...[
+                                      in result.medicines) ...[
                                     Builder(builder: (context) {
                                       final dosages = recommendation.dosages;
                                       final apiRoute = dosages.isEmpty
@@ -155,7 +155,7 @@ class TargetedTreatmentScreen extends ConsumerWidget {
                                       );
                                     }),
                                     if (recommendation !=
-                                        result.recommendations.last)
+                                        result.medicines.last)
                                       const SizedBox(
                                           height: Spacing.inline),
                                   ],

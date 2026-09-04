@@ -7,13 +7,12 @@ part of 'add_patient_controller.dart';
 // **************************************************************************
 
 String _$addPatientControllerHash() =>
-    r'23692a1d672927b7c7c1952c5b34797e84a95f81';
+    r'4bb59cb3810fef33a9068072a938d01103a61f95';
 
 /// Holds the "Thêm bệnh nhân" form state and submits it to
 /// `POST /patients` (guidelines §2.1 Riverpod codegen).
 ///
-/// Pre-filled with the sample patient, mirroring the React prototype's
-/// `useState(patient)`.
+/// Starts empty — every field is typed by the doctor.
 ///
 /// Copied from [AddPatientController].
 @ProviderFor(AddPatientController)

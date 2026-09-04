@@ -76,9 +76,9 @@ class TreatmentItemDto with _$TreatmentItemDto {
 }
 
 /// Body of `POST /patients/{id}/treatments` (`CreateTreatmentRequestDto`).
+/// The doctor identity comes from the gateway-injected `X-ID` header.
 class CreateTreatmentRequest {
   CreateTreatmentRequest({
-    required this.doctorId,
     required this.treatmentType,
     required this.crcl,
     required this.systemRecommendedMedicines,
@@ -90,7 +90,6 @@ class CreateTreatmentRequest {
     this.reasonForDifferentChoice,
   });
 
-  final String doctorId;
   final String treatmentType; // EmpiricalTherapy | TargetedTherapy
   final double crcl;
   final List<Map<String, dynamic>> systemRecommendedMedicines;
@@ -102,7 +101,6 @@ class CreateTreatmentRequest {
   final String? reasonForDifferentChoice;
 
   Map<String, dynamic> toJson() => {
-        'doctorId': doctorId,
         'treatmentType': treatmentType,
         'diagnosisRecord': {
           'crcl': crcl,
