@@ -6,6 +6,7 @@ import 'package:respira_mobile/core/theme/theme_mode_provider.dart';
 import 'package:respira_mobile/design_system/design_system.dart';
 import 'package:respira_mobile/features/patient/routes.dart';
 
+import 'helpers/fill_add_patient_form.dart';
 import 'helpers/pump_test_app.dart';
 
 Future<void> _pumpClinicalApp(WidgetTester tester) =>
@@ -24,6 +25,11 @@ void main() {
 
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 200));
+
+      // The form now starts empty — fill everything (BHYT exactly 10
+      // chars) so validation lets the submit through.
+      await fillAddPatientForm(tester, name: 'Nguyễn Minh Khôi');
+
       await tester.ensureVisible(find.text('Lưu hồ sơ'));
       await tester.pump(const Duration(milliseconds: 200));
       await tester.tap(find.text('Lưu hồ sơ'));

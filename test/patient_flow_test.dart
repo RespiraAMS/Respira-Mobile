@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:respira_mobile/design_system/design_system.dart';
 import 'package:respira_mobile/features/patient/routes.dart';
 
+import 'helpers/fill_add_patient_form.dart';
 import 'helpers/pump_test_app.dart';
 
 /// Clinical patient-flow tests (ft/patient branch): add → detail → progress.
@@ -25,10 +26,63 @@ void main() {
     expect(find.text('Họ và tên'), findsOneWidget);
   });
 
+  testWidgets('form starts empty with placeholders', (tester) async {
+    await _pumpAt(tester, PatientRoutes.addPatient);
+
+    // Every text input is empty (the sample-patient prefill is gone);
+    // hints guide input instead.
+    for (final hint in [
+      'Nguyễn Văn A',
+      'BA-2026-0001',
+      'dd/MM/yyyy',
+      '1234567890',
+      'Cần Thơ',
+      'Việt Nam',
+    ]) {
+      expect(find.text(hint), findsOneWidget);
+    }
+  });
+
+  testWidgets('empty submit is blocked by validation before the API call',
+      (tester) async {
+    await _pumpAt(tester, PatientRoutes.addPatient);
+
+    await tester.ensureVisible(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    // Client-side validation fires first — no navigation happened.
+    expect(find.text('Vui lòng nhập họ và tên.'), findsOneWidget);
+    expect(find.text('Chi tiết bệnh nhân'), findsNothing);
+  });
+
+  testWidgets('invalid BHYT length is rejected before the API call',
+      (tester) async {
+    await _pumpAt(tester, PatientRoutes.addPatient);
+
+    await fillAddPatientForm(tester);
+    // Break the exactly-10-chars rule (mirrors backend Length(10)).
+    await tester.enterText(
+      find.widgetWithText(AppTextField, 'Số thẻ BHYT'),
+      '12345',
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    await tester.ensureVisible(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Số thẻ BHYT phải có đúng 10 ký tự.'), findsOneWidget);
+    expect(find.text('Chi tiết bệnh nhân'), findsNothing);
+  });
+
   testWidgets('submitting the form navigates to patient detail',
       (tester) async {
     await _pumpAt(tester, PatientRoutes.addPatient);
 
+    await fillAddPatientForm(tester, name: 'Nguyễn Minh Khôi');
     await tester.ensureVisible(find.text('Lưu hồ sơ'));
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Lưu hồ sơ'));
@@ -47,6 +101,7 @@ void main() {
       (tester) async {
     await _pumpAt(tester, PatientRoutes.addPatient);
 
+    await fillAddPatientForm(tester, name: 'Nguyễn Minh Khôi');
     await tester.ensureVisible(find.text('Lưu hồ sơ'));
     await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Lưu hồ sơ'));
@@ -77,10 +132,7 @@ void main() {
     expect(find.text('Thêm bệnh nhân'), findsOneWidget);
 
     // Fill in a distinguishable patient and save.
-    await tester.enterText(
-      find.widgetWithText(AppTextField, 'Họ và tên'),
-      'Bệnh Nhân Mới',
-    );
+    await fillAddPatientForm(tester, name: 'Bệnh Nhân Mới');
     await tester.pump(const Duration(milliseconds: 100));
 
     await tester.ensureVisible(find.text('Lưu hồ sơ'));

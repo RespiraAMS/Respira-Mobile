@@ -62,12 +62,14 @@ class AddPatientScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section),
                       AppTextField(
                         label: 'Họ và tên',
+                        hintText: 'Nguyễn Văn A',
                         initialValue: form.name,
                         onChanged: controller.setName,
                       ),
                       const SizedBox(height: Spacing.group),
                       AppTextField(
                         label: 'Mã bệnh án',
+                        hintText: 'BA-2026-0001',
                         initialValue: form.code,
                         onChanged: controller.setCode,
                       ),
@@ -78,6 +80,7 @@ class AddPatientScreen extends ConsumerWidget {
                           Expanded(
                             child: AppTextField(
                               label: 'Ngày sinh',
+                              hintText: 'dd/MM/yyyy',
                               initialValue: form.dob,
                               onChanged: controller.setDob,
                             ),
@@ -95,12 +98,14 @@ class AddPatientScreen extends ConsumerWidget {
                       AppTextField(
                         label: 'Số thẻ BHYT',
                         keyboardType: TextInputType.text,
+                        hintText: '1234567890',
                         initialValue: form.insurance,
                         onChanged: controller.setInsurance,
                       ),
                       const SizedBox(height: Spacing.group),
                       AppTextField(
                         label: 'Địa chỉ',
+                        hintText: '123 Nguyễn Trãi, Q. Ninh Kiều',
                         initialValue: form.address,
                         onChanged: controller.setAddress,
                       ),
@@ -111,6 +116,7 @@ class AddPatientScreen extends ConsumerWidget {
                           Expanded(
                             child: AppTextField(
                               label: 'Tỉnh/Thành phố',
+                              hintText: 'Cần Thơ',
                               initialValue: form.city,
                               onChanged: controller.setCity,
                             ),
@@ -119,6 +125,7 @@ class AddPatientScreen extends ConsumerWidget {
                           Expanded(
                             child: AppTextField(
                               label: 'Quốc gia',
+                              hintText: 'Việt Nam',
                               initialValue: form.country,
                               onChanged: controller.setCountry,
                             ),
