@@ -152,7 +152,11 @@ class PatientListScreen extends ConsumerWidget {
                 items: navItems,
                 activeIndex: 0,
                 onTap: (index) {
-                  if (index == 4) {
+                  if (index == 2) {
+                    // Diagnosis entry: create a patient, then continue with
+                    // the empirical-treatment flow for them.
+                    context.push(PatientRoutes.addPatientForDiagnosis);
+                  } else if (index == 4) {
                     context.push(StatisticsRoutes.overview);
                   } else if (index != 0) {
                     _showTabPlaceholder(context, navItems[index].label);

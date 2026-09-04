@@ -52,8 +52,8 @@ void main() {
       await tester.tap(find.text('Lưu diễn biến'));
       await _settleNavigation(tester);
 
-      expect(find.text('Bước 1/5 · Thông số lâm sàng'), findsOneWidget);
-      expect(find.text('Thông số lâm sàng'), findsOneWidget);
+      expect(find.text('Bước 1/5 · Chỉ số nền'), findsOneWidget);
+      expect(find.text('Chỉ số cơ thể và chức năng thận'), findsOneWidget);
       await tester.enterText(
           find.widgetWithText(AppUnitField, 'Chiều cao'), '170');
       await tester.enterText(

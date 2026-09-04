@@ -7,7 +7,7 @@ part of 'add_patient_controller.dart';
 // **************************************************************************
 
 String _$addPatientControllerHash() =>
-    r'6693c9e7f0c9c867b0eb150e0f6a35e7eb4154bc';
+    r'4efeb2eedd786f32aa722b8c60503c69baa67b05';
 
 /// Holds the "Thêm bệnh nhân" form state (guidelines §2.1 Riverpod codegen).
 ///

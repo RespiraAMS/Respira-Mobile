@@ -32,7 +32,7 @@ class VitalsScreen extends ConsumerWidget {
                     children: [
                       AppAppBar(
                         title: 'Kinh nghiệm',
-                        subtitle: 'Bước 1/5 · Chỉ số nền',
+                        subtitle: 'Bước 1/5 · Chỉ số nền',
                         onBack: () => context.goBackOr('/patient/progress'),
                       ),
                       const SizedBox(height: Spacing.section),
@@ -41,7 +41,7 @@ class VitalsScreen extends ConsumerWidget {
                         child: Column(
                           children: [
                             const CriteriaBannerWidget(
-                              'Chỉ số cơ thể và chức năng thận',
+                              'Chỉ số cơ thể và chức năng thận',
                             ),
                             const SizedBox(height: Spacing.control),
                             Container(

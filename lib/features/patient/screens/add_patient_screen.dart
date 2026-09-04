@@ -11,8 +11,14 @@ import '../widgets/section_label_widget.dart';
 import '../routes.dart';
 
 /// Route `/patient/add` — "Thêm bệnh nhân" form.
+///
+/// When reached with [diagnosisEntry] (query `?flow=diagnosis` from the
+/// bottom-nav 'Chẩn đoán' tab), saving continues straight into the
+/// empirical-treatment progress flow for the just-created patient.
 class AddPatientScreen extends ConsumerWidget {
-  const AddPatientScreen({super.key});
+  const AddPatientScreen({super.key, this.diagnosisEntry = false});
+
+  final bool diagnosisEntry;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -89,7 +95,11 @@ class AddPatientScreen extends ConsumerWidget {
                           expand: true,
                           onPressed: () {
                             controller.save();
-                            context.push(PatientRoutes.detail);
+                            context.push(
+                              diagnosisEntry
+                                  ? PatientRoutes.progress
+                                  : PatientRoutes.detail,
+                            );
                           },
                         ),
                       ),

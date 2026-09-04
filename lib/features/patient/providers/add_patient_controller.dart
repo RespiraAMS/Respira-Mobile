@@ -2,6 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../models/add_patient_form_state.dart';
 import '../models/patient.dart';
+import 'active_patient_provider.dart';
 
 part 'add_patient_controller.g.dart';
 
@@ -37,9 +38,11 @@ class AddPatientController extends _$AddPatientController {
 
   /// Persists the profile. Repository integration lands with the API layer;
   /// for now saving simply returns the resulting [Patient].
+  /// Persists the form into the active patient so every downstream
+  /// screen (progress, wizard, detail) reflects the record just saved.
   Patient save() {
     final form = state;
-    return samplePatient.copyWith(
+    final patient = samplePatient.copyWith(
       name: form.name,
       code: form.code,
       dob: form.dob,
@@ -47,5 +50,7 @@ class AddPatientController extends _$AddPatientController {
       insurance: form.insurance,
       address: form.address,
     );
+    ref.read(activePatientControllerProvider.notifier).set(patient);
+    return patient;
   }
 }

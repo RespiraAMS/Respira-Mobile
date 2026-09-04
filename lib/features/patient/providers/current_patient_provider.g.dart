@@ -6,12 +6,11 @@ part of 'current_patient_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$currentPatientHash() => r'33b7b0c54fb65e2239d815550f778d9df41fa885';
+String _$currentPatientHash() => r'74a0e4f319cbc5da3a2f7243cbfba4c64ae071fb';
 
-/// The patient shown on detail/progress screens.
-///
-/// Backed by the demo record; swap the body for a repository call once the
-/// networking layer (dio + retrofit) is in place.
+/// The patient shown on detail/progress/wizard screens — mirrors the
+/// [activePatientControllerProvider] so a freshly created patient flows
+/// through the whole diagnosis journey.
 ///
 /// Copied from [currentPatient].
 @ProviderFor(currentPatient)

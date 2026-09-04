@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:respira_mobile/core/router/app_router.dart';
+import 'package:respira_mobile/design_system/design_system.dart';
 import 'package:respira_mobile/features/patient/routes.dart';
 import 'package:respira_mobile/main.dart';
 
@@ -67,5 +68,45 @@ void main() {
     expect(find.text('Thêm diễn biến'), findsOneWidget);
     expect(find.text('Loại điều trị'), findsOneWidget);
     expect(find.text('Không thể chỉnh sửa sau khi lưu'), findsOneWidget);
+  });
+
+  testWidgets(
+      'Chẩn đoán nav tab: create patient then start empirical treatment '
+      'for them', (tester) async {
+    await _pumpAt(tester, PatientRoutes.list);
+
+    // 'Chẩn đoán' appears only as the nav label on the list screen.
+    await tester.tap(find.text('Chẩn đoán'));
+    await _settleNavigation(tester);
+
+    expect(find.text('Thêm bệnh nhân'), findsOneWidget);
+
+    // Fill in a distinguishable patient and save.
+    await tester.enterText(
+      find.widgetWithText(AppTextField, 'Họ và tên'),
+      'Bệnh Nhân Mới',
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    await tester.ensureVisible(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Lưu hồ sơ'));
+    await _settleNavigation(tester);
+
+    // Straight into the empirical progress flow — and the header shows
+    // the patient that was just created (active-patient propagation).
+    // The form below still holds the name as an EditableText too, so
+    // expect "at least one" rather than exactly one.
+    expect(find.text('Thêm diễn biến'), findsOneWidget);
+    expect(find.text('Ghi nhận thay đổi điều trị mới nhất'), findsOneWidget);
+    expect(find.text('Bệnh Nhân Mới'), findsWidgets);
+
+    // And the wizard continues for that patient.
+    await tester.ensureVisible(find.text('Lưu diễn biến'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Lưu diễn biến'));
+    await _settleNavigation(tester);
+    
+    expect(find.text('Bước 1/5 · Chỉ số nền'), findsOneWidget);
   });
 }

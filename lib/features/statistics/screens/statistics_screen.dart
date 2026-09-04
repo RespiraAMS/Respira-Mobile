@@ -123,6 +123,10 @@ class StatisticsScreen extends ConsumerWidget {
                 onTap: (index) {
                   if (index == 0) {
                     context.go(PatientRoutes.list);
+                  } else if (index == 2) {
+                    // Diagnosis entry: create a patient, then continue with
+                    // the empirical-treatment flow for them.
+                    context.push(PatientRoutes.addPatientForDiagnosis);
                   } else if (index != 4) {
                     _showTabPlaceholder(context, navItems[index].label);
                   }
