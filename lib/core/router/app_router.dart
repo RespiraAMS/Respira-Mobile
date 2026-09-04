@@ -4,6 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../features/diagnosis/routes.dart';
 import '../../features/authentication/routes.dart';
 import '../../features/calculator/routes.dart';
+import '../../features/lookup/lookup_routes.dart';
 import '../../features/patient/routes.dart';
 import '../../features/statistics/routes.dart';
 
@@ -20,6 +21,7 @@ GoRouter buildAppRouter({
       ...diagnosisRoutes,
       ...statisticsRoutes,
       ...calculatorRoutes,
+      ...lookupRoutes,
     ],
   );
 }

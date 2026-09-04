@@ -104,3 +104,18 @@ Future<Response<dynamic>> _performRefresh(
 
 /// Builds a Dio pre-configured for an unauthenticated call (login).
 Dio unauthenticatedDio() => Dio(BaseOptions(baseUrl: kApiBaseUrl));
+
+/// Compatibility client for lookup-feature repositories
+/// (`AntibioticRepository`, `PathogenRepository`, …).
+///
+/// Exposes the shared auth-aware [Dio] with the `/api/1` base appended so
+/// their relative paths (`/antibiotics`, `/pathogens`, …) resolve against
+/// the gateway. Their calls therefore inherit the bearer token and
+/// refresh handling for free.
+class ApiClient {
+  final Dio dio;
+
+  ApiClient({Dio? dioOverride})
+      : dio = dioOverride ??
+            Dio(BaseOptions(baseUrl: '$kApiBaseUrl/api/$kApiVersion'));
+}

@@ -5,6 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../design_system/design_system.dart';
 import '../../../../features/calculator/routes.dart';
+import '../../../../features/lookup/lookup_routes.dart';
 import '../../../../features/patient/routes.dart';
 import '../models/statistics_view.dart';
 import '../providers/statistics_provider.dart';
@@ -124,6 +125,8 @@ class StatisticsScreen extends ConsumerWidget {
                 onTap: (index) {
                   if (index == 0) {
                     context.go(PatientRoutes.list);
+                  } else if (index == 1) {
+                    context.push(LookupRoutes.lookup);
                   } else if (index == 2) {
                     // Diagnosis entry: create a patient, then continue with
                     // the empirical-treatment flow for them.

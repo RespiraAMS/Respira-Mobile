@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:respira_mobile/features/calculator/routes.dart';
+import 'package:respira_mobile/features/lookup/lookup_routes.dart';
 import 'package:respira_mobile/features/statistics/routes.dart';
 
 import '../../../../design_system/design_system.dart';
@@ -205,7 +206,9 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
                 items: navItems,
                 activeIndex: 0,
                 onTap: (index) {
-                  if (index == 2) {
+                  if (index == 1) {
+                    context.push(LookupRoutes.lookup);
+                  } else if (index == 2) {
                     // Diagnosis entry: create a patient, then continue with
                     // the empirical-treatment flow for them.
                     context.push(PatientRoutes.addPatientForDiagnosis);
