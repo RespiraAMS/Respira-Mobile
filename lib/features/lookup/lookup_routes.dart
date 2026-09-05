@@ -4,7 +4,7 @@ import '../antibiograms/screens/antibiogram_list_screen.dart';
 import '../antibiotic/screens/antibiotic_list_screen.dart';
 import '../antibioticGroup/screens/antibiotic_group_list_screen.dart';
 import '../diseases/screens/disease_list_screen.dart';
-import '../lockup/screens/medical_lookup_screen.dart';
+import 'screens/medical_lookup_screen.dart';
 import '../pathogen/screens/pathogen_list_screen.dart';
 
 class LookupRoutes {
