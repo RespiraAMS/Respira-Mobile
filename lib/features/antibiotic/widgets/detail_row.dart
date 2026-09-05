@@ -19,7 +19,15 @@ class DetailRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           AppText(label, type: AppTextType.caption, fontWeight: FontWeight.w600),
-          AppText(value, type: AppTextType.label, color: context.respiraColors.textPrimary),
+          const SizedBox(width: Spacing.group),
+          Expanded(
+            child: AppText(
+              value, 
+              type: AppTextType.label, 
+              color: context.respiraColors.textPrimary,
+              textAlign: TextAlign.left,
+            ),
+          ),
         ],
       ),
     );

@@ -31,6 +31,8 @@ class _ResultAccordionState extends State<ResultAccordion> {
   }
 
   void _toggleAccordion() {
+    if (widget.children.isEmpty) return;
+    
     setState(() {
       _isExpanded = !_isExpanded;
     });
@@ -71,7 +73,10 @@ class _ResultAccordionState extends State<ResultAccordion> {
                       turns: _isExpanded ? 0.25 : 0.0,
                       duration: const Duration(milliseconds: 200),
                       curve: Curves.easeOut,
-                      child: Icon(LucideIcons.chevronRight, color: c.iconDefault),
+                      child: Icon(
+                        LucideIcons.chevronRight, 
+                        color: widget.children.isEmpty ? c.iconDefault.withOpacity(0.3) : c.iconDefault,
+                      ),
                     ),
                   ],
                 ),
@@ -83,8 +88,9 @@ class _ResultAccordionState extends State<ResultAccordion> {
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
             alignment: Alignment.topCenter,
-            child: Container(
-              child: _isExpanded && widget.children.isNotEmpty
+            child: Offstage(
+              offstage: !_isExpanded,
+              child: widget.children.isNotEmpty
                   ? Padding(
                       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                       child: Column(

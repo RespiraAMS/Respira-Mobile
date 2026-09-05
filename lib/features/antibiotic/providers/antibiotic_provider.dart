@@ -59,4 +59,8 @@ class AntibioticProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
   }
+
+  Future<AntibioticDetail> fetchAntibioticDetail(String id) {
+    return _repository.fetchAntibioticDetail(id);
+  }
 }

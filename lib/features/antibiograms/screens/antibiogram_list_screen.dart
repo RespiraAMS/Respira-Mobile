@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../core/network/api_client.dart';
 import '../providers/antibiogram_provider.dart';
+import '../providers/antibiogram_service.dart';
 import 'antibiogram_detail_screen.dart';
 
 class AntibiogramListScreen extends StatefulWidget {
@@ -89,7 +91,16 @@ class _AntibiogramListScreenState extends State<AntibiogramListScreen> {
                       return GestureDetector(
                         onTap: () => Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => AntibiogramDetailScreen(antibiogram: item)),
+                          MaterialPageRoute(
+                            builder: (_) => ChangeNotifierProvider(
+                              create: (_) {
+                                final apiClient = ApiClient(); 
+                                final repository = AntibiogramRepository(apiClient: apiClient);
+                                return AntibiogramProvider(repository);
+                              },
+                              child: AntibiogramDetailScreen(antibiogram: item),
+                            ),
+                          ),
                         ),
                         child: AppSurface(
                           padding: const EdgeInsets.symmetric(horizontal: Spacing.group, vertical: Spacing.control),

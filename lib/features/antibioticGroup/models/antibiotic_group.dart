@@ -3,12 +3,14 @@ class AntibioticGroup {
   final String name;
   final String? parentId;
   final String? parentName;
+  final String? description;
 
   const AntibioticGroup({
     required this.id,
     required this.name,
     this.parentId,
     this.parentName,
+    this.description,
   });
 
   factory AntibioticGroup.fromJson(Map<String, dynamic> json) {
@@ -17,6 +19,7 @@ class AntibioticGroup {
       name: json['name'] ?? '',
       parentId: json['parentId'],
       parentName: json['parentName'],
+      description: json['description']
     );
   }
 }

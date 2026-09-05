@@ -51,4 +51,23 @@ class AntibioticRepository {
       throw Exception('Lỗi xử lý dữ liệu: $e');
     }
   }
+
+  Future<AntibioticDetail> fetchAntibioticDetail(String id) async {
+    try {
+      final response = await apiClient.dio.get('/antibiotics/$id');
+      final Map<String, dynamic> responseBody = response.data;
+      final Map<String, dynamic> data = responseBody['data'] ?? {};
+      
+      return AntibioticDetail.fromJson(data);
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception('Lỗi server: ${e.response?.statusCode}');
+      } else {
+        throw Exception('Lỗi kết nối mạng: Vui lòng kiểm tra internet');
+      }
+    } catch (e) {
+      throw Exception('Lỗi xử lý dữ liệu: $e');
+    }
+  }
 }
+
