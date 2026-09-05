@@ -5,7 +5,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../design_system/design_system.dart';
 import '../../../../features/calculator/routes.dart';
-import '../../../../features/lookup/lookup_routes.dart';
+import '../../lookup/lookup_routes.dart';
 import '../../../../features/patient/routes.dart';
 import '../models/statistics_view.dart';
 import '../providers/statistics_provider.dart';

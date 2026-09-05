@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../core/network/api_client.dart';
+import '../../empiricTreatmentProtocols/providers/protocol_provider.dart';
+import '../../empiricTreatmentProtocols/providers/protocol_repository.dart';
+import '../../empiricTreatmentProtocols/screens/protocol_detail_screen.dart';
 import '../models/disease.dart';
 import '../providers/disease_provider.dart';
 import '../widgets/info_row_with_icon.dart';
@@ -143,6 +147,56 @@ class _DiseaseDetailScreenState extends State<DiseaseDetailScreen> {
                           value: r.pathogenName
                         )).toList(),
                       ),
+                      const SizedBox(height: Spacing.section),
+                      AppText('Phác đồ điều trị kinh nghiệm', type: AppTextType.bodyLarge, fontWeight: FontWeight.w700),
+                      const SizedBox(height: Spacing.control),
+                      
+                      if (detail.empiricTreatmentProtocols.isEmpty)
+                        AppText('Chưa có phác đồ cho bệnh lý này', color: c.textSecondary)
+                      else
+                        AppCard.divided(
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          detail.empiricTreatmentProtocols.map((p) => Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: () {
+                                // Điều hướng sang màn hình Protocol Detail có tiêm Provider
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => ChangeNotifierProvider(
+                                      create: (_) {
+                                        final apiClient = ApiClient(); 
+                                        final repo = ProtocolRepository(apiClient: apiClient);
+                                        return ProtocolProvider(repo);
+                                      },
+                                      child: ProtocolDetailScreen(protocolId: p.id),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          AppText(p.name, type: AppTextType.label, color: c.textPrimary, fontWeight: FontWeight.w600),
+                                          const SizedBox(height: 2),
+                                          AppText('${p.issuer} · Phiên bản ${p.version}', type: AppTextType.caption, color: c.textSecondary),
+                                        ],
+                                      ),
+                                    ),
+                                    Icon(LucideIcons.chevronRight, color: c.iconDefault, size: 20),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )).toList(),
+                        ),
+                      const SizedBox(height: Spacing.screen),
                     ],
                   ),
                 ),

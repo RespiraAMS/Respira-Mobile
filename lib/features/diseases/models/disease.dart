@@ -1,3 +1,5 @@
+import '../../empiricTreatmentProtocols/models/protocol.dart';
+
 class Disease {
   final String id;
   final String name;
@@ -18,6 +20,7 @@ class DiseaseDetail extends Disease {
   final List<String> causes;
   final List<DiseaseCriterion> icuCriteria;
   final List<DiseaseRisk> risks;
+  final List<ProtocolSummary> empiricTreatmentProtocols;
 
   const DiseaseDetail({
     required super.id,
@@ -27,10 +30,10 @@ class DiseaseDetail extends Disease {
     required this.causes,
     required this.icuCriteria,
     required this.risks,
+    required this.empiricTreatmentProtocols,
   });
 
   factory DiseaseDetail.fromJson(Map<String, dynamic> json) {
-    // Trích xuất danh sách tác nhân gây bệnh (lọc trùng lặp)
     final causesList = (json['causes'] as List?)
             ?.map((c) => c['pathogenName'].toString())
             .toSet()
@@ -52,6 +55,10 @@ class DiseaseDetail extends Disease {
                 ))
             .toList() ?? [];
 
+    final protocols = (json['empiricTreatmentProtocols'] as List?)
+            ?.map((p) => ProtocolSummary.fromJson(p))
+            .toList() ?? [];
+
     return DiseaseDetail(
       id: json['id'] ?? '',
       name: json['name'] ?? '',
@@ -60,6 +67,7 @@ class DiseaseDetail extends Disease {
       causes: causesList,
       icuCriteria: criteriaList,
       risks: riskList,
+      empiricTreatmentProtocols: protocols,
     );
   }
 }
