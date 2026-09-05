@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../antibiotic/models/antibiotic.dart';
 import '../models/antibiogram.dart';
 import './antibiogram_service.dart';
 
@@ -45,5 +46,9 @@ class AntibiogramProvider extends ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  Future<AntibioticDetail> fetchAntibioticDetail(String id) {
+    return _repository.fetchAntibioticDetail(id);
   }
 }

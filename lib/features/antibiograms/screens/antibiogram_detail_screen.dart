@@ -88,14 +88,22 @@ class AntibiogramDetailScreen extends StatelessWidget {
                   ResultAccordion(
                     title: 'Lựa chọn đầu tay',
                     summary: '${antibiogram.firstPriorityMedicines.length} ưu tiên',
-                    children: antibiogram.firstPriorityMedicines.map((m) => TreatmentCard(name: m.name, note: null)).toList(),
+                    children: antibiogram.firstPriorityMedicines.map((m) => TreatmentCard(
+                      id: m.id,
+                      name: m.name, 
+                      note: null
+                    )).toList(),
                   ),
                   const SizedBox(height: Spacing.control),
 
                   ResultAccordion(
                     title: 'Lựa chọn thay thế',
                     summary: '${antibiogram.secondPriorityMedicines.length} lựa chọn',
-                    children: antibiogram.secondPriorityMedicines.map((m) => TreatmentCard(name: m.name, note: null)).toList(),
+                    children: antibiogram.secondPriorityMedicines.map((m) => TreatmentCard(
+                      id: m.id,
+                      name: m.name, 
+                      note: null
+                    )).toList(),
                   ),
                 ],
               ),
