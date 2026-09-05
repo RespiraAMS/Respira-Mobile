@@ -123,7 +123,6 @@ class _RowTreatment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c = context.respiraColors;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,

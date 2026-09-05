@@ -6,7 +6,6 @@ import '../models/antibiotic.dart';
 import '../providers/antibiotic_provider.dart';
 import '../widgets/detail_row.dart';
 import '../widgets/gfr_card.dart';
-import '../widgets/pathogen_tag.dart';
 
 class AntibioticDetailScreen extends StatefulWidget {
   final Antibiotic antibiotic;
