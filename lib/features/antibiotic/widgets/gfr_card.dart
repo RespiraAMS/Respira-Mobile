@@ -22,16 +22,20 @@ class GfrCard extends StatelessWidget {
     return AppSurface(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start, 
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(title, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
-              const SizedBox(height: 4),
-              AppText(sub, type: AppTextType.caption),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(title, type: AppTextType.bodyMedium, fontWeight: FontWeight.w600),
+                const SizedBox(height: 4),
+                AppText(sub, type: AppTextType.caption),
+              ],
+            ),
           ),
+          const SizedBox(width: Spacing.control),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(color: tagBg, borderRadius: AppRadius.full),
