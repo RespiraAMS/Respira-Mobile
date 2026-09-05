@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:provider/provider.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../core/network/api_client.dart';
 import '../providers/antibiotic_provider.dart';
+import '../providers/antibiotic_service.dart';
 import 'antibiotic_detail_screen.dart';
 
 class AntibioticListScreen extends StatefulWidget {
@@ -22,7 +24,6 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
   @override
   void initState() {
     super.initState();
-    // Gọi fetchPage khi màn hình khởi tạo (nếu chưa có dữ liệu)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = context.read<AntibioticProvider>();
       if (provider.items.isEmpty) {
@@ -181,14 +182,20 @@ class _AntibioticListScreenState extends State<AntibioticListScreen> {
                               : c.error;
 
                       return GestureDetector(
-                        onTap: () {
+                        onTap: () =>
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AntibioticDetailScreen(antibiotic: item),
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ChangeNotifierProvider(
+                              create: (_) {
+                                final apiClient = ApiClient(); 
+                                final repository = AntibioticRepository(apiClient: apiClient);
+                                return AntibioticProvider(repository);
+                              },
+                              child: AntibioticDetailScreen(antibiotic: item),
                             ),
-                          );
-                        },
+                          ),
+                        ),
                         child: AppSurface(
                           padding: const EdgeInsets.symmetric(
                             horizontal: Spacing.group,
