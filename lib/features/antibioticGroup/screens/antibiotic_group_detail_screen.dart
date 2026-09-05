@@ -86,12 +86,11 @@ class _AntibioticGroupDetailScreenState extends State<AntibioticGroupDetailScree
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     [
                       _InfoRow(label: 'Nhóm cha', value: widget.group.parentName ?? 'Không có'),
-                      const _InfoRow(label: 'Mô tả', value: 'Không có dữ liệu'),
+                      _InfoRow(label: 'Mô tả', value: widget.group.description ?? 'Không có dữ liệu'),
                     ],
                   ),
                   const SizedBox(height: Spacing.section),
 
-                  // Dùng FutureBuilder thay cho dữ liệu cứng
                   AppText('Kháng sinh trong nhóm', type: AppTextType.button, fontWeight: FontWeight.w700),
                   const SizedBox(height: Spacing.control),
                   FutureBuilder<List<Antibiotic>>(
@@ -138,6 +137,7 @@ class _AntibioticGroupDetailScreenState extends State<AntibioticGroupDetailScree
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
+  
   const _InfoRow({required this.label, required this.value});
 
   @override
@@ -146,9 +146,22 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 15),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start, 
         children: [
-          AppText(label, type: AppTextType.label, color: context.respiraColors.textSecondary),
-          AppText(value, type: AppTextType.label, color: context.respiraColors.textPrimary),
+          AppText(
+            label, 
+            type: AppTextType.label, 
+            color: context.respiraColors.textSecondary,
+          ),
+          const SizedBox(width: Spacing.group),
+          Expanded(
+            child: AppText(
+              value, 
+              type: AppTextType.label, 
+              color: context.respiraColors.textPrimary,
+              textAlign: TextAlign.left,
+            ),
+          ),
         ],
       ),
     );
