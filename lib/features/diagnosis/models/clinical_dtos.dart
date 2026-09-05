@@ -23,9 +23,7 @@ class CriterionItemDto with _$CriterionItemDto {
       _$CriterionItemDtoFromJson(json);
 }
 
-/// `{id, name}` reference to an entity (`Pathogen` inside infection
-/// probabilities, `AntibioticGroup` inside medicines — the API embeds the
-/// full entity, extra keys are ignored).
+/// `{id, name}` reference to an entity.
 @freezed
 class EntityRefDto with _$EntityRefDto {
   const factory EntityRefDto({required String id, required String name}) =
@@ -58,13 +56,14 @@ class PathogenItemDto with _$PathogenItemDto {
       _$PathogenItemDtoFromJson(json);
 }
 
-/// One recommended antibiotic (`Antibiotic`).
+/// One recommended antibiotic (`AntibioticResult` — flat
+/// `antibioticGroupName`, per the Application-layer response contract).
 @freezed
 class AntibioticResultDto with _$AntibioticResultDto {
   const factory AntibioticResultDto({
     required String id,
     required String name,
-    @Default(EntityRefDto(id: '', name: '')) EntityRefDto antibioticGroup,
+    @Default('') String antibioticGroupName,
     @Default('') String classification,
     @Default([]) List<DosageDto> dosages,
   }) = _AntibioticResultDto;
@@ -85,11 +84,13 @@ class DosageDto with _$DosageDto {
       _$DosageDtoFromJson(json);
 }
 
-/// Infection probability (`InfectionProbability` — nested pathogen).
+/// Infection probability (`InfectionProbability` — flat `pathogenId` /
+/// `pathogenName`, per the Application-layer response contract).
 @freezed
 class InfectionProbabilityDto with _$InfectionProbabilityDto {
   const factory InfectionProbabilityDto({
-    @Default(EntityRefDto(id: '', name: '')) EntityRefDto pathogen,
+    @Default('') String pathogenId,
+    @Default('') String pathogenName,
     @Default(0) double probability,
   }) = _InfectionProbabilityDto;
 
@@ -111,8 +112,7 @@ class ReferenceDto with _$ReferenceDto {
       _$ReferenceDtoFromJson(json);
 }
 
-/// `POST /diagnose/empirical` response (`EmpiricalDiagnoseResult` — the
-/// API exposes a single `medicines` list, no `recommendations`).
+/// `POST /diagnose/empirical` response (`EmpiricalDiagnoseResult`).
 @freezed
 class EmpiricalDiagnoseResultDto with _$EmpiricalDiagnoseResultDto {
   const factory EmpiricalDiagnoseResultDto({
@@ -128,8 +128,7 @@ class EmpiricalDiagnoseResultDto with _$EmpiricalDiagnoseResultDto {
       _$EmpiricalDiagnoseResultDtoFromJson(json);
 }
 
-/// `POST /diagnose/target` response (`TargetedDiagnoseResult` — also a
-/// single `medicines` list).
+/// `POST /diagnose/target` response (`TargetedDiagnoseResult`).
 @freezed
 class TargetedDiagnoseResultDto with _$TargetedDiagnoseResultDto {
   const factory TargetedDiagnoseResultDto({

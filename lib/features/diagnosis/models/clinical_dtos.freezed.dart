@@ -951,7 +951,7 @@ AntibioticResultDto _$AntibioticResultDtoFromJson(Map<String, dynamic> json) {
 mixin _$AntibioticResultDto {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  EntityRefDto get antibioticGroup => throw _privateConstructorUsedError;
+  String get antibioticGroupName => throw _privateConstructorUsedError;
   String get classification => throw _privateConstructorUsedError;
   List<DosageDto> get dosages => throw _privateConstructorUsedError;
 
@@ -975,12 +975,10 @@ abstract class $AntibioticResultDtoCopyWith<$Res> {
   $Res call({
     String id,
     String name,
-    EntityRefDto antibioticGroup,
+    String antibioticGroupName,
     String classification,
     List<DosageDto> dosages,
   });
-
-  $EntityRefDtoCopyWith<$Res> get antibioticGroup;
 }
 
 /// @nodoc
@@ -1000,7 +998,7 @@ class _$AntibioticResultDtoCopyWithImpl<$Res, $Val extends AntibioticResultDto>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? antibioticGroup = null,
+    Object? antibioticGroupName = null,
     Object? classification = null,
     Object? dosages = null,
   }) {
@@ -1014,10 +1012,10 @@ class _$AntibioticResultDtoCopyWithImpl<$Res, $Val extends AntibioticResultDto>
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
                       as String,
-            antibioticGroup: null == antibioticGroup
-                ? _value.antibioticGroup
-                : antibioticGroup // ignore: cast_nullable_to_non_nullable
-                      as EntityRefDto,
+            antibioticGroupName: null == antibioticGroupName
+                ? _value.antibioticGroupName
+                : antibioticGroupName // ignore: cast_nullable_to_non_nullable
+                      as String,
             classification: null == classification
                 ? _value.classification
                 : classification // ignore: cast_nullable_to_non_nullable
@@ -1029,16 +1027,6 @@ class _$AntibioticResultDtoCopyWithImpl<$Res, $Val extends AntibioticResultDto>
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of AntibioticResultDto
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $EntityRefDtoCopyWith<$Res> get antibioticGroup {
-    return $EntityRefDtoCopyWith<$Res>(_value.antibioticGroup, (value) {
-      return _then(_value.copyWith(antibioticGroup: value) as $Val);
-    });
   }
 }
 
@@ -1054,13 +1042,10 @@ abstract class _$$AntibioticResultDtoImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
-    EntityRefDto antibioticGroup,
+    String antibioticGroupName,
     String classification,
     List<DosageDto> dosages,
   });
-
-  @override
-  $EntityRefDtoCopyWith<$Res> get antibioticGroup;
 }
 
 /// @nodoc
@@ -1079,7 +1064,7 @@ class __$$AntibioticResultDtoImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? antibioticGroup = null,
+    Object? antibioticGroupName = null,
     Object? classification = null,
     Object? dosages = null,
   }) {
@@ -1093,10 +1078,10 @@ class __$$AntibioticResultDtoImplCopyWithImpl<$Res>
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
                   as String,
-        antibioticGroup: null == antibioticGroup
-            ? _value.antibioticGroup
-            : antibioticGroup // ignore: cast_nullable_to_non_nullable
-                  as EntityRefDto,
+        antibioticGroupName: null == antibioticGroupName
+            ? _value.antibioticGroupName
+            : antibioticGroupName // ignore: cast_nullable_to_non_nullable
+                  as String,
         classification: null == classification
             ? _value.classification
             : classification // ignore: cast_nullable_to_non_nullable
@@ -1116,7 +1101,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
   const _$AntibioticResultDtoImpl({
     required this.id,
     required this.name,
-    this.antibioticGroup = const EntityRefDto(id: '', name: ''),
+    this.antibioticGroupName = '',
     this.classification = '',
     final List<DosageDto> dosages = const [],
   }) : _dosages = dosages;
@@ -1130,7 +1115,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
   final String name;
   @override
   @JsonKey()
-  final EntityRefDto antibioticGroup;
+  final String antibioticGroupName;
   @override
   @JsonKey()
   final String classification;
@@ -1145,7 +1130,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
 
   @override
   String toString() {
-    return 'AntibioticResultDto(id: $id, name: $name, antibioticGroup: $antibioticGroup, classification: $classification, dosages: $dosages)';
+    return 'AntibioticResultDto(id: $id, name: $name, antibioticGroupName: $antibioticGroupName, classification: $classification, dosages: $dosages)';
   }
 
   @override
@@ -1155,8 +1140,8 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
             other is _$AntibioticResultDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.antibioticGroup, antibioticGroup) ||
-                other.antibioticGroup == antibioticGroup) &&
+            (identical(other.antibioticGroupName, antibioticGroupName) ||
+                other.antibioticGroupName == antibioticGroupName) &&
             (identical(other.classification, classification) ||
                 other.classification == classification) &&
             const DeepCollectionEquality().equals(other._dosages, _dosages));
@@ -1168,7 +1153,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
     runtimeType,
     id,
     name,
-    antibioticGroup,
+    antibioticGroupName,
     classification,
     const DeepCollectionEquality().hash(_dosages),
   );
@@ -1194,7 +1179,7 @@ abstract class _AntibioticResultDto implements AntibioticResultDto {
   const factory _AntibioticResultDto({
     required final String id,
     required final String name,
-    final EntityRefDto antibioticGroup,
+    final String antibioticGroupName,
     final String classification,
     final List<DosageDto> dosages,
   }) = _$AntibioticResultDtoImpl;
@@ -1207,7 +1192,7 @@ abstract class _AntibioticResultDto implements AntibioticResultDto {
   @override
   String get name;
   @override
-  EntityRefDto get antibioticGroup;
+  String get antibioticGroupName;
   @override
   String get classification;
   @override
@@ -1399,7 +1384,8 @@ InfectionProbabilityDto _$InfectionProbabilityDtoFromJson(
 
 /// @nodoc
 mixin _$InfectionProbabilityDto {
-  EntityRefDto get pathogen => throw _privateConstructorUsedError;
+  String get pathogenId => throw _privateConstructorUsedError;
+  String get pathogenName => throw _privateConstructorUsedError;
   double get probability => throw _privateConstructorUsedError;
 
   /// Serializes this InfectionProbabilityDto to a JSON map.
@@ -1419,9 +1405,7 @@ abstract class $InfectionProbabilityDtoCopyWith<$Res> {
     $Res Function(InfectionProbabilityDto) then,
   ) = _$InfectionProbabilityDtoCopyWithImpl<$Res, InfectionProbabilityDto>;
   @useResult
-  $Res call({EntityRefDto pathogen, double probability});
-
-  $EntityRefDtoCopyWith<$Res> get pathogen;
+  $Res call({String pathogenId, String pathogenName, double probability});
 }
 
 /// @nodoc
@@ -1441,13 +1425,21 @@ class _$InfectionProbabilityDtoCopyWithImpl<
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? pathogen = null, Object? probability = null}) {
+  $Res call({
+    Object? pathogenId = null,
+    Object? pathogenName = null,
+    Object? probability = null,
+  }) {
     return _then(
       _value.copyWith(
-            pathogen: null == pathogen
-                ? _value.pathogen
-                : pathogen // ignore: cast_nullable_to_non_nullable
-                      as EntityRefDto,
+            pathogenId: null == pathogenId
+                ? _value.pathogenId
+                : pathogenId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            pathogenName: null == pathogenName
+                ? _value.pathogenName
+                : pathogenName // ignore: cast_nullable_to_non_nullable
+                      as String,
             probability: null == probability
                 ? _value.probability
                 : probability // ignore: cast_nullable_to_non_nullable
@@ -1455,16 +1447,6 @@ class _$InfectionProbabilityDtoCopyWithImpl<
           )
           as $Val,
     );
-  }
-
-  /// Create a copy of InfectionProbabilityDto
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $EntityRefDtoCopyWith<$Res> get pathogen {
-    return $EntityRefDtoCopyWith<$Res>(_value.pathogen, (value) {
-      return _then(_value.copyWith(pathogen: value) as $Val);
-    });
   }
 }
 
@@ -1477,10 +1459,7 @@ abstract class _$$InfectionProbabilityDtoImplCopyWith<$Res>
   ) = __$$InfectionProbabilityDtoImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({EntityRefDto pathogen, double probability});
-
-  @override
-  $EntityRefDtoCopyWith<$Res> get pathogen;
+  $Res call({String pathogenId, String pathogenName, double probability});
 }
 
 /// @nodoc
@@ -1500,13 +1479,21 @@ class __$$InfectionProbabilityDtoImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? pathogen = null, Object? probability = null}) {
+  $Res call({
+    Object? pathogenId = null,
+    Object? pathogenName = null,
+    Object? probability = null,
+  }) {
     return _then(
       _$InfectionProbabilityDtoImpl(
-        pathogen: null == pathogen
-            ? _value.pathogen
-            : pathogen // ignore: cast_nullable_to_non_nullable
-                  as EntityRefDto,
+        pathogenId: null == pathogenId
+            ? _value.pathogenId
+            : pathogenId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        pathogenName: null == pathogenName
+            ? _value.pathogenName
+            : pathogenName // ignore: cast_nullable_to_non_nullable
+                  as String,
         probability: null == probability
             ? _value.probability
             : probability // ignore: cast_nullable_to_non_nullable
@@ -1520,7 +1507,8 @@ class __$$InfectionProbabilityDtoImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$InfectionProbabilityDtoImpl implements _InfectionProbabilityDto {
   const _$InfectionProbabilityDtoImpl({
-    this.pathogen = const EntityRefDto(id: '', name: ''),
+    this.pathogenId = '',
+    this.pathogenName = '',
     this.probability = 0,
   });
 
@@ -1529,14 +1517,17 @@ class _$InfectionProbabilityDtoImpl implements _InfectionProbabilityDto {
 
   @override
   @JsonKey()
-  final EntityRefDto pathogen;
+  final String pathogenId;
+  @override
+  @JsonKey()
+  final String pathogenName;
   @override
   @JsonKey()
   final double probability;
 
   @override
   String toString() {
-    return 'InfectionProbabilityDto(pathogen: $pathogen, probability: $probability)';
+    return 'InfectionProbabilityDto(pathogenId: $pathogenId, pathogenName: $pathogenName, probability: $probability)';
   }
 
   @override
@@ -1544,15 +1535,18 @@ class _$InfectionProbabilityDtoImpl implements _InfectionProbabilityDto {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$InfectionProbabilityDtoImpl &&
-            (identical(other.pathogen, pathogen) ||
-                other.pathogen == pathogen) &&
+            (identical(other.pathogenId, pathogenId) ||
+                other.pathogenId == pathogenId) &&
+            (identical(other.pathogenName, pathogenName) ||
+                other.pathogenName == pathogenName) &&
             (identical(other.probability, probability) ||
                 other.probability == probability));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, pathogen, probability);
+  int get hashCode =>
+      Object.hash(runtimeType, pathogenId, pathogenName, probability);
 
   /// Create a copy of InfectionProbabilityDto
   /// with the given fields replaced by the non-null parameter values.
@@ -1573,7 +1567,8 @@ class _$InfectionProbabilityDtoImpl implements _InfectionProbabilityDto {
 
 abstract class _InfectionProbabilityDto implements InfectionProbabilityDto {
   const factory _InfectionProbabilityDto({
-    final EntityRefDto pathogen,
+    final String pathogenId,
+    final String pathogenName,
     final double probability,
   }) = _$InfectionProbabilityDtoImpl;
 
@@ -1581,7 +1576,9 @@ abstract class _InfectionProbabilityDto implements InfectionProbabilityDto {
       _$InfectionProbabilityDtoImpl.fromJson;
 
   @override
-  EntityRefDto get pathogen;
+  String get pathogenId;
+  @override
+  String get pathogenName;
   @override
   double get probability;
 

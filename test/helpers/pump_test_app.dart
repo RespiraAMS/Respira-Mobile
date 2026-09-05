@@ -10,8 +10,9 @@ import 'package:respira_mobile/main.dart';
 import 'fake_api_adapter.dart';
 
 /// Pumps the production app with mocked SharedPreferences + offline Dio,
-/// starting at [initialLocation].
-Future<void> pumpTestApp(
+/// starting at [initialLocation]. Returns the [FakeApiAdapter] backing
+/// the app's Dio so tests can add/replace canned responses mid-test.
+Future<FakeApiAdapter> pumpTestApp(
   WidgetTester tester, {
   String initialLocation = '/splash',
   Map<String, MockedResponse> overrides = const {},
@@ -19,8 +20,9 @@ Future<void> pumpTestApp(
   SharedPreferences.setMockInitialValues({});
   final prefs = await SharedPreferences.getInstance();
 
+  final adapter = FakeApiAdapter(overrides: overrides);
   final dio = Dio(BaseOptions(baseUrl: 'http://localhost:5016'))
-    ..httpClientAdapter = FakeApiAdapter(overrides: overrides);
+    ..httpClientAdapter = adapter;
 
   await tester.pumpWidget(
     ProviderScope(
@@ -35,6 +37,7 @@ Future<void> pumpTestApp(
   );
   await tester.pump(const Duration(milliseconds: 100));
   await tester.pump(const Duration(milliseconds: 100));
+  return adapter;
 }
 
 /// Lets *real* async work (Dio socket-less adapter futures) complete, then

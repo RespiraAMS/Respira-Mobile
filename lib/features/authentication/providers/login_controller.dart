@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -47,6 +48,12 @@ class LoginController extends _$LoginController {
       return true;
     } on ApiException catch (e) {
       state = state.copyWith(submitting: false, errorMessage: e.message);
+      return false;
+    } on DioException catch (e) {
+      state = state.copyWith(
+        submitting: false,
+        errorMessage: apiErrorMessage(e),
+      );
       return false;
     } catch (_) {
       state = state.copyWith(

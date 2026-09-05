@@ -150,7 +150,9 @@ class __$$ApiResponseImplCopyWithImpl<T, $Res>
 
 /// @nodoc
 @JsonSerializable(genericArgumentFactories: true)
-class _$ApiResponseImpl<T> implements _ApiResponse<T> {
+class _$ApiResponseImpl<T>
+    with DiagnosticableTreeMixin
+    implements _ApiResponse<T> {
   const _$ApiResponseImpl({
     required this.statusCode,
     required this.success,
@@ -173,8 +175,19 @@ class _$ApiResponseImpl<T> implements _ApiResponse<T> {
   final T? data;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'ApiResponse<$T>(statusCode: $statusCode, success: $success, message: $message, data: $data)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ApiResponse<$T>'))
+      ..add(DiagnosticsProperty('statusCode', statusCode))
+      ..add(DiagnosticsProperty('success', success))
+      ..add(DiagnosticsProperty('message', message))
+      ..add(DiagnosticsProperty('data', data));
   }
 
   @override

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -35,6 +35,8 @@ void main() {
       await tester.tap(find.text('Lưu hồ sơ'));
       await tester.pump(const Duration(milliseconds: 600));
       await _settleNavigation(tester);
+      // Detail now fetches GET /patients/{id} — let it settle.
+      await settleApi(tester);
 
       await tester.ensureVisible(find.text('Cập nhật trạng thái'));
       await tester.pump(const Duration(milliseconds: 200));
@@ -108,13 +110,16 @@ void main() {
       await tester.tap(find.text('Chẩn đoán').last);
       await _settleNavigation(tester);
 
-      expect(find.text('Kết quả chẩn đoán'), findsOneWidget);
+      expect(find.text('Kết quả chẩn đoán'), findsWidgets);
       expect(find.text('Kinh nghiệm · Viêm phổi cộng đồng'), findsOneWidget);
       // Derived CURB-65 score: confusion ✓ + urea 9 (>7) + age 70 (≥65).
       expect(find.text('CURB-65'), findsWidgets);
       expect(find.text('3'), findsWidgets);
       expect(find.text('Viêm phổi cộng đồng'), findsWidgets);
-      expect(find.text('Nguy cơ cao'), findsWidgets);
+      // Severity tile + basis summary per the approved design.
+      expect(find.text('Mức độ'), findsOneWidget);
+      expect(find.text('Cao'), findsOneWidget);
+      expect(find.text('CURB-65 = 3'), findsOneWidget);
 
       await tester.tap(find.text('Thuốc khuyến nghị').last);
       await tester.pump(const Duration(milliseconds: 200));
@@ -125,9 +130,9 @@ void main() {
       expect(find.text('Phác đồ A · Viêm phổi cộng đồng'), findsOneWidget);
 
       // ── Confirm dialog completes the route ────────────────────────
-      await tester.ensureVisible(find.text('Lưu kết quả'));
+      await tester.ensureVisible(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 200));
-      await tester.tap(find.text('Lưu kết quả'));
+      await tester.tap(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.text('Lưu kết quả chẩn đoán?'), findsOneWidget);
@@ -135,18 +140,24 @@ void main() {
       // Cancel first — dialog closes, screen stays.
       await tester.tap(find.text('Hủy'));
       await _settleNavigation(tester);
-      expect(find.text('Kết quả chẩn đoán'), findsOneWidget);
+      expect(find.text('Kết quả chẩn đoán'), findsWidgets);
 
-      await tester.ensureVisible(find.text('Lưu kết quả'));
+      await tester.ensureVisible(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 200));
-      await tester.tap(find.text('Lưu kết quả'));
+      await tester.tap(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text('Xác nhận lưu'));
       await tester.pump(const Duration(milliseconds: 600));
       await _settleNavigation(tester);
+      // Detail refetches GET /patients/{id} (provider invalidated after
+      // the save) — let it settle before asserting the fresh timeline.
+      await settleApi(tester);
 
+      // Success toast now fires on the destination screen.
       expect(find.text('Đã lưu kết quả chẩn đoán.'), findsOneWidget);
       expect(find.text('Chi tiết bệnh nhân'), findsOneWidget);
+      // The refreshed timeline carries the treatment just created.
+      expect(find.text('Điều trị kinh nghiệm'), findsOneWidget);
 
       // Flush the toast auto-dismiss timer before the test ends.
       await tester.pump(const Duration(seconds: 3));

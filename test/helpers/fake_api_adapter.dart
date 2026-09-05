@@ -119,6 +119,48 @@ class FakeApiAdapter implements HttpClientAdapter {
         'address': 'Cần Thơ',
       }),
     ),
+    // GET /patients/{id} — detail endpoints; must precede the paged-list
+    // entry, which matches by substring.
+    'GET /api/1/patients/patient-BA-2026-0001': MockedResponse(
+      200,
+      envelope(_patientDetail(
+        'patient-BA-2026-0001',
+        'Khoa',
+        'BA-2026-0001',
+      )),
+    ),
+    'GET /api/1/patients/patient-BA-2026-0002': MockedResponse(
+      200,
+      envelope(_patientDetail(
+        'patient-BA-2026-0002',
+        'An',
+        'BA-2026-0002',
+      )),
+    ),
+    'GET /api/1/patients/11111111-1111-1111-1111-111111111111': MockedResponse(
+      200,
+      envelope({
+        'id': '11111111-1111-1111-1111-111111111111',
+        'fullName': 'Nguyễn Minh Khôi',
+        'dateOfBirth': '1970-08-12',
+        'isMale': true,
+        'medicalRecordCode': 'BA-2026-0231',
+        'healthInsuranceCardNumber': '1234567890',
+        'address': 'Ninh Kiều, Cần Thơ',
+        'city': 'Cần Thơ',
+        'country': 'Việt Nam',
+        'admission': '2026-09-01',
+        'status': 'InTreatment',
+        'treatments': [
+          {
+            'id': 'treatment-1',
+            'start': '2026-09-01T08:00:00+07:00',
+            'treatmentType': 'EmpiricalTherapy',
+            'status': 'FavorableResponse',
+          },
+        ],
+      }),
+    ),
     'GET /api/1/patients': MockedResponse(
       200,
       envelope({
@@ -195,7 +237,8 @@ class FakeApiAdapter implements HttpClientAdapter {
     ),
   };
 
-  static Map<String, dynamic> _patient(
+  /// Paged roster row (`PagedPatientItem`).
+  static Map<String, dynamic> patient(
     String name,
     String code,
     int age,
@@ -210,6 +253,42 @@ class FakeApiAdapter implements HttpClientAdapter {
         'status': status,
       };
 
+  static Map<String, dynamic> _patient(
+    String name,
+    String code,
+    int age,
+    String status,
+  ) =>
+      patient(name, code, age, status);
+
+  /// `PatientResult` — GET /patients/{id} response body.
+  static Map<String, dynamic> _patientDetail(
+    String id,
+    String name,
+    String code,
+  ) =>
+      {
+        'id': id,
+        'fullName': name,
+        'dateOfBirth': '1970-08-12',
+        'isMale': true,
+        'medicalRecordCode': code,
+        'healthInsuranceCardNumber': '1234567890',
+        'address': 'Ninh Kiều, Cần Thơ',
+        'city': 'Cần Thơ',
+        'country': 'Việt Nam',
+        'admission': '2026-09-01',
+        'status': 'InTreatment',
+        'treatments': [
+          {
+            'id': 'treatment-1',
+            'start': '2026-09-01T08:00:00+07:00',
+            'treatmentType': 'EmpiricalTherapy',
+            'status': 'FavorableResponse',
+          },
+        ],
+      };
+
   static Map<String, dynamic> _medicine(
     String name,
     String route,
@@ -218,7 +297,7 @@ class FakeApiAdapter implements HttpClientAdapter {
         'id': 'med-$name',
         'name': name,
         'antibioticGroupId': 'group-1',
-        'antibioticGroup': {'id': 'group-1', 'name': 'Beta-lactam'},
+        'antibioticGroupName': 'Beta-lactam',
         'classification': 'Access',
         'dosages': [
           {'routeOfAdministration': route, 'dose': '1 g mỗi 8 giờ'},
@@ -235,10 +314,8 @@ class FakeApiAdapter implements HttpClientAdapter {
         ],
         'infectionProbabilities': [
           {
-            'pathogen': {
-              'id': 'k-pneumoniae-id',
-              'name': 'Klebsiella pneumoniae',
-            },
+            'pathogenId': 'k-pneumoniae-id',
+            'pathogenName': 'Klebsiella pneumoniae',
             'probability': 0.72,
           },
         ],

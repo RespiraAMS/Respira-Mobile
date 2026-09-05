@@ -1,5 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:respira_mobile/features/patient/routes.dart';
+
+import 'helpers/fill_add_patient_form.dart';
 import 'helpers/pump_test_app.dart';
 
 /// Targeted-treatment flow tests: switching the treatment-type tab, the
@@ -79,7 +82,24 @@ void main() {
 
   testWidgets('saving targeted treatment lands on patient detail',
       (tester) async {
-    await _pumpProgress(tester);
+    // Create a real patient first — treatment saves require an active
+    // patient with a server id (empty-id saves are rejected client-side).
+    await pumpTestApp(tester, initialLocation: PatientRoutes.addPatient);
+    await fillAddPatientForm(tester, name: 'Nguyễn Minh Khôi');
+    await tester.ensureVisible(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Lưu hồ sơ'));
+    await tester.pump(const Duration(milliseconds: 600));
+    await _settleNavigation(tester);
+    await settleApi(tester);
+
+    // Add-patient flow (no ?flow=diagnosis) lands on detail — continue
+    // into the progress screen from there.
+    await tester.ensureVisible(find.text('Thêm điều trị'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Thêm điều trị'));
+    await _settleNavigation(tester);
+    await settleApi(tester);
 
     await tester.tap(find.text('Điều trị đích'));
     await tester.pump(const Duration(milliseconds: 200));

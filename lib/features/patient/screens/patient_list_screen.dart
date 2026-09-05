@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:respira_mobile/core/router/app_router.dart';
 import 'package:respira_mobile/features/calculator/routes.dart';
 import 'package:respira_mobile/features/lookup/lookup_routes.dart';
 import 'package:respira_mobile/features/statistics/routes.dart';
@@ -22,7 +23,8 @@ class PatientListScreen extends ConsumerStatefulWidget {
   ConsumerState<PatientListScreen> createState() => _PatientListScreenState();
 }
 
-class _PatientListScreenState extends ConsumerState<PatientListScreen> {
+class _PatientListScreenState extends ConsumerState<PatientListScreen>
+    with RouteAware {
   @override
   void initState() {
     super.initState();
@@ -30,6 +32,28 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen> {
     Future.microtask(
       () => ref.read(patientListControllerProvider.notifier).refresh(),
     );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    appRouteObserver.subscribe(
+      this,
+      ModalRoute.of(context)!,
+    );
+  }
+
+  @override
+  void dispose() {
+    appRouteObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Returning from add-patient / detail — refetch so a newly created
+    // patient (or updated status) shows up.
+    ref.read(patientListControllerProvider.notifier).refresh();
   }
 
   void _showTabPlaceholder(BuildContext context, String label) {

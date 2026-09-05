@@ -1,10 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/network/api_response.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
-import '../../../../core/network/api_response.dart';
 import '../models/patient.dart';
 import '../providers/add_patient_controller.dart';
 import '../providers/add_patient_saving_provider.dart';
@@ -30,13 +31,18 @@ class AddPatientScreen extends ConsumerWidget {
 
     Future<void> save(BuildContext context) async {
       try {
-        await controller.save();
+        final id = await controller.save();
         if (!context.mounted) return;
         context.push(
-          diagnosisEntry ? PatientRoutes.progress : PatientRoutes.detail,
+          diagnosisEntry
+              ? PatientRoutes.progress
+              : '${PatientRoutes.detail}?id=${Uri.encodeComponent(id)}',
         );
       } on ApiException catch (e) {
         showAppToast(context, e.message);
+      } on DioException catch (e) {
+        if (!context.mounted) return;
+        showAppToast(context, apiErrorMessage(e));
       } catch (_) {
         showAppToast(context, 'Không thể tạo bệnh nhân. Vui lòng thử lại.');
       }

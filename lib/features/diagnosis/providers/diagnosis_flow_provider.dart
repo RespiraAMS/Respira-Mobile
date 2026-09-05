@@ -103,8 +103,8 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       state = state.copyWith(empiricalResult: result, errorMessage: null);
     } on ApiException catch (e) {
       state = state.copyWith(errorMessage: e.message);
-    } on DioException {
-      state = state.copyWith(errorMessage: 'Không thể kết nối máy chủ.');
+    } on DioException catch (e) {
+      state = state.copyWith(errorMessage: apiErrorMessage(e));
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());
     }
@@ -114,13 +114,20 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
   /// `POST /patients/{id}/treatments` and flags completion.
   ///
   /// The backend (`CreateTreatmentValidator`) requires identical
-  /// medicine lists to carry a null `ReasonForDifferentChoice`, and
-  /// infection probabilities to embed a nested `{pathogen, probability}`
-  /// record — both honored here.
+  /// medicine lists to carry a null `ReasonForDifferentChoice`; the
+  /// `pathogen` record must carry the real pathogen GUID from the
+  /// diagnose response — an empty id fails JSON binding server-side.
   Future<bool> saveEmpiricalTreatment() async {
     final patient = ref.read(activePatientControllerProvider);
     final result = state.empiricalResult;
     if (result == null) return false;
+
+    if (patient.id.isEmpty) {
+      state = state.copyWith(
+        errorMessage: 'Vui lòng chọn hoặc tạo bệnh nhân trước khi lưu.',
+      );
+      return false;
+    }
 
     // Only medicines with an adjusted dosage can be persisted — the
     // backend rejects records with an empty route or dose.
@@ -142,6 +149,16 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       return false;
     }
 
+    // Only pathogens with a real id can be validated server-side; drop
+    // malformed entries instead of failing the whole save.
+    final infectionRecords = result.infectionProbabilities
+        .where((p) => p.pathogenId.isNotEmpty)
+        .map((p) => {
+              'pathogen': {'id': p.pathogenId, 'name': p.pathogenName},
+              'probability': p.probability,
+            })
+        .toList();
+
     try {
       await _patientService.createTreatment(
         patient.id,
@@ -152,15 +169,7 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
           doctorChosenMedicines: medicines,
           severity: result.severity,
           treatmentSite: result.treatmentSite,
-          infectionProbabilityRecords: result.infectionProbabilities
-              .map((p) => {
-                    'pathogen': {
-                      'id': p.pathogen.id,
-                      'name': p.pathogen.name,
-                    },
-                    'probability': p.probability,
-                  })
-              .toList(),
+          infectionProbabilityRecords: infectionRecords,
         ),
       );
       state = state.copyWith(saved: true, errorMessage: null);
@@ -168,8 +177,8 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
     } on ApiException catch (e) {
       state = state.copyWith(errorMessage: e.message);
       return false;
-    } on DioException {
-      state = state.copyWith(errorMessage: 'Không thể kết nối máy chủ.');
+    } on DioException catch (e) {
+      state = state.copyWith(errorMessage: apiErrorMessage(e));
       return false;
     } catch (e) {
       state = state.copyWith(errorMessage: e.toString());

@@ -72,7 +72,9 @@ class PatientService {
   }
 
   /// `POST /patients/{patientId}/treatments` — persists one diagnosis
-  /// record (202-style NoContent / empty body on success).
+  /// record. The server validates it against the Clinical service
+  /// (RabbitMQ roundtrip) before answering, so the request gets a longer
+  /// receive timeout than the global default.
   Future<void> createTreatment(
     String patientId,
     CreateTreatmentRequest request,
@@ -80,6 +82,9 @@ class PatientService {
     await _dio.post(
       '/api/1/patients/$patientId/treatments',
       data: request.toJson(),
+      options: Options(
+        receiveTimeout: const Duration(seconds: 45),
+      ),
     );
   }
 }

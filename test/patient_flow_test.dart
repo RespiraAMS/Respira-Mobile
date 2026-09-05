@@ -89,6 +89,8 @@ void main() {
     // POST /patients is async now — wait for it, then for navigation.
     await tester.pump(const Duration(milliseconds: 600));
     await _settleNavigation(tester);
+    // Detail now fetches GET /patients/{id} — let it settle.
+    await settleApi(tester);
 
     expect(find.text('Chi tiết bệnh nhân'), findsOneWidget);
     // The form route stays mounted below the pushed detail route, so the
@@ -107,6 +109,7 @@ void main() {
     await tester.tap(find.text('Lưu hồ sơ'));
     await tester.pump(const Duration(milliseconds: 600));
     await _settleNavigation(tester);
+    await settleApi(tester);
 
     // Bottom-pinned actions may be below the fold on the test surface.
     await tester.ensureVisible(find.text('Cập nhật trạng thái'));

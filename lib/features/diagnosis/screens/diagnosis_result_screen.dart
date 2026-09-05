@@ -5,6 +5,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../../features/patient/providers/active_patient_provider.dart';
+import '../../../../features/patient/providers/patient_detail_provider.dart';
+import '../../../../features/patient/routes.dart';
 import '../models/clinical_dtos.dart';
 import '../models/diagnosis_result.dart';
 import '../models/diagnosis_state.dart';
@@ -13,7 +16,6 @@ import '../providers/diagnosis_flow_provider.dart';
 import '../providers/diagnosis_tab_controller.dart';
 import '../widgets/medicine_card_widget.dart';
 import '../widgets/reference_row_widget.dart';
-import '../widgets/risk_pill_widget.dart';
 import '../widgets/stat_tile_widget.dart';
 
 import '../routes.dart';
@@ -46,16 +48,26 @@ class DiagnosisResultScreen extends ConsumerWidget {
         .read(diagnosisFlowControllerProvider.notifier)
         .saveEmpiricalTreatment();
     if (!context.mounted) return;
-    final flow = ref.read(diagnosisFlowControllerProvider);
-    showAppToast(
-      context,
-      ok
-          ? 'Đã lưu kết quả chẩn đoán.'
-          : (flow.errorMessage ?? 'Lưu thất bại. Vui lòng thử lại.'),
-    );
-    if (ok) context.go('/patient/detail');
-  }
 
+    if (!ok) {
+      final flow = ref.read(diagnosisFlowControllerProvider);
+      showAppToast(
+        context,
+        flow.errorMessage ?? 'Lưu thất bại. Vui lòng thử lại.',
+      );
+      return;
+    }
+
+    // Success feedback shows on the destination screen (a toast fired
+    // here races the route transition). Invalidate the cached detail so
+    // the timeline reflects the treatment just created.
+    final patient = ref.read(activePatientControllerProvider);
+    ref.invalidate(patientDetailProvider(patient.id));
+    context.go(
+      '${PatientRoutes.detail}?id=${Uri.encodeComponent(patient.id)}',
+      extra: 'saved',
+    );
+  }
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final result = ref.watch(diagnosisFlowControllerProvider).empiricalResult;
@@ -124,7 +136,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
                           bottom: Spacing.lg,
                         ),
                         child: AppButton(
-                          label: 'Lưu kết quả',
+                          label: 'Xác nhận chẩn đoán',
                           expand: true,
                           onPressed: () => _confirmSave(context, ref, result),
                         ),
@@ -166,18 +178,23 @@ class _ResultTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
     final inputs = ref.watch(diagnosisCriteriaControllerProvider);
+    final severity = switch (result.severity) {
+      'Severe' => 'Cao',
+      'Moderate' => 'Trung bình',
+      'Mild' => 'Thấp',
+      _ => result.severity,
+    };
     final severityIsHigh = result.severity == 'Severe';
     final siteLabel = switch (result.treatmentSite) {
       'Inpatient' => 'Nội trú',
       'IntensiveCareUnit' => 'ICU',
       _ => 'Ngoại trú',
     };
-    final riskLabel = severityIsHigh ? 'Nguy cơ cao' : 'Nguy cơ thấp';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _SectionTitle('Chẩn đoán'),
+        const _SectionTitle('Kết quả chẩn đoán'),
         const SizedBox(height: Spacing.xxs + 4),
         AppSurface(
           radius: AppRadius.mdValue,
@@ -193,13 +210,46 @@ class _ResultTab extends ConsumerWidget {
                   context,
                 ).copyWith(color: c.textPrimary),
               ),
-              const SizedBox(height: Spacing.xxxs),
-              AppText('Chẩn đoán kinh nghiệm', type: AppTextType.caption),
+              const SizedBox(height: Spacing.inline),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: Spacing.control,
+                  vertical: Spacing.xxxs + 3,
+                ),
+                decoration: BoxDecoration(
+                  color: c.primarySoft,
+                  borderRadius: AppRadius.full,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: c.primary,
+                      ),
+                    ),
+                    const SizedBox(width: Spacing.inline),
+                    Text(
+                      'Chẩn đoán kinh nghiệm',
+                      style: TypographyTokens.label(context)
+                          .copyWith(color: c.textPrimary),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
+        const SizedBox(height: Spacing.control - 2),
+        AppText(
+          'Kết quả này cần được bác sĩ xác nhận trước khi áp dụng điều trị.',
+          type: AppTextType.caption,
+        ),
         const SizedBox(height: Spacing.section),
-        const _SectionTitle('Đánh giá'),
+        const _SectionTitle('Đánh giá lâm sàng'),
         const SizedBox(height: Spacing.control - 4),
         Row(
           children: [
@@ -213,9 +263,11 @@ class _ResultTab extends ConsumerWidget {
             const SizedBox(width: Spacing.group),
             Expanded(
               child: StatTileWidget(
-                label: 'CrCl',
-                value: result.crcl.toStringAsFixed(1),
-                tone: StatTileTone.neutral,
+                label: 'Mức độ',
+                value: severity,
+                tone: severityIsHigh
+                    ? StatTileTone.warning
+                    : StatTileTone.neutral,
               ),
             ),
             const SizedBox(width: Spacing.group),
@@ -227,11 +279,34 @@ class _ResultTab extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: Spacing.block - 4),
-        RiskPillWidget(label: riskLabel, isHigh: severityIsHigh),
-        const SizedBox(height: Spacing.control + 4),
+        const SizedBox(height: Spacing.section),
+        const _SectionTitle('Tóm tắt căn cứ'),
+        const SizedBox(height: Spacing.control - 4),
+        AppSurface(
+          radius: AppRadius.mdValue,
+          color: c.surfaceSecondary,
+          borderColor: Colors.transparent,
+          padding: const EdgeInsets.all(Spacing.group - 2),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText('CURB-65 = ${inputs.curb65Score}'),
+              if (inputs.selectedIcuCriteriaIds.isNotEmpty) ...[
+                const SizedBox(height: Spacing.xxxs),
+                const AppText('Có tiêu chí nhập viện'),
+              ],
+              if (inputs.selectedResistanceRiskIds.isNotEmpty) ...[
+                const SizedBox(height: Spacing.xxxs),
+                const AppText('Nguy cơ kháng thuốc cao'),
+              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: Spacing.section),
+        AppText('Hành động tiếp theo', type: AppTextType.label),
+        const SizedBox(height: Spacing.xxxs),
         AppText(
-          'Kết quả cần được bác sĩ xác nhận trước khi áp dụng điều trị.',
+          'Xem thuốc khuyến nghị hoặc xác nhận chẩn đoán để lưu.',
           type: AppTextType.caption,
         ),
       ],
@@ -258,7 +333,7 @@ class _MedicinesTab extends StatelessWidget {
           MedicineCardWidget(
             name: medicine.name,
             regimenLine: medicine.dosages.isEmpty
-                ? medicine.antibioticGroup.name
+                ? medicine.antibioticGroupName
                 : '${medicine.dosages.first.routeOfAdministration} · ${medicine.dosages.first.dose}',
           ),
           if (medicine != medicines.last) const SizedBox(height: Spacing.group),

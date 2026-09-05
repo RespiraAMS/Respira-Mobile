@@ -108,8 +108,9 @@ class CreateTreatmentRequest {
           'doctorChosenMedicines': doctorChosenMedicines,
           if (severity != null) 'severity': severity,
           if (treatmentSite != null) 'treatmentSite': treatmentSite,
-          if (infectionProbabilityRecords.isNotEmpty)
-            'infectionProbabilityRecords': infectionProbabilityRecords,
+          // Always present: the server's ToDiagnosisRecord throws when the
+          // key is absent (empty list is fine, null is not).
+          'infectionProbabilityRecords': infectionProbabilityRecords,
           if (pathogen != null) 'pathogen': pathogen,
           if (reasonForDifferentChoice != null)
             'reasonForDifferentChoice': reasonForDifferentChoice,

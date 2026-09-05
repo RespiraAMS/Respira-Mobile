@@ -31,10 +31,10 @@ final List<RouteBase> patientRoutes = [
   ),
   GoRoute(
     path: PatientRoutes.detail,
-    builder: (context, state) {
-      final id = state.uri.queryParameters['id'];
-      return PatientDetailScreen(patientId: id);
-    },
+    builder: (context, state) => PatientDetailScreen(
+      patientId: state.uri.queryParameters['id'],
+      justSaved: state.extra == 'saved',
+    ),
   ),
   GoRoute(
     path: PatientRoutes.progress,

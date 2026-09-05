@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../core/network/api_client.dart';
@@ -70,6 +72,7 @@ Future<bool> saveTargetedTreatment(
   required List<MedicineRecordDto> medicines,
 }) async {
   final patient = ref.read(activePatientControllerProvider);
+  if (patient.id.isEmpty) return false;
 
   try {
     await PatientService(ref.read(apiClientProvider)).createTreatment(
@@ -84,7 +87,8 @@ Future<bool> saveTargetedTreatment(
       ),
     );
     return true;
-  } on ApiException catch (_) {
+  } on DioException catch (e) {
+    debugPrint('saveTargetedTreatment failed: ${apiErrorMessage(e)}');
     return false;
   } on Exception {
     return false;

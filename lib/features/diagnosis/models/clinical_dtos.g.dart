@@ -77,9 +77,7 @@ _$AntibioticResultDtoImpl _$$AntibioticResultDtoImplFromJson(
 ) => _$AntibioticResultDtoImpl(
   id: json['id'] as String,
   name: json['name'] as String,
-  antibioticGroup: json['antibioticGroup'] == null
-      ? const EntityRefDto(id: '', name: '')
-      : EntityRefDto.fromJson(json['antibioticGroup'] as Map<String, dynamic>),
+  antibioticGroupName: json['antibioticGroupName'] as String? ?? '',
   classification: json['classification'] as String? ?? '',
   dosages:
       (json['dosages'] as List<dynamic>?)
@@ -93,7 +91,7 @@ Map<String, dynamic> _$$AntibioticResultDtoImplToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
-  'antibioticGroup': instance.antibioticGroup,
+  'antibioticGroupName': instance.antibioticGroupName,
   'classification': instance.classification,
   'dosages': instance.dosages,
 };
@@ -113,16 +111,16 @@ Map<String, dynamic> _$$DosageDtoImplToJson(_$DosageDtoImpl instance) =>
 _$InfectionProbabilityDtoImpl _$$InfectionProbabilityDtoImplFromJson(
   Map<String, dynamic> json,
 ) => _$InfectionProbabilityDtoImpl(
-  pathogen: json['pathogen'] == null
-      ? const EntityRefDto(id: '', name: '')
-      : EntityRefDto.fromJson(json['pathogen'] as Map<String, dynamic>),
+  pathogenId: json['pathogenId'] as String? ?? '',
+  pathogenName: json['pathogenName'] as String? ?? '',
   probability: (json['probability'] as num?)?.toDouble() ?? 0,
 );
 
 Map<String, dynamic> _$$InfectionProbabilityDtoImplToJson(
   _$InfectionProbabilityDtoImpl instance,
 ) => <String, dynamic>{
-  'pathogen': instance.pathogen,
+  'pathogenId': instance.pathogenId,
+  'pathogenName': instance.pathogenName,
   'probability': instance.probability,
 };
 
