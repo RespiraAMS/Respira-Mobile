@@ -52,8 +52,12 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen>
   @override
   void didPopNext() {
     // Returning from add-patient / detail — refetch so a newly created
-    // patient (or updated status) shows up.
-    ref.read(patientListControllerProvider.notifier).refresh();
+    // patient (or updated status) shows up. Deferred out of the
+    // Navigator's page-flush: Riverpod forbids provider writes while
+    // the widget tree is building.
+    Future.microtask(
+      () => ref.read(patientListControllerProvider.notifier).refresh(),
+    );
   }
 
   void _showTabPlaceholder(BuildContext context, String label) {

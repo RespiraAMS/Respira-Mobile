@@ -77,6 +77,7 @@ class AddPatientController extends _$AddPatientController {
       );
 
       final patient = Patient(
+        id: id,
         name: form.name.trim(),
         code: form.code.trim(),
         dob: form.dob.trim(),

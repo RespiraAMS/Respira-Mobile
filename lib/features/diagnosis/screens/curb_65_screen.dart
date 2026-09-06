@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../../patient/providers/current_patient_provider.dart';
 import '../../patient/widgets/selection_row_widget.dart';
 import '../providers/diagnosis_controller.dart';
 import '../routes.dart';
@@ -19,6 +20,8 @@ class Curb65Screen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(diagnosisCriteriaControllerProvider);
     final controller = ref.read(diagnosisCriteriaControllerProvider.notifier);
+    final patient = ref.watch(currentPatientProvider);
+    final age = patient.computedAge;
 
     return Scaffold(
       body: SafeArea(
@@ -116,15 +119,31 @@ class Curb65Screen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: Spacing.inline),
-                            // 65 — age.
+                            // 65 — age derived from the patient's DOB
+                            // (read-only; the server derives it too).
                             Container(
                               padding: const EdgeInsets.all(Spacing.control),
                               decoration: _rowDecoration(context),
-                              child: AppUnitField(
-                                label: 'Tuổi',
-                                unit: 'tuổi',
-                                initialValue: state.age,
-                                onChanged: controller.setAge,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      'Tuổi',
+                                      style: TypographyTokens.body(context)
+                                          .copyWith(
+                                              color: context
+                                                  .respiraColors.textPrimary),
+                                    ),
+                                  ),
+                                  Text(
+                                    age != null ? '$age tuổi' : '—',
+                                    style: TypographyTokens.body(context)
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: context
+                                                .respiraColors.textSecondary),
+                                  ),
+                                ],
                               ),
                             ),
                           ],

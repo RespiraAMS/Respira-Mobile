@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../core/utils/age.dart';
+
 part 'patient.freezed.dart';
 part 'patient.g.dart';
 
@@ -15,6 +17,8 @@ enum Gender {
 
 @freezed
 class Patient with _$Patient {
+  const Patient._();
+
   const factory Patient({
     @Default('') String id,
     required String name,
@@ -29,6 +33,9 @@ class Patient with _$Patient {
 
   factory Patient.fromJson(Map<String, dynamic> json) =>
       _$PatientFromJson(json);
+
+  /// Whole-year age derived from [dob]; null when the DOB is unparseable.
+  int? get computedAge => computeAgeFromDob(dob);
 }
 
 /// Demo record mirroring the React prototype until a repository exists.

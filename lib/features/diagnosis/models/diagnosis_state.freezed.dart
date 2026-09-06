@@ -32,8 +32,7 @@ mixin _$DiagnosisCriteriaState {
   String get urea => throw _privateConstructorUsedError;
   String get respRate => throw _privateConstructorUsedError;
   String get sbp => throw _privateConstructorUsedError;
-  String get dbp => throw _privateConstructorUsedError;
-  String get age =>
+  String get dbp =>
       throw _privateConstructorUsedError; // ── Step 3/5 · ICU criteria ────────────────────────────────────
   String get pao2Fio2 => throw _privateConstructorUsedError;
   Set<String> get selectedIcuCriteriaIds =>
@@ -69,7 +68,6 @@ abstract class $DiagnosisCriteriaStateCopyWith<$Res> {
     String respRate,
     String sbp,
     String dbp,
-    String age,
     String pao2Fio2,
     Set<String> selectedIcuCriteriaIds,
     Set<String> selectedResistanceRiskIds,
@@ -103,7 +101,6 @@ class _$DiagnosisCriteriaStateCopyWithImpl<
     Object? respRate = null,
     Object? sbp = null,
     Object? dbp = null,
-    Object? age = null,
     Object? pao2Fio2 = null,
     Object? selectedIcuCriteriaIds = null,
     Object? selectedResistanceRiskIds = null,
@@ -142,10 +139,6 @@ class _$DiagnosisCriteriaStateCopyWithImpl<
             dbp: null == dbp
                 ? _value.dbp
                 : dbp // ignore: cast_nullable_to_non_nullable
-                      as String,
-            age: null == age
-                ? _value.age
-                : age // ignore: cast_nullable_to_non_nullable
                       as String,
             pao2Fio2: null == pao2Fio2
                 ? _value.pao2Fio2
@@ -187,7 +180,6 @@ abstract class _$$DiagnosisCriteriaStateImplCopyWith<$Res>
     String respRate,
     String sbp,
     String dbp,
-    String age,
     String pao2Fio2,
     Set<String> selectedIcuCriteriaIds,
     Set<String> selectedResistanceRiskIds,
@@ -218,7 +210,6 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
     Object? respRate = null,
     Object? sbp = null,
     Object? dbp = null,
-    Object? age = null,
     Object? pao2Fio2 = null,
     Object? selectedIcuCriteriaIds = null,
     Object? selectedResistanceRiskIds = null,
@@ -258,10 +249,6 @@ class __$$DiagnosisCriteriaStateImplCopyWithImpl<$Res>
             ? _value.dbp
             : dbp // ignore: cast_nullable_to_non_nullable
                   as String,
-        age: null == age
-            ? _value.age
-            : age // ignore: cast_nullable_to_non_nullable
-                  as String,
         pao2Fio2: null == pao2Fio2
             ? _value.pao2Fio2
             : pao2Fio2 // ignore: cast_nullable_to_non_nullable
@@ -295,7 +282,6 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
     this.respRate = '',
     this.sbp = '',
     this.dbp = '',
-    this.age = '',
     this.pao2Fio2 = '',
     final Set<String> selectedIcuCriteriaIds = const <String>{},
     final Set<String> selectedResistanceRiskIds = const <String>{},
@@ -333,9 +319,6 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
   @override
   @JsonKey()
   final String dbp;
-  @override
-  @JsonKey()
-  final String age;
   // ── Step 3/5 · ICU criteria ────────────────────────────────────
   @override
   @JsonKey()
@@ -376,7 +359,7 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
 
   @override
   String toString() {
-    return 'DiagnosisCriteriaState(heightCm: $heightCm, weightKg: $weightKg, serumCreatinine: $serumCreatinine, confusion: $confusion, urea: $urea, respRate: $respRate, sbp: $sbp, dbp: $dbp, age: $age, pao2Fio2: $pao2Fio2, selectedIcuCriteriaIds: $selectedIcuCriteriaIds, selectedResistanceRiskIds: $selectedResistanceRiskIds, selectedOtherCriteriaIds: $selectedOtherCriteriaIds)';
+    return 'DiagnosisCriteriaState(heightCm: $heightCm, weightKg: $weightKg, serumCreatinine: $serumCreatinine, confusion: $confusion, urea: $urea, respRate: $respRate, sbp: $sbp, dbp: $dbp, pao2Fio2: $pao2Fio2, selectedIcuCriteriaIds: $selectedIcuCriteriaIds, selectedResistanceRiskIds: $selectedResistanceRiskIds, selectedOtherCriteriaIds: $selectedOtherCriteriaIds)';
   }
 
   @override
@@ -397,7 +380,6 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
                 other.respRate == respRate) &&
             (identical(other.sbp, sbp) || other.sbp == sbp) &&
             (identical(other.dbp, dbp) || other.dbp == dbp) &&
-            (identical(other.age, age) || other.age == age) &&
             (identical(other.pao2Fio2, pao2Fio2) ||
                 other.pao2Fio2 == pao2Fio2) &&
             const DeepCollectionEquality().equals(
@@ -426,7 +408,6 @@ class _$DiagnosisCriteriaStateImpl implements _DiagnosisCriteriaState {
     respRate,
     sbp,
     dbp,
-    age,
     pao2Fio2,
     const DeepCollectionEquality().hash(_selectedIcuCriteriaIds),
     const DeepCollectionEquality().hash(_selectedResistanceRiskIds),
@@ -461,7 +442,6 @@ abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
     final String respRate,
     final String sbp,
     final String dbp,
-    final String age,
     final String pao2Fio2,
     final Set<String> selectedIcuCriteriaIds,
     final Set<String> selectedResistanceRiskIds,
@@ -487,9 +467,7 @@ abstract class _DiagnosisCriteriaState implements DiagnosisCriteriaState {
   @override
   String get sbp;
   @override
-  String get dbp;
-  @override
-  String get age; // ── Step 3/5 · ICU criteria ────────────────────────────────────
+  String get dbp; // ── Step 3/5 · ICU criteria ────────────────────────────────────
   @override
   String get pao2Fio2;
   @override

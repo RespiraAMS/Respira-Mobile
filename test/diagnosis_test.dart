@@ -66,17 +66,19 @@ void main() {
       expect(find.text('Bước 2/5 · CURB-65'), findsOneWidget);
       expect(find.text('Lú lẫn mới xuất hiện'), findsOneWidget);
 
-      // Confusion (pre-checked) + urea 9 (>7) + age 70 (≥65) → score 3.
+      // Confusion (pre-checked) + urea 9 (>7) → score 2 (age 55 < 65).
       await tester.enterText(find.widgetWithText(AppUnitField, 'Urea'), '9');
-      await tester.enterText(find.widgetWithText(AppUnitField, 'Tuổi'), '70');
       await tester.pump(const Duration(milliseconds: 100));
 
       // Continue to step 3/5. Unfocus first (caret visibility pins the
-      // scroll), then drag the CURB scroll view from the app-bar area —
-      // the button is below the fold after the Huyết áp dual-field was
-      // added.
+      // scroll), then drag the CURB scroll view — the button is below
+      // the fold. Dragging past the age row also proves it rendered.
       FocusManager.instance.primaryFocus?.unfocus();
       await tester.pump();
+      await tester.dragFrom(const Offset(400, 200), const Offset(0, -200));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('Tuổi'), findsOneWidget);
+      expect(find.textContaining(RegExp(r'^\d+ tuổi$')), findsOneWidget);
       await tester.dragFrom(const Offset(400, 40), const Offset(0, -260));
       await tester.pumpAndSettle(const Duration(milliseconds: 100));
       await tester.tap(find.text('Tiếp tục'));
@@ -112,14 +114,14 @@ void main() {
 
       expect(find.text('Kết quả chẩn đoán'), findsWidgets);
       expect(find.text('Kinh nghiệm · Viêm phổi cộng đồng'), findsOneWidget);
-      // Derived CURB-65 score: confusion ✓ + urea 9 (>7) + age 70 (≥65).
+      // Derived CURB-65 score: confusion ✓ + urea 9 (>7); age 55 < 65.
       expect(find.text('CURB-65'), findsWidgets);
-      expect(find.text('3'), findsWidgets);
+      expect(find.text('2'), findsWidgets);
       expect(find.text('Viêm phổi cộng đồng'), findsWidgets);
       // Severity tile + basis summary per the approved design.
       expect(find.text('Mức độ'), findsOneWidget);
       expect(find.text('Cao'), findsOneWidget);
-      expect(find.text('CURB-65 = 3'), findsOneWidget);
+      expect(find.text('CURB-65 = 2'), findsOneWidget);
 
       await tester.tap(find.text('Thuốc khuyến nghị').last);
       await tester.pump(const Duration(milliseconds: 200));

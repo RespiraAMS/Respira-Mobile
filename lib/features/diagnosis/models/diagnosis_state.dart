@@ -53,7 +53,6 @@ class DiagnosisCriteriaState with _$DiagnosisCriteriaState {
     @Default('') String respRate,
     @Default('') String sbp,
     @Default('') String dbp,
-    @Default('') String age,
 
     // ── Step 3/5 · ICU criteria ────────────────────────────────────
     @Default('') String pao2Fio2,
@@ -92,15 +91,17 @@ extension DiagnosisCriteriaX on DiagnosisCriteriaState {
         (diastolic != null && diastolic <= 60);
   }
 
-  bool get hasAgeOver65 => (_parse(age) ?? 0) >= 65;
+  bool hasAgeOver65(int? age) => (age ?? 0) >= 65;
 
-  /// CURB-65 score 0–5, one point per met criterion.
-  int get curb65Score => [
+  /// CURB-65 score 0–5, one point per met criterion. The age criterion
+  /// comes from the patient's DOB (computed by the caller) instead of a
+  /// manual input.
+  int curb65Score(int? age) => [
         hasConfusion,
         hasHighUrea,
         hasTachypnea,
         hasHypotension,
-        hasAgeOver65,
+        hasAgeOver65(age),
       ].where((met) => met).length;
 
   /// Body-mass index proxy for later steps / clinical display.

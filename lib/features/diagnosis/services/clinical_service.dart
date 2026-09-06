@@ -20,12 +20,31 @@ class ClinicalService {
   }
 
   /// `GET /diseases/{id}/criteria` — ICU / resistance / other check-lists.
+  ///
+  /// The server dedupes only the other-criteria list; the ICU and
+  /// resistance lists can carry duplicate rows sharing one criterion id
+  /// (seeded associations) — ticking one would tick both. Dedupe by id
+  /// here so every rendered row is independently selectable.
   Future<DiseaseCriteriaDto> getDiseaseCriteria(String diseaseId) async {
     final res = await _dio.get('/api/1/diseases/$diseaseId/criteria');
-    return unwrapData(
+    final criteria = unwrapData(
       res,
       (json) => DiseaseCriteriaDto.fromJson(json),
     );
+    return DiseaseCriteriaDto(
+      icuHospitalizeCriteria: _distinctById(criteria.icuHospitalizeCriteria),
+      resistanceRiskFactorCriteria:
+          _distinctById(criteria.resistanceRiskFactorCriteria),
+      otherCriteria: _distinctById(criteria.otherCriteria),
+    );
+  }
+
+  List<CriterionItemDto> _distinctById(Iterable<CriterionItemDto> items) {
+    final seen = <String>{};
+    return [
+      for (final item in items)
+        if (seen.add(item.id)) item,
+    ];
   }
 
   /// `GET /pathogens/list`.

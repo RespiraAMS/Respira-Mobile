@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
 import '../../../../features/patient/providers/active_patient_provider.dart';
+import '../../../../features/patient/providers/current_patient_provider.dart';
 import '../../../../features/patient/providers/patient_detail_provider.dart';
 import '../../../../features/patient/routes.dart';
 import '../models/clinical_dtos.dart';
@@ -178,6 +179,8 @@ class _ResultTab extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
     final inputs = ref.watch(diagnosisCriteriaControllerProvider);
+    final age = ref.watch(currentPatientProvider).computedAge;
+    final score = inputs.curb65Score(age);
     final severity = switch (result.severity) {
       'Severe' => 'Cao',
       'Moderate' => 'Trung bình',
@@ -256,7 +259,7 @@ class _ResultTab extends ConsumerWidget {
             Expanded(
               child: StatTileWidget(
                 label: 'CURB-65',
-                value: '${inputs.curb65Score}',
+                value: '$score',
                 tone: StatTileTone.primary,
               ),
             ),
@@ -290,7 +293,7 @@ class _ResultTab extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppText('CURB-65 = ${inputs.curb65Score}'),
+              AppText('CURB-65 = $score'),
               if (inputs.selectedIcuCriteriaIds.isNotEmpty) ...[
                 const SizedBox(height: Spacing.xxxs),
                 const AppText('Có tiêu chí nhập viện'),

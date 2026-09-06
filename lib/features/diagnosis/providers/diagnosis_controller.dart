@@ -31,8 +31,6 @@ class DiagnosisCriteriaController extends _$DiagnosisCriteriaController {
 
   void setDbp(String value) => state = state.copyWith(dbp: value);
 
-  void setAge(String value) => state = state.copyWith(age: value);
-
   // ── Step 3/5 · ICU criteria ───────────────────────────────────────
   void setPao2Fio2(String value) => state = state.copyWith(pao2Fio2: value);
 

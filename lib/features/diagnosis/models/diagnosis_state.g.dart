@@ -17,7 +17,6 @@ _$DiagnosisCriteriaStateImpl _$$DiagnosisCriteriaStateImplFromJson(
   respRate: json['respRate'] as String? ?? '',
   sbp: json['sbp'] as String? ?? '',
   dbp: json['dbp'] as String? ?? '',
-  age: json['age'] as String? ?? '',
   pao2Fio2: json['pao2Fio2'] as String? ?? '',
   selectedIcuCriteriaIds:
       (json['selectedIcuCriteriaIds'] as List<dynamic>?)
@@ -47,7 +46,6 @@ Map<String, dynamic> _$$DiagnosisCriteriaStateImplToJson(
   'respRate': instance.respRate,
   'sbp': instance.sbp,
   'dbp': instance.dbp,
-  'age': instance.age,
   'pao2Fio2': instance.pao2Fio2,
   'selectedIcuCriteriaIds': instance.selectedIcuCriteriaIds.toList(),
   'selectedResistanceRiskIds': instance.selectedResistanceRiskIds.toList(),

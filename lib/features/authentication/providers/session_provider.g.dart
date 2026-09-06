@@ -45,7 +45,7 @@ final sessionDoctorProvider = AutoDisposeProvider<DoctorProfile?>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SessionDoctorRef = AutoDisposeProviderRef<DoctorProfile?>;
-String _$sessionControllerHash() => r'5e7da7d620c1c386c9326cef5f7771d143d0c334';
+String _$sessionControllerHash() => r'072460128e191cbdc61c11acad5b34dfe80417a2';
 
 /// Holds the active session (null = logged out). The login screen drives
 /// [login]; the app header's logout button drives [logout].
