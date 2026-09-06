@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import '../lookup_routes.dart';
+import '../../../../core/router/app_nav.dart';
 import '../../../../design_system/design_system.dart';
+
 /// Bottom navigation of the Tra cứu (lookup) screens.
 ///
-/// Mirrors the app-wide 5-tab layout; tapping the other tabs routes back
-/// into the main app sections.
+/// Floating-pill variant of the app-wide 5-tab layout; the taps route
+/// through the shared [onAppNavTap] handler (Tra cứu is active here, so
+/// tapping it is a no-op).
 class FloatingBottomNav extends StatelessWidget {
   const FloatingBottomNav({super.key});
+
+  static const _activeIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +27,13 @@ class FloatingBottomNav extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _NavItem(
-            icon: LucideIcons.users,
-            label: 'Bệnh nhân',
-            isActive: false,
-            onTap: () => context.go('/'),
-          ),
-          _NavItem(
-            icon: LucideIcons.search,
-            label: 'Tra cứu',
-            isActive: true,
-            onTap: () => context.go(LookupRoutes.lookup),
-          ),
-          _NavItem(
-            icon: LucideIcons.stethoscope,
-            label: 'Chẩn đoán',
-            isActive: false,
-            onTap: () => context.push('/patient/add?flow=diagnosis'),
-          ),
-          _NavItem(
-            icon: LucideIcons.calculator,
-            label: 'Máy tính',
-            isActive: false,
-            onTap: () => context.push('/calculators'),
-          ),
-          _NavItem(
-            icon: LucideIcons.barChart,
-            label: 'Thống kê',
-            isActive: false,
-            onTap: () => context.push('/statistics'),
-          ),
+          for (var i = 0; i < appNavItems.length; i++)
+            _NavItem(
+              icon: appNavItems[i].icon,
+              label: appNavItems[i].label,
+              isActive: i == _activeIndex,
+              onTap: () => onAppNavTap(context, i, activeIndex: _activeIndex),
+            ),
         ],
       ),
     );

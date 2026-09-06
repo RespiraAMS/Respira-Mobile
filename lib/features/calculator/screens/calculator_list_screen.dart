@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-
+import 'package:respira_mobile/core/router/app_nav.dart';
 import 'package:respira_mobile/features/calculator/routes.dart';
-import 'package:respira_mobile/features/patient/routes.dart';
 import 'package:respira_mobile/features/patient/widgets/section_label_widget.dart';
-import 'package:respira_mobile/features/statistics/routes.dart';
-
 import '../../../../design_system/design_system.dart';
 import '../models/calculator.dart';
 import '../providers/calculator_providers.dart';
@@ -18,22 +15,10 @@ import '../widgets/calculator_entry_row_widget.dart';
 class CalculatorListScreen extends ConsumerWidget {
   const CalculatorListScreen({super.key});
 
-  void _showTabPlaceholder(BuildContext context, String label) {
-    showAppToast(context, 'Tab "$label" sẽ được bổ sung sau.');
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
     final entries = ref.watch(calculatorListProvider);
-
-    final navItems = const [
-      AppBottomNavItem(icon: LucideIcons.users, label: 'Bệnh nhân'),
-      AppBottomNavItem(icon: LucideIcons.search, label: 'Tra cứu'),
-      AppBottomNavItem(icon: LucideIcons.stethoscope, label: 'Chẩn đoán'),
-      AppBottomNavItem(icon: LucideIcons.calculator, label: 'Máy tính'),
-      AppBottomNavItem(icon: LucideIcons.barChart2, label: 'Thống kê'),
-    ];
 
     return Scaffold(
       body: SafeArea(
@@ -113,19 +98,10 @@ class CalculatorListScreen extends ConsumerWidget {
               ),
               const SizedBox(height: Spacing.inline),
               AppBottomNavigation(
-                items: navItems,
+                items: appNavItems,
                 activeIndex: 3,
-                onTap: (index) {
-                  if (index == 0) {
-                    context.go(PatientRoutes.list);
-                  } else if (index == 2) {
-                    context.push(PatientRoutes.addPatientForDiagnosis);
-                  } else if (index == 4) {
-                    context.push(StatisticsRoutes.overview);
-                  } else if (index != 3) {
-                    _showTabPlaceholder(context, navItems[index].label);
-                  }
-                },
+                onTap: (index) =>
+                    onAppNavTap(context, index, activeIndex: 3),
               ),
             ],
           ),

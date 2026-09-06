@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:respira_mobile/core/router/app_nav.dart';
 import 'package:respira_mobile/core/router/app_router.dart';
-import 'package:respira_mobile/features/calculator/routes.dart';
-import 'package:respira_mobile/features/lookup/lookup_routes.dart';
-import 'package:respira_mobile/features/statistics/routes.dart';
 
 import '../../../../design_system/design_system.dart';
 import '../models/patient_summary.dart';
@@ -60,10 +58,6 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen>
     );
   }
 
-  void _showTabPlaceholder(BuildContext context, String label) {
-    showAppToast(context, 'Tab "$label" sẽ được bổ sung sau.');
-  }
-
   @override
   Widget build(BuildContext context) {
     final c = context.respiraColors;
@@ -78,14 +72,6 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen>
         roster.where((p) => p.status == PatientStatus.treating).length;
     final highRiskCount =
         roster.where((p) => p.status == PatientStatus.deceased).length;
-
-    final navItems = const [
-      AppBottomNavItem(icon: LucideIcons.users, label: 'Bệnh nhân'),
-      AppBottomNavItem(icon: LucideIcons.search, label: 'Tra cứu'),
-      AppBottomNavItem(icon: LucideIcons.stethoscope, label: 'Chẩn đoán'),
-      AppBottomNavItem(icon: LucideIcons.calculator, label: 'Máy tính'),
-      AppBottomNavItem(icon: LucideIcons.barChart2, label: 'Thống kê'),
-    ];
 
     return Scaffold(
       body: SafeArea(
@@ -231,23 +217,10 @@ class _PatientListScreenState extends ConsumerState<PatientListScreen>
               ),
               const SizedBox(height: Spacing.inline),
               AppBottomNavigation(
-                items: navItems,
+                items: appNavItems,
                 activeIndex: 0,
-                onTap: (index) {
-                  if (index == 1) {
-                    context.push(LookupRoutes.lookup);
-                  } else if (index == 2) {
-                    // Diagnosis entry: create a patient, then continue with
-                    // the empirical-treatment flow for them.
-                    context.push(PatientRoutes.addPatientForDiagnosis);
-                  } else if (index == 3) {
-                    context.push(CalculatorRoutes.list);
-                  } else if (index == 4) {
-                    context.push(StatisticsRoutes.overview);
-                  } else if (index != 0) {
-                    _showTabPlaceholder(context, navItems[index].label);
-                  }
-                },
+                onTap: (index) =>
+                    onAppNavTap(context, index, activeIndex: 0),
               ),
             ],
           ),
