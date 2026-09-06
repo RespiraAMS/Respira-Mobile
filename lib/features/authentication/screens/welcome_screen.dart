@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:respira_mobile/features/patient/routes.dart';
 
 import '../../../../design_system/design_system.dart';
+import '../providers/session_provider.dart';
 import '../widgets/brand_header_widget.dart';
 
 /// Route `/welcome` — post-login landing page with workspace summary.
@@ -14,6 +15,9 @@ class WelcomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
+    final doctor = ref.watch(sessionDoctorProvider);
+    final greeting = _doctorGreeting(doctor);
+    final patientCount = doctor?.patientCount ?? 0;
 
     return Scaffold(
       body: SafeArea(
@@ -75,7 +79,7 @@ class WelcomeScreen extends ConsumerWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Chào mừng, BS. Lê Hoàng Minh',
+                                        greeting,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: TypographyTokens.body(context)
@@ -93,7 +97,9 @@ class WelcomeScreen extends ConsumerWidget {
                               ],
                             ),
                             const SizedBox(height: Spacing.control),
-                            _BulletRow(text: '12 bệnh nhân đang theo dõi'),
+                            _BulletRow(
+                                text:
+                                    '$patientCount bệnh nhân đang theo dõi'),
                             const SizedBox(height: Spacing.inline - 4),
                             _BulletRow(text: '3 ca cần chú ý trong ngày'),
                             const SizedBox(height: Spacing.inline - 4),
@@ -136,6 +142,19 @@ class WelcomeScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Builds the welcome greeting from the session profile: 'Chào mừng,
+/// BS. …' for a real API name, or a graceful fallback when the profile
+/// is an email / missing.
+String _doctorGreeting(DoctorProfile? doctor) {
+  final name = doctor?.name.trim() ?? '';
+  if (name.isEmpty || name.contains('@')) return 'Chào mừng Bác sĩ';
+  final displayName = name.toLowerCase().startsWith('bs.') ||
+          name.toLowerCase().startsWith('bs ')
+      ? name
+      : 'BS. $name';
+  return 'Chào mừng, $displayName';
 }
 
 class _BulletRow extends StatelessWidget {

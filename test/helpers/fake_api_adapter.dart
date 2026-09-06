@@ -117,6 +117,11 @@ class FakeApiAdapter implements HttpClientAdapter {
         'gender': 'Male',
         'citizenIdentificationNumber': '012345678901',
         'address': 'Cần Thơ',
+        'patients': [
+          'patient-BA-2026-0001',
+          'patient-BA-2026-0002',
+          'patient-BA-2026-0003',
+        ],
       }),
     ),
     // GET /patients/{id} — detail endpoints; must precede the paged-list

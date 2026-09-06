@@ -26,6 +26,7 @@ class DoctorProfileDto {
     required this.lastName,
     required this.phone,
     this.url,
+    this.patientIds = const [],
   });
 
   factory DoctorProfileDto.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,9 @@ class DoctorProfileDto {
       lastName: json['lastName'] as String? ?? '',
       phone: json['phone'] as String? ?? '',
       url: json['url'] as String?,
+      patientIds: (json['patients'] as List<dynamic>? ?? const [])
+          .map((e) => e.toString())
+          .toList(),
     );
   }
 
@@ -43,6 +47,10 @@ class DoctorProfileDto {
   final String lastName;
   final String phone;
   final String? url;
+
+  /// IDs of the patients this doctor manages
+  /// (`DoctorQueryResult.Patients`).
+  final List<String> patientIds;
 }
 
 /// DI'd with the shared authenticated Dio.

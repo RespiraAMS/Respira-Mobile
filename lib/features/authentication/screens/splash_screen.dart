@@ -42,33 +42,37 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Spacing.group),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Spacer(flex: 3),
-              RespiraLogoMarkWidget(size: 96),
+              const RespiraLogoMarkWidget(size: 96),
               const SizedBox(height: Spacing.xl),
               Text(
                 'RespiraAMS',
+                textAlign: TextAlign.center,
                 style: TypographyTokens.h1(
                   context,
                 ).copyWith(color: c.textPrimary),
               ),
               const SizedBox(height: Spacing.inline),
-              AppText(
+              const AppText(
                 'Clinical workspace for respiratory care',
                 type: AppTextType.caption,
                 textAlign: TextAlign.center,
               ),
               const Spacer(flex: 4),
               // Page indicator dots (template: soft · primary · soft).
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _Dot(size: 8, color: c.primarySoft),
-                  const SizedBox(width: Spacing.inline),
-                  _Dot(size: 10, color: c.primary),
-                  const SizedBox(width: Spacing.inline),
-                  _Dot(size: 8, color: c.primarySoft),
-                ],
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _Dot(size: 8, color: c.primarySoft),
+                    const SizedBox(width: Spacing.inline),
+                    _Dot(size: 10, color: c.primary),
+                    const SizedBox(width: Spacing.inline),
+                    _Dot(size: 8, color: c.primarySoft),
+                  ],
+                ),
               ),
               const Spacer(),
             ],

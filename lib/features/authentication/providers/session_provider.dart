@@ -9,17 +9,22 @@ import '../services/doctor_service.dart';
 
 part 'session_provider.g.dart';
 
-/// Logged-in doctor identity shown on headers.
+/// Logged-in doctor identity shown on headers and the welcome screen.
 class DoctorProfile {
   const DoctorProfile({
     required this.id,
     required this.name,
     this.avatarUrl,
+    this.patientCount = 0,
   });
 
   final String id;
   final String name;
   final String? avatarUrl;
+
+  /// Patients under the doctor's care, from `GET /doctors/{id}`. Only
+  /// known right after a login (not restored from disk).
+  final int patientCount;
 }
 
 /// Holds the active session (null = logged out). The login screen drives
@@ -56,18 +61,25 @@ class SessionController extends _$SessionController {
     // Enrich with the real profile (best-effort — fall back to email).
     var name = fallbackName;
     String? avatar;
+    var patientCount = 0;
     try {
       final profile = await ref
           .read(doctorServiceProvider)
           .getDoctor(doctorId);
       name = '${profile.firstName} ${profile.lastName}'.trim();
       avatar = profile.url;
+      patientCount = profile.patientIds.length;
     } on Exception {
       // Keep the email fallback.
     }
 
     await storage.saveDoctor(id: doctorId, name: name);
-    final profile = DoctorProfile(id: doctorId, name: name, avatarUrl: avatar);
+    final profile = DoctorProfile(
+      id: doctorId,
+      name: name,
+      avatarUrl: avatar,
+      patientCount: patientCount,
+    );
     state = profile;
     return profile;
   }

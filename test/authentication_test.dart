@@ -56,9 +56,12 @@ void main() {
     await pumpAsync(tester);
     await _settleNavigation(tester);
 
-    // Post-login landing page.
+    // Post-login landing page — the greeting and patient count come from
+    // the mocked doctor profile (GET /doctors/{id}).
     expect(find.text('MOBILE CLINICAL WORKSPACE'), findsOneWidget);
     expect(find.text('Bắt đầu'), findsOneWidget);
+    expect(find.text('Chào mừng, BS. Lê Hoàng Minh'), findsOneWidget);
+    expect(find.text('3 bệnh nhân đang theo dõi'), findsOneWidget);
 
     // Enter the clinical workspace.
     await tester.tap(find.text('Bắt đầu'));
