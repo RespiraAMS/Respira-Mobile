@@ -21,7 +21,9 @@ Future<FakeApiAdapter> pumpTestApp(
   final prefs = await SharedPreferences.getInstance();
 
   final adapter = FakeApiAdapter(overrides: overrides);
-  final dio = Dio(BaseOptions(baseUrl: 'http://localhost:5016'))
+  // Cosmetic: matches the production URL namespace. The FakeApiAdapter
+  // intercepts every request — no socket is ever opened.
+  final dio = Dio(BaseOptions(baseUrl: 'https://localhost:7283'))
     ..httpClientAdapter = adapter;
 
   await tester.pumpWidget(

@@ -3,22 +3,39 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'token_storage.dart';
 
-/// Base URL of the RespiraAMS gateway (YARP). Override with
-/// `--dart-define=API_BASE_URL=https://...` for other environments.
-///
-/// Defaults to the gateway's HTTPS endpoint — its HTTP port only 307-
-/// redirects back here, and the Aspire dev certificate (`CN=localhost`)
-/// is trusted on developer machines. Debug builds additionally accept
-/// self-signed certs so emulators (`10.0.2.2`) and LAN devices work.
-const String kApiBaseUrl = String.fromEnvironment(
+/// Compile-time override, e.g. `--dart-define=API_BASE_URL=https://...`.
+/// `String.fromEnvironment` yields the default when the define is not
+/// passed, so an explicitly-passed value always differs from it.
+const String _kDefineBaseUrl = String.fromEnvironment(
   'API_BASE_URL',
-  defaultValue: 'https://localhost:7283',
+  defaultValue: '',
 );
+
+const String _kDefaultBaseUrl = 'https://localhost:7283';
+
+/// Base URL of the RespiraAMS gateway (YARP).
+///
+/// Precedence: `--dart-define` → `API_BASE_URL` in `env/.env` → the
+/// gateway's HTTPS default (its HTTP port only 307-redirects back here,
+/// and the Aspire dev certificate `CN=localhost` is trusted on developer
+/// machines). Debug builds additionally accept self-signed certs so
+/// emulators (`10.0.2.2`) and LAN devices work.
+String get kApiBaseUrl {
+  if (_kDefineBaseUrl.isNotEmpty) return _kDefineBaseUrl;
+  try {
+    final fromEnv = dotenv.env['API_BASE_URL'];
+    if (fromEnv != null && fromEnv.trim().isNotEmpty) return fromEnv.trim();
+  } catch (_) {
+    // dotenv not loaded (e.g. widget tests) — fall through to default.
+  }
+  return _kDefaultBaseUrl;
+}
 
 const String kApiVersion = '1';
 
