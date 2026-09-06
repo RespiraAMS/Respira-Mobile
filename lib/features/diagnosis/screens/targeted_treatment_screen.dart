@@ -6,10 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/network/api_response.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
+import '../../../../features/patient/providers/current_patient_provider.dart';
 import '../../../../features/patient/routes.dart';
 import '../models/clinical_dtos.dart';
 import '../models/microbiology_result.dart';
-import '../providers/microbiology_provider.dart';
+import '../providers/targeted_pathogen_controller.dart';
 import '../providers/targeted_treatment_provider.dart';
 import '../widgets/microbiology_banner.dart';
 import '../widgets/treatment_option_row_widget.dart';
@@ -26,7 +27,6 @@ class TargetedTreatmentScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final micro = ref.watch(microbiologyResultProvider);
     final pathogensAsync = ref.watch(pathogenListProvider);
 
     return Scaffold(
@@ -59,10 +59,14 @@ class TargetedTreatmentScreen extends ConsumerWidget {
                         message: 'Không có tác nhân gây bệnh trong hệ thống.',
                       );
                     }
-                    final pathogen = pathogens.first;
+                    final selectedId =
+                        ref.watch(targetedPathogenControllerProvider);
+                    final pathogen = pathogens.firstWhere(
+                      (p) => p.id == selectedId,
+                      orElse: () => pathogens.first,
+                    );
                     return _TargetedBody(
                       pathogen: pathogen,
-                      micro: micro,
                     );
                   },
                 ),
@@ -79,16 +83,17 @@ class TargetedTreatmentScreen extends ConsumerWidget {
   }
 }
 
-/// The diagnose content once the pathogen list has loaded.
+/// The diagnose content once the pathogen list has loaded. The pathogen
+/// is chosen on the Add progress screen — shown here read-only.
 class _TargetedBody extends ConsumerWidget {
-  const _TargetedBody({required this.pathogen, required this.micro});
+  const _TargetedBody({required this.pathogen});
 
   final PathogenItemDto pathogen;
-  final MicrobiologyResult micro;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final c = context.respiraColors;
+    final patient = ref.watch(currentPatientProvider);
     final diagnoseAsync =
         ref.watch(targetedDiagnoseResultProvider(pathogen.id));
     final selection = ref.watch(targetedSelectionControllerProvider);
@@ -136,15 +141,16 @@ class _TargetedBody extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            'Nguyễn Minh Khôi',
+                            patient.name,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TypographyTokens.body(context)
                                 .copyWith(fontWeight: FontWeight.w700),
                           ),
                           const SizedBox(height: Spacing.xxxs),
-                          AppText('BA-2026-0231 · 55 tuổi',
-                              type: AppTextType.caption),
+                          AppText(
+                            '${patient.code} · ${patient.gender.displayName}${patient.computedAge != null ? ' · ${patient.computedAge} tuổi' : ''}',
+                            type: AppTextType.caption),
                         ],
                       ),
                     ),
@@ -152,9 +158,8 @@ class _TargetedBody extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: Spacing.block),
-              BacteriaDisplayField(bacteria: micro.bacteria),
-              const SizedBox(height: Spacing.control),
-              AntibiogramBanner(line: micro.antibiogramLine),
+              // Pathogen chosen on Add progress — read-only here.
+              BacteriaDisplayField(bacteria: pathogen.name),
               const SizedBox(height: Spacing.section),
               Text(
                 'Chọn thuốc + đường dùng',

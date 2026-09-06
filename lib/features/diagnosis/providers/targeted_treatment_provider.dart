@@ -60,6 +60,9 @@ class TargetedSelectionController extends _$TargetedSelectionController {
     }
     state = next;
   }
+
+  /// Clears picks — used when the doctor switches pathogen.
+  void reset() => state = {};
 }
 
 /// Persists the targeted treatment via

@@ -1,14 +1,15 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/network/api_response.dart';
 import '../../../../core/utils/context_extensions.dart';
 import '../../../../design_system/design_system.dart';
-import 'package:respira_mobile/features/diagnosis/models/microbiology_result.dart';
-import 'package:respira_mobile/features/diagnosis/providers/diagnosis_flow_provider.dart';
-import 'package:respira_mobile/features/diagnosis/providers/microbiology_provider.dart';
-import 'package:respira_mobile/features/diagnosis/routes.dart';
-import 'package:respira_mobile/features/diagnosis/widgets/microbiology_banner.dart';
+import '../../../../features/diagnosis/providers/diagnosis_flow_provider.dart';
+import '../../../../features/diagnosis/providers/targeted_treatment_provider.dart';
+import '../../../../features/diagnosis/routes.dart';
+import '../../../../features/diagnosis/widgets/pathogen_picker_field.dart';
 import '../models/add_progress_form_state.dart';
 import '../providers/add_progress_controller.dart';
 import '../providers/current_patient_provider.dart';
@@ -91,7 +92,7 @@ class _AddProgressScreenState extends ConsumerState<AddProgressScreen> {
                       ),
                       const SizedBox(height: Spacing.section),
                       if (isTargeted)
-                        _TargetedBody(micro: ref.watch(microbiologyResultProvider))
+                        const _TargetedBody()
                       else
                         _EmpiricalBody(
                           form: form,
@@ -149,26 +150,76 @@ class _EmpiricalBody extends StatelessWidget {
   }
 }
 
-/// Targeted variant: identified bacteria + latest antibiogram + warning
-/// to verify the antibiogram before choosing drugs.
-class _TargetedBody extends StatelessWidget {
-  const _TargetedBody({required this.micro});
-
-  final MicrobiologyResult micro;
+/// Targeted variant: doctor-selectable pathogen (the choice point of
+/// the targeted flow — the Chẩn đoán vi sinh screen reads the same
+/// selection) + warning to verify before choosing drugs.
+class _TargetedBody extends ConsumerWidget {
+  const _TargetedBody();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final pathogensAsync = ref.watch(pathogenListProvider);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        BacteriaDisplayField(bacteria: micro.bacteria),
-        const SizedBox(height: Spacing.control),
-        AntibiogramBanner(line: micro.antibiogramLine),
+        pathogensAsync.when(
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(Spacing.section),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          error: (error, _) => _PathogenLoadError(
+            message: error is DioException
+                ? apiErrorMessage(error)
+                : '$error',
+            onRetry: () => ref.invalidate(pathogenListProvider),
+          ),
+          data: (pathogens) {
+            if (pathogens.isEmpty) {
+              return const AppText(
+                'Không có tác nhân gây bệnh trong hệ thống.',
+                type: AppTextType.caption,
+              );
+            }
+            return PathogenPickerField(pathogens: pathogens);
+          },
+        ),
         const SizedBox(height: Spacing.section),
         const ClinicalAlert(
           severity: ClinicalSeverity.needsAttention,
           title: 'Điều trị đích dựa trên kết quả vi sinh',
-          description: 'Kiểm tra tác nhân và kháng sinh đồ trước khi chọn thuốc.',
+          description: 'Chọn tác nhân gây bệnh trước khi chọn thuốc.',
+        ),
+      ],
+    );
+  }
+}
+
+/// Pathogen-list failure on the Add progress screen — server message
+/// with a retry, never a red screen.
+class _PathogenLoadError extends StatelessWidget {
+  const _PathogenLoadError({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.respiraColors;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          message,
+          style: TypographyTokens.caption(context).copyWith(color: c.error),
+        ),
+        const SizedBox(height: Spacing.control),
+        AppButton(
+          label: 'Thử lại',
+          type: AppButtonType.outline,
+          onPressed: onRetry,
         ),
       ],
     );

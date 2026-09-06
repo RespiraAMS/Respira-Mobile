@@ -7,7 +7,7 @@ part of 'medicine_selection_provider.dart';
 // **************************************************************************
 
 String _$medicineSelectionControllerHash() =>
-    r'4327ee3773040b507ba064532ddcdb4cbbd20bbf';
+    r'cf2a6ae730db12aeb738e3cd408fab5059f09795';
 
 /// Tracks medicine edits for the empirical 'Thuốc khuyến nghị' tab.
 ///

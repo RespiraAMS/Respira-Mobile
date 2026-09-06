@@ -203,7 +203,7 @@ class _TargetedDiagnoseResultProviderElement
 }
 
 String _$targetedSelectionControllerHash() =>
-    r'2d0ec3e27f530399b3f658fa006d4e8bba549ce3';
+    r'b840e0a9c3562a0f73acf4aa9379de5f0866e309';
 
 /// Selected antibiotic IDs of the targeted-treatment screen.
 ///

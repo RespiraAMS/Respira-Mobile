@@ -238,6 +238,7 @@ class FakeApiAdapter implements HttpClientAdapter {
       200,
       envelopeList([
         {'id': 'k-pneumoniae-id', 'name': 'Klebsiella pneumoniae'},
+        {'id': 'p-aeruginosa-id', 'name': 'Pseudomonas aeruginosa'},
       ]),
     ),
   };

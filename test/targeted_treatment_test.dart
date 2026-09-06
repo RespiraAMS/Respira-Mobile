@@ -33,14 +33,61 @@ void main() {
     await tester.tap(find.text('Điều trị đích'));
     await tester.pump(const Duration(milliseconds: 200));
 
-    // Targeted variant.
+    // Targeted variant: the doctor-selectable pathogen picker (API
+    // backed, first pathogen by default) + guidance alert. The demo
+    // antibiogram banner is gone.
     expect(find.text('Dựa trên kết quả vi sinh đã có'), findsOneWidget);
     expect(find.text('Loại điều trị tiếp theo'), findsOneWidget);
+    for (var i = 0; i < 8; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
     expect(find.text('Klebsiella pneumoniae'), findsOneWidget);
-    expect(find.text('Kháng sinh đồ gần nhất'), findsOneWidget);
+    expect(find.text('Kháng sinh đồ gần nhất'), findsNothing);
     expect(find.text('Điều trị đích dựa trên kết quả vi sinh'), findsOneWidget);
     expect(find.text('Tiếp tục điều trị đích'), findsOneWidget);
     expect(find.text('Lưu diễn biến'), findsNothing);
+  });
+
+  testWidgets('doctor picks the pathogen on Add progress; vi sinh follows',
+      (tester) async {
+    await _pumpProgress(tester);
+
+    await tester.tap(find.text('Điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    for (var i = 0; i < 8; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('Klebsiella pneumoniae'), findsOneWidget);
+
+    // Open the picker on the progress screen — both pathogens listed.
+    await tester.tap(find.text('Klebsiella pneumoniae'), warnIfMissed: true);
+    await tester.pumpAndSettle(const Duration(milliseconds: 300));
+    expect(find.text('Chọn tác nhân gây bệnh'), findsOneWidget);
+    expect(find.text('Pseudomonas aeruginosa'), findsOneWidget);
+
+    // Switch to Pseudomonas.
+    await tester.tap(find.text('Pseudomonas aeruginosa'));
+    await tester.pumpAndSettle(const Duration(milliseconds: 200));
+    expect(find.text('Pseudomonas aeruginosa'), findsOneWidget);
+
+    // Continue into Chẩn đoán vi sinh — the choice carries over and the
+    // pathogen shows read-only.
+    await tester.ensureVisible(find.text('Tiếp tục điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Tiếp tục điều trị đích'));
+    await _settleNavigation(tester);
+    for (var i = 0; i < 12; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.text('Chẩn đoán vi sinh'), findsOneWidget);
+    expect(find.text('Pseudomonas aeruginosa'), findsOneWidget);
+    expect(find.text('Klebsiella pneumoniae'), findsNothing);
+    // Medicines for the chosen pathogen loaded.
+    expect(find.text('Meropenem'), findsOneWidget);
   });
 
   testWidgets('targeted CTA opens Chẩn đoán vi sinh with derived chips',
