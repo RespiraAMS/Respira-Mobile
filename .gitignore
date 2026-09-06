@@ -46,3 +46,7 @@ app.*.map.json
 
 # Root-level design export templates (kept local only)
 /*.txt
+
+# Local environment configuration (.env.example is the template)
+/.env
+
