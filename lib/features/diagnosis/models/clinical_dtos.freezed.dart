@@ -951,6 +951,7 @@ AntibioticResultDto _$AntibioticResultDtoFromJson(Map<String, dynamic> json) {
 mixin _$AntibioticResultDto {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String get antibioticGroupId => throw _privateConstructorUsedError;
   String get antibioticGroupName => throw _privateConstructorUsedError;
   String get classification => throw _privateConstructorUsedError;
   List<DosageDto> get dosages => throw _privateConstructorUsedError;
@@ -975,6 +976,7 @@ abstract class $AntibioticResultDtoCopyWith<$Res> {
   $Res call({
     String id,
     String name,
+    String antibioticGroupId,
     String antibioticGroupName,
     String classification,
     List<DosageDto> dosages,
@@ -998,6 +1000,7 @@ class _$AntibioticResultDtoCopyWithImpl<$Res, $Val extends AntibioticResultDto>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? antibioticGroupId = null,
     Object? antibioticGroupName = null,
     Object? classification = null,
     Object? dosages = null,
@@ -1011,6 +1014,10 @@ class _$AntibioticResultDtoCopyWithImpl<$Res, $Val extends AntibioticResultDto>
             name: null == name
                 ? _value.name
                 : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            antibioticGroupId: null == antibioticGroupId
+                ? _value.antibioticGroupId
+                : antibioticGroupId // ignore: cast_nullable_to_non_nullable
                       as String,
             antibioticGroupName: null == antibioticGroupName
                 ? _value.antibioticGroupName
@@ -1042,6 +1049,7 @@ abstract class _$$AntibioticResultDtoImplCopyWith<$Res>
   $Res call({
     String id,
     String name,
+    String antibioticGroupId,
     String antibioticGroupName,
     String classification,
     List<DosageDto> dosages,
@@ -1064,6 +1072,7 @@ class __$$AntibioticResultDtoImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
+    Object? antibioticGroupId = null,
     Object? antibioticGroupName = null,
     Object? classification = null,
     Object? dosages = null,
@@ -1077,6 +1086,10 @@ class __$$AntibioticResultDtoImplCopyWithImpl<$Res>
         name: null == name
             ? _value.name
             : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        antibioticGroupId: null == antibioticGroupId
+            ? _value.antibioticGroupId
+            : antibioticGroupId // ignore: cast_nullable_to_non_nullable
                   as String,
         antibioticGroupName: null == antibioticGroupName
             ? _value.antibioticGroupName
@@ -1101,6 +1114,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
   const _$AntibioticResultDtoImpl({
     required this.id,
     required this.name,
+    this.antibioticGroupId = '',
     this.antibioticGroupName = '',
     this.classification = '',
     final List<DosageDto> dosages = const [],
@@ -1113,6 +1127,9 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
   final String id;
   @override
   final String name;
+  @override
+  @JsonKey()
+  final String antibioticGroupId;
   @override
   @JsonKey()
   final String antibioticGroupName;
@@ -1130,7 +1147,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
 
   @override
   String toString() {
-    return 'AntibioticResultDto(id: $id, name: $name, antibioticGroupName: $antibioticGroupName, classification: $classification, dosages: $dosages)';
+    return 'AntibioticResultDto(id: $id, name: $name, antibioticGroupId: $antibioticGroupId, antibioticGroupName: $antibioticGroupName, classification: $classification, dosages: $dosages)';
   }
 
   @override
@@ -1140,6 +1157,8 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
             other is _$AntibioticResultDtoImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.antibioticGroupId, antibioticGroupId) ||
+                other.antibioticGroupId == antibioticGroupId) &&
             (identical(other.antibioticGroupName, antibioticGroupName) ||
                 other.antibioticGroupName == antibioticGroupName) &&
             (identical(other.classification, classification) ||
@@ -1153,6 +1172,7 @@ class _$AntibioticResultDtoImpl implements _AntibioticResultDto {
     runtimeType,
     id,
     name,
+    antibioticGroupId,
     antibioticGroupName,
     classification,
     const DeepCollectionEquality().hash(_dosages),
@@ -1179,6 +1199,7 @@ abstract class _AntibioticResultDto implements AntibioticResultDto {
   const factory _AntibioticResultDto({
     required final String id,
     required final String name,
+    final String antibioticGroupId,
     final String antibioticGroupName,
     final String classification,
     final List<DosageDto> dosages,
@@ -1191,6 +1212,8 @@ abstract class _AntibioticResultDto implements AntibioticResultDto {
   String get id;
   @override
   String get name;
+  @override
+  String get antibioticGroupId;
   @override
   String get antibioticGroupName;
   @override
@@ -1816,6 +1839,8 @@ mixin _$EmpiricalDiagnoseResultDto {
       throw _privateConstructorUsedError; // Mild | Moderate | Severe
   String get treatmentSite =>
       throw _privateConstructorUsedError; // Outpatient | Inpatient | IntensiveCareUnit
+  List<AntibioticResultDto> get recommendations =>
+      throw _privateConstructorUsedError;
   List<AntibioticResultDto> get medicines => throw _privateConstructorUsedError;
   List<InfectionProbabilityDto> get infectionProbabilities =>
       throw _privateConstructorUsedError;
@@ -1846,6 +1871,7 @@ abstract class $EmpiricalDiagnoseResultDtoCopyWith<$Res> {
     double crcl,
     String severity,
     String treatmentSite,
+    List<AntibioticResultDto> recommendations,
     List<AntibioticResultDto> medicines,
     List<InfectionProbabilityDto> infectionProbabilities,
     List<ReferenceDto> references,
@@ -1873,6 +1899,7 @@ class _$EmpiricalDiagnoseResultDtoCopyWithImpl<
     Object? crcl = null,
     Object? severity = null,
     Object? treatmentSite = null,
+    Object? recommendations = null,
     Object? medicines = null,
     Object? infectionProbabilities = null,
     Object? references = null,
@@ -1891,6 +1918,10 @@ class _$EmpiricalDiagnoseResultDtoCopyWithImpl<
                 ? _value.treatmentSite
                 : treatmentSite // ignore: cast_nullable_to_non_nullable
                       as String,
+            recommendations: null == recommendations
+                ? _value.recommendations
+                : recommendations // ignore: cast_nullable_to_non_nullable
+                      as List<AntibioticResultDto>,
             medicines: null == medicines
                 ? _value.medicines
                 : medicines // ignore: cast_nullable_to_non_nullable
@@ -1922,6 +1953,7 @@ abstract class _$$EmpiricalDiagnoseResultDtoImplCopyWith<$Res>
     double crcl,
     String severity,
     String treatmentSite,
+    List<AntibioticResultDto> recommendations,
     List<AntibioticResultDto> medicines,
     List<InfectionProbabilityDto> infectionProbabilities,
     List<ReferenceDto> references,
@@ -1949,6 +1981,7 @@ class __$$EmpiricalDiagnoseResultDtoImplCopyWithImpl<$Res>
     Object? crcl = null,
     Object? severity = null,
     Object? treatmentSite = null,
+    Object? recommendations = null,
     Object? medicines = null,
     Object? infectionProbabilities = null,
     Object? references = null,
@@ -1967,6 +2000,10 @@ class __$$EmpiricalDiagnoseResultDtoImplCopyWithImpl<$Res>
             ? _value.treatmentSite
             : treatmentSite // ignore: cast_nullable_to_non_nullable
                   as String,
+        recommendations: null == recommendations
+            ? _value._recommendations
+            : recommendations // ignore: cast_nullable_to_non_nullable
+                  as List<AntibioticResultDto>,
         medicines: null == medicines
             ? _value._medicines
             : medicines // ignore: cast_nullable_to_non_nullable
@@ -1991,10 +2028,12 @@ class _$EmpiricalDiagnoseResultDtoImpl implements _EmpiricalDiagnoseResultDto {
     required this.crcl,
     required this.severity,
     required this.treatmentSite,
+    final List<AntibioticResultDto> recommendations = const [],
     final List<AntibioticResultDto> medicines = const [],
     final List<InfectionProbabilityDto> infectionProbabilities = const [],
     final List<ReferenceDto> references = const [],
-  }) : _medicines = medicines,
+  }) : _recommendations = recommendations,
+       _medicines = medicines,
        _infectionProbabilities = infectionProbabilities,
        _references = references;
 
@@ -2010,8 +2049,17 @@ class _$EmpiricalDiagnoseResultDtoImpl implements _EmpiricalDiagnoseResultDto {
   @override
   final String treatmentSite;
   // Outpatient | Inpatient | IntensiveCareUnit
-  final List<AntibioticResultDto> _medicines;
+  final List<AntibioticResultDto> _recommendations;
   // Outpatient | Inpatient | IntensiveCareUnit
+  @override
+  @JsonKey()
+  List<AntibioticResultDto> get recommendations {
+    if (_recommendations is EqualUnmodifiableListView) return _recommendations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_recommendations);
+  }
+
+  final List<AntibioticResultDto> _medicines;
   @override
   @JsonKey()
   List<AntibioticResultDto> get medicines {
@@ -2041,7 +2089,7 @@ class _$EmpiricalDiagnoseResultDtoImpl implements _EmpiricalDiagnoseResultDto {
 
   @override
   String toString() {
-    return 'EmpiricalDiagnoseResultDto(crcl: $crcl, severity: $severity, treatmentSite: $treatmentSite, medicines: $medicines, infectionProbabilities: $infectionProbabilities, references: $references)';
+    return 'EmpiricalDiagnoseResultDto(crcl: $crcl, severity: $severity, treatmentSite: $treatmentSite, recommendations: $recommendations, medicines: $medicines, infectionProbabilities: $infectionProbabilities, references: $references)';
   }
 
   @override
@@ -2054,6 +2102,10 @@ class _$EmpiricalDiagnoseResultDtoImpl implements _EmpiricalDiagnoseResultDto {
                 other.severity == severity) &&
             (identical(other.treatmentSite, treatmentSite) ||
                 other.treatmentSite == treatmentSite) &&
+            const DeepCollectionEquality().equals(
+              other._recommendations,
+              _recommendations,
+            ) &&
             const DeepCollectionEquality().equals(
               other._medicines,
               _medicines,
@@ -2075,6 +2127,7 @@ class _$EmpiricalDiagnoseResultDtoImpl implements _EmpiricalDiagnoseResultDto {
     crcl,
     severity,
     treatmentSite,
+    const DeepCollectionEquality().hash(_recommendations),
     const DeepCollectionEquality().hash(_medicines),
     const DeepCollectionEquality().hash(_infectionProbabilities),
     const DeepCollectionEquality().hash(_references),
@@ -2103,6 +2156,7 @@ abstract class _EmpiricalDiagnoseResultDto
     required final double crcl,
     required final String severity,
     required final String treatmentSite,
+    final List<AntibioticResultDto> recommendations,
     final List<AntibioticResultDto> medicines,
     final List<InfectionProbabilityDto> infectionProbabilities,
     final List<ReferenceDto> references,
@@ -2117,6 +2171,8 @@ abstract class _EmpiricalDiagnoseResultDto
   String get severity; // Mild | Moderate | Severe
   @override
   String get treatmentSite; // Outpatient | Inpatient | IntensiveCareUnit
+  @override
+  List<AntibioticResultDto> get recommendations;
   @override
   List<AntibioticResultDto> get medicines;
   @override

@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:respira_mobile/features/patient/routes.dart';
 
+import 'helpers/fake_api_adapter.dart';
 import 'helpers/fill_add_patient_form.dart';
 import 'helpers/pump_test_app.dart';
 
@@ -22,8 +23,11 @@ void main() {
       (tester) async {
     await _pumpProgress(tester);
 
-    // Empirical variant by default.
-    expect(find.text('Lý do thay đổi'), findsOneWidget);
+    // Empirical variant by default — the reason-checkbox section is
+    // gone; only the editability warning remains.
+    expect(find.text('Lý do thay đổi'), findsNothing);
+    expect(find.text('Có kết quả vi sinh'), findsNothing);
+    expect(find.text('Không thể chỉnh sửa sau khi lưu'), findsOneWidget);
     expect(find.text('Lưu diễn biến'), findsOneWidget);
 
     await tester.tap(find.text('Điều trị đích'));
@@ -59,7 +63,7 @@ void main() {
     expect(
         find.text('Mỗi đường dùng là một lựa chọn thuốc riêng'),
         findsOneWidget);
-    // Recommendations from POST /diagnose/target (mock).
+    // Options from POST /diagnose/target (mock).
     expect(find.text('Meropenem'), findsOneWidget);
     expect(find.text('Amikacin'), findsOneWidget);
 
@@ -126,5 +130,72 @@ void main() {
 
     // Flush the toast auto-dismiss timer before the test ends.
     await tester.pump(const Duration(seconds: 3));
+  });
+
+  testWidgets(
+      'diagnose 500 renders an error view with retry instead of crashing',
+      (tester) async {
+    // The real backend throws 500 when a pathogen has no antibiogram.
+    await pumpTestApp(
+      tester,
+      initialLocation: '/patient/progress',
+      overrides: {
+        'POST /api/1/diagnose/target': MockedResponse(500, {
+          'statusCode': 500,
+          'success': false,
+          'message': 'No antibiogram found for this pathogen',
+        }),
+      },
+    );
+
+    await tester.tap(find.text('Điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.ensureVisible(find.text('Tiếp tục điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Tiếp tục điều trị đích'));
+    await _settleNavigation(tester);
+    for (var i = 0; i < 12; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    // No red screen — the server message is shown with a retry.
+    expect(find.text('Chẩn đoán vi sinh'), findsOneWidget);
+    expect(
+      find.text('No antibiogram found for this pathogen'),
+      findsOneWidget,
+    );
+    expect(find.text('Thử lại'), findsOneWidget);
+  });
+
+  testWidgets(
+      'pathogen-list failure renders an error view instead of crashing',
+      (tester) async {
+    await pumpTestApp(
+      tester,
+      initialLocation: '/patient/progress',
+      overrides: {
+        'GET /api/1/pathogens/list': MockedResponse(500, {
+          'statusCode': 500,
+          'success': false,
+          'message': 'List endpoint failure',
+        }),
+      },
+    );
+
+    await tester.tap(find.text('Điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.ensureVisible(find.text('Tiếp tục điều trị đích'));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.tap(find.text('Tiếp tục điều trị đích'));
+    await _settleNavigation(tester);
+    for (var i = 0; i < 12; i++) {
+      await settleApi(tester);
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    expect(find.text('Chẩn đoán vi sinh'), findsOneWidget);
+    expect(find.text('List endpoint failure'), findsOneWidget);
+    expect(find.text('Thử lại'), findsOneWidget);
   });
 }

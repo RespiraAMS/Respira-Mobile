@@ -12,6 +12,7 @@ import '../../patient/services/patient_service.dart';
 import '../models/clinical_dtos.dart';
 import '../services/clinical_service.dart';
 import 'diagnosis_controller.dart';
+import 'medicine_selection_provider.dart';
 
 part 'diagnosis_flow_provider.freezed.dart';
 part 'diagnosis_flow_provider.g.dart';
@@ -101,6 +102,7 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
         ),
       );
       state = state.copyWith(empiricalResult: result, errorMessage: null);
+      ref.read(medicineSelectionControllerProvider.notifier).reset();
     } on ApiException catch (e) {
       state = state.copyWith(errorMessage: e.message);
     } on DioException catch (e) {
@@ -113,11 +115,10 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
   /// Persists the empirical treatment via
   /// `POST /patients/{id}/treatments` and flags completion.
   ///
-  /// The backend (`CreateTreatmentValidator`) requires identical
-  /// medicine lists to carry a null `ReasonForDifferentChoice`; the
-  /// `pathogen` record must carry the real pathogen GUID from the
-  /// diagnose response — an empty id fails JSON binding server-side.
-  Future<bool> saveEmpiricalTreatment() async {
+  /// [reason] is required by the backend whenever the doctor's chosen
+  /// list differs from the system's recommendation — a medicine replaced
+  /// or removed.
+  Future<bool> saveEmpiricalTreatment({String? reason}) async {
     final patient = ref.read(activePatientControllerProvider);
     final result = state.empiricalResult;
     if (result == null) return false;
@@ -129,22 +130,60 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
       return false;
     }
 
-    // Only medicines with an adjusted dosage can be persisted — the
-    // backend rejects records with an empty route or dose.
-    final medicines = result.medicines
-        .where((m) => m.dosages.isNotEmpty)
-        .map((m) => MedicineRecordDto(
-              id: m.id,
-              name: m.name,
-              classification: m.classification,
-              routeOfAdministration: m.dosages.first.routeOfAdministration,
-              dose: m.dosages.first.dose,
-            ).toJson())
-        .toList();
+    List<Map<String, dynamic>> toRecords(List<AntibioticResultDto> list) =>
+        list
+            .where((m) => m.dosages.isNotEmpty)
+            .map((m) => MedicineRecordDto(
+                  id: m.id,
+                  name: m.name,
+                  classification: m.classification,
+                  routeOfAdministration: m.dosages.first.routeOfAdministration,
+                  dose: m.dosages.first.dose,
+                ).toJson())
+            .toList();
 
-    if (medicines.isEmpty) {
+    // The system recommendation is the protocol subset (fallback to the
+    // full pool when the protocol carries no medicines).
+    final recommendationSource = result.recommendations.isNotEmpty
+        ? result.recommendations
+        : result.medicines;
+    final systemRecords = toRecords(recommendationSource);
+
+    if (systemRecords.isEmpty) {
       state = state.copyWith(
         errorMessage: 'Không có thuốc phù hợp với CrCl của bệnh nhân.',
+      );
+      return false;
+    }
+
+    // Apply the doctor's same-group replacements + removals on top of
+    // the recommendation. The backend requires at least one chosen
+    // medicine.
+    final selection = ref.read(medicineSelectionControllerProvider.notifier);
+    final chosenList = recommendationSource
+        .map((m) {
+          final chosenId = selection.chosenFor(m.id);
+          if (chosenId == null) return null; // removed by the doctor
+          if (chosenId == m.id) return m; // unchanged
+          return result.medicines.firstWhere(
+            (pool) => pool.id == chosenId,
+            orElse: () => m,
+          );
+        })
+        .whereType<AntibioticResultDto>()
+        .toList();
+    final chosenRecords = toRecords(chosenList);
+
+    if (chosenRecords.isEmpty) {
+      state = state.copyWith(
+        errorMessage: 'Phải giữ ít nhất một thuốc trong phác đồ.',
+      );
+      return false;
+    }
+
+    if (selection.hasChanges && (reason == null || reason.trim().isEmpty)) {
+      state = state.copyWith(
+        errorMessage: 'Vui lòng nhập lý do thay đổi lựa chọn thuốc.',
       );
       return false;
     }
@@ -165,11 +204,13 @@ class DiagnosisFlowController extends _$DiagnosisFlowController {
         CreateTreatmentRequest(
           treatmentType: 'EmpiricalTherapy',
           crcl: result.crcl,
-          systemRecommendedMedicines: medicines,
-          doctorChosenMedicines: medicines,
+          systemRecommendedMedicines: systemRecords,
+          doctorChosenMedicines: chosenRecords,
           severity: result.severity,
           treatmentSite: result.treatmentSite,
           infectionProbabilityRecords: infectionRecords,
+          reasonForDifferentChoice:
+              selection.hasChanges ? reason!.trim() : null,
         ),
       );
       state = state.copyWith(saved: true, errorMessage: null);

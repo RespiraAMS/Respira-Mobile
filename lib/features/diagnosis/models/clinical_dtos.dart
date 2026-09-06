@@ -63,6 +63,7 @@ class AntibioticResultDto with _$AntibioticResultDto {
   const factory AntibioticResultDto({
     required String id,
     required String name,
+    @Default('') String antibioticGroupId,
     @Default('') String antibioticGroupName,
     @Default('') String classification,
     @Default([]) List<DosageDto> dosages,
@@ -113,12 +114,18 @@ class ReferenceDto with _$ReferenceDto {
 }
 
 /// `POST /diagnose/empirical` response (`EmpiricalDiagnoseResult`).
+///
+/// `recommendations` merges the medicines of the matched treatment
+/// protocols (the system's suggestion); `medicines` is the full
+/// pick-pool — doctors may replace a recommendation only with a pool
+/// medicine of the same antibiotic group.
 @freezed
 class EmpiricalDiagnoseResultDto with _$EmpiricalDiagnoseResultDto {
   const factory EmpiricalDiagnoseResultDto({
     required double crcl,
     required String severity, // Mild | Moderate | Severe
     required String treatmentSite, // Outpatient | Inpatient | IntensiveCareUnit
+    @Default([]) List<AntibioticResultDto> recommendations,
     @Default([]) List<AntibioticResultDto> medicines,
     @Default([]) List<InfectionProbabilityDto> infectionProbabilities,
     @Default([]) List<ReferenceDto> references,

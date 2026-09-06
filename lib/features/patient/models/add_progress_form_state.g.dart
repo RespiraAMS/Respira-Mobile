@@ -12,16 +12,12 @@ _$AddProgressFormStateImpl _$$AddProgressFormStateImplFromJson(
   treatmentType:
       $enumDecodeNullable(_$TreatmentTypeEnumMap, json['treatmentType']) ??
       TreatmentType.empirical,
-  microbiologyResult: json['microbiologyResult'] as bool? ?? true,
-  poorResponse: json['poorResponse'] as bool? ?? false,
 );
 
 Map<String, dynamic> _$$AddProgressFormStateImplToJson(
   _$AddProgressFormStateImpl instance,
 ) => <String, dynamic>{
   'treatmentType': _$TreatmentTypeEnumMap[instance.treatmentType]!,
-  'microbiologyResult': instance.microbiologyResult,
-  'poorResponse': instance.poorResponse,
 };
 
 const _$TreatmentTypeEnumMap = {

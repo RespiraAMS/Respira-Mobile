@@ -14,7 +14,6 @@ import '../providers/add_progress_controller.dart';
 import '../providers/current_patient_provider.dart';
 import '../routes.dart';
 import '../widgets/section_label_widget.dart';
-import '../widgets/selection_row_widget.dart';
 
 /// Route `/patient/progress` — record a treatment change. The form
 /// switches between the empirical variant (reason checkboxes) and the
@@ -127,7 +126,7 @@ class _AddProgressScreenState extends ConsumerState<AddProgressScreen> {
   }
 }
 
-/// Empirical variant: reason checkboxes + editability warning.
+/// Empirical variant: editability warning.
 class _EmpiricalBody extends StatelessWidget {
   const _EmpiricalBody({required this.form, required this.controller});
 
@@ -136,26 +135,11 @@ class _EmpiricalBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SectionLabelWidget('Lý do thay đổi'),
-        const SizedBox(height: Spacing.xxxs),
-        SelectionRowWidget(
-          title: 'Có kết quả vi sinh',
-          description: 'Chuyển sang điều trị đích khi phù hợp.',
-          selected: form.microbiologyResult,
-          onTap: controller.toggleMicrobiologyResult,
-        ),
-        const SizedBox(height: Spacing.control),
-        SelectionRowWidget(
-          title: 'Đáp ứng kém',
-          description: 'Triệu chứng không cải thiện sau theo dõi.',
-          selected: form.poorResponse,
-          onTap: controller.togglePoorResponse,
-        ),
-        const SizedBox(height: Spacing.section),
-        const ClinicalAlert(
+        SizedBox(height: Spacing.inline),
+        ClinicalAlert(
           severity: ClinicalSeverity.needsAttention,
           title: 'Không thể chỉnh sửa sau khi lưu',
           description: 'Tạo diễn biến mới nếu cần cập nhật tiếp.',

@@ -22,8 +22,9 @@ Future<List<PathogenItemDto>> pathogenList(PathogenListRef ref) async {
 }
 
 /// Real targeted diagnosis from `POST /diagnose/target` for the given
-/// pathogen, using the active patient's demographics.
-@Riverpod(keepAlive: true)
+/// pathogen, using the active patient's demographics. Auto-disposed so
+/// a failed/stale result never leaks between patients.
+@riverpod
 Future<TargetedDiagnoseResultDto> targetedDiagnoseResult(
   TargetedDiagnoseResultRef ref,
   String pathogenId,

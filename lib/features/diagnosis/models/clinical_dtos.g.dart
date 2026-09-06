@@ -77,6 +77,7 @@ _$AntibioticResultDtoImpl _$$AntibioticResultDtoImplFromJson(
 ) => _$AntibioticResultDtoImpl(
   id: json['id'] as String,
   name: json['name'] as String,
+  antibioticGroupId: json['antibioticGroupId'] as String? ?? '',
   antibioticGroupName: json['antibioticGroupName'] as String? ?? '',
   classification: json['classification'] as String? ?? '',
   dosages:
@@ -91,6 +92,7 @@ Map<String, dynamic> _$$AntibioticResultDtoImplToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'name': instance.name,
+  'antibioticGroupId': instance.antibioticGroupId,
   'antibioticGroupName': instance.antibioticGroupName,
   'classification': instance.classification,
   'dosages': instance.dosages,
@@ -146,6 +148,11 @@ _$EmpiricalDiagnoseResultDtoImpl _$$EmpiricalDiagnoseResultDtoImplFromJson(
   crcl: (json['crcl'] as num).toDouble(),
   severity: json['severity'] as String,
   treatmentSite: json['treatmentSite'] as String,
+  recommendations:
+      (json['recommendations'] as List<dynamic>?)
+          ?.map((e) => AntibioticResultDto.fromJson(e as Map<String, dynamic>))
+          .toList() ??
+      const [],
   medicines:
       (json['medicines'] as List<dynamic>?)
           ?.map((e) => AntibioticResultDto.fromJson(e as Map<String, dynamic>))
@@ -171,6 +178,7 @@ Map<String, dynamic> _$$EmpiricalDiagnoseResultDtoImplToJson(
   'crcl': instance.crcl,
   'severity': instance.severity,
   'treatmentSite': instance.treatmentSite,
+  'recommendations': instance.recommendations,
   'medicines': instance.medicines,
   'infectionProbabilities': instance.infectionProbabilities,
   'references': instance.references,

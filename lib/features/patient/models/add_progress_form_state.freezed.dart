@@ -23,12 +23,6 @@ AddProgressFormState _$AddProgressFormStateFromJson(Map<String, dynamic> json) {
 mixin _$AddProgressFormState {
   TreatmentType get treatmentType => throw _privateConstructorUsedError;
 
-  /// "Có kết quả vi sinh".
-  bool get microbiologyResult => throw _privateConstructorUsedError;
-
-  /// "Đáp ứng kém".
-  bool get poorResponse => throw _privateConstructorUsedError;
-
   /// Serializes this AddProgressFormState to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -46,11 +40,7 @@ abstract class $AddProgressFormStateCopyWith<$Res> {
     $Res Function(AddProgressFormState) then,
   ) = _$AddProgressFormStateCopyWithImpl<$Res, AddProgressFormState>;
   @useResult
-  $Res call({
-    TreatmentType treatmentType,
-    bool microbiologyResult,
-    bool poorResponse,
-  });
+  $Res call({TreatmentType treatmentType});
 }
 
 /// @nodoc
@@ -70,25 +60,13 @@ class _$AddProgressFormStateCopyWithImpl<
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? treatmentType = null,
-    Object? microbiologyResult = null,
-    Object? poorResponse = null,
-  }) {
+  $Res call({Object? treatmentType = null}) {
     return _then(
       _value.copyWith(
             treatmentType: null == treatmentType
                 ? _value.treatmentType
                 : treatmentType // ignore: cast_nullable_to_non_nullable
                       as TreatmentType,
-            microbiologyResult: null == microbiologyResult
-                ? _value.microbiologyResult
-                : microbiologyResult // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            poorResponse: null == poorResponse
-                ? _value.poorResponse
-                : poorResponse // ignore: cast_nullable_to_non_nullable
-                      as bool,
           )
           as $Val,
     );
@@ -104,11 +82,7 @@ abstract class _$$AddProgressFormStateImplCopyWith<$Res>
   ) = __$$AddProgressFormStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    TreatmentType treatmentType,
-    bool microbiologyResult,
-    bool poorResponse,
-  });
+  $Res call({TreatmentType treatmentType});
 }
 
 /// @nodoc
@@ -124,25 +98,13 @@ class __$$AddProgressFormStateImplCopyWithImpl<$Res>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? treatmentType = null,
-    Object? microbiologyResult = null,
-    Object? poorResponse = null,
-  }) {
+  $Res call({Object? treatmentType = null}) {
     return _then(
       _$AddProgressFormStateImpl(
         treatmentType: null == treatmentType
             ? _value.treatmentType
             : treatmentType // ignore: cast_nullable_to_non_nullable
                   as TreatmentType,
-        microbiologyResult: null == microbiologyResult
-            ? _value.microbiologyResult
-            : microbiologyResult // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        poorResponse: null == poorResponse
-            ? _value.poorResponse
-            : poorResponse // ignore: cast_nullable_to_non_nullable
-                  as bool,
       ),
     );
   }
@@ -153,8 +115,6 @@ class __$$AddProgressFormStateImplCopyWithImpl<$Res>
 class _$AddProgressFormStateImpl implements _AddProgressFormState {
   const _$AddProgressFormStateImpl({
     this.treatmentType = TreatmentType.empirical,
-    this.microbiologyResult = true,
-    this.poorResponse = false,
   });
 
   factory _$AddProgressFormStateImpl.fromJson(Map<String, dynamic> json) =>
@@ -164,19 +124,9 @@ class _$AddProgressFormStateImpl implements _AddProgressFormState {
   @JsonKey()
   final TreatmentType treatmentType;
 
-  /// "Có kết quả vi sinh".
-  @override
-  @JsonKey()
-  final bool microbiologyResult;
-
-  /// "Đáp ứng kém".
-  @override
-  @JsonKey()
-  final bool poorResponse;
-
   @override
   String toString() {
-    return 'AddProgressFormState(treatmentType: $treatmentType, microbiologyResult: $microbiologyResult, poorResponse: $poorResponse)';
+    return 'AddProgressFormState(treatmentType: $treatmentType)';
   }
 
   @override
@@ -185,17 +135,12 @@ class _$AddProgressFormStateImpl implements _AddProgressFormState {
         (other.runtimeType == runtimeType &&
             other is _$AddProgressFormStateImpl &&
             (identical(other.treatmentType, treatmentType) ||
-                other.treatmentType == treatmentType) &&
-            (identical(other.microbiologyResult, microbiologyResult) ||
-                other.microbiologyResult == microbiologyResult) &&
-            (identical(other.poorResponse, poorResponse) ||
-                other.poorResponse == poorResponse));
+                other.treatmentType == treatmentType));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, treatmentType, microbiologyResult, poorResponse);
+  int get hashCode => Object.hash(runtimeType, treatmentType);
 
   /// Create a copy of AddProgressFormState
   /// with the given fields replaced by the non-null parameter values.
@@ -216,25 +161,14 @@ class _$AddProgressFormStateImpl implements _AddProgressFormState {
 }
 
 abstract class _AddProgressFormState implements AddProgressFormState {
-  const factory _AddProgressFormState({
-    final TreatmentType treatmentType,
-    final bool microbiologyResult,
-    final bool poorResponse,
-  }) = _$AddProgressFormStateImpl;
+  const factory _AddProgressFormState({final TreatmentType treatmentType}) =
+      _$AddProgressFormStateImpl;
 
   factory _AddProgressFormState.fromJson(Map<String, dynamic> json) =
       _$AddProgressFormStateImpl.fromJson;
 
   @override
   TreatmentType get treatmentType;
-
-  /// "Có kết quả vi sinh".
-  @override
-  bool get microbiologyResult;
-
-  /// "Đáp ứng kém".
-  @override
-  bool get poorResponse;
 
   /// Create a copy of AddProgressFormState
   /// with the given fields replaced by the non-null parameter values.

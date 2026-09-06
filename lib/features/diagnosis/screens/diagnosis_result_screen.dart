@@ -15,7 +15,7 @@ import '../models/diagnosis_state.dart';
 import '../providers/diagnosis_controller.dart';
 import '../providers/diagnosis_flow_provider.dart';
 import '../providers/diagnosis_tab_controller.dart';
-import '../widgets/medicine_card_widget.dart';
+import '../providers/medicine_selection_provider.dart';
 import '../widgets/reference_row_widget.dart';
 import '../widgets/stat_tile_widget.dart';
 
@@ -32,6 +32,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
     WidgetRef ref,
     EmpiricalDiagnoseResultDto result,
   ) async {
+    final changes = ref.read(medicineSelectionControllerProvider.notifier);
     final confirmed = await showAppConfirmDialog(
       context,
       icon: LucideIcons.save,
@@ -39,15 +40,24 @@ class DiagnosisResultScreen extends ConsumerWidget {
       description:
           'Sau khi lưu, nội dung chỉ có thể xem và không được chỉnh sửa trực tiếp.',
       infoLabel:
-          'Đã chọn ${result.medicines.length} thuốc · ${result.references.length} phác đồ',
+          'Đã chọn ${result.recommendations.isEmpty ? result.medicines.length : result.recommendations.length} thuốc · ${result.references.length} phác đồ'
+          '${changes.hasChanges ? ' · ${changes.changedCount} thay đổi' : ''}',
       confirmLabel: 'Xác nhận lưu',
     );
 
     if (confirmed != true || !context.mounted) return;
 
+    // The backend requires a reason whenever the doctor's choice differs
+    // from the system recommendation (a medicine replaced or removed).
+    String? reason;
+    if (changes.hasChanges) {
+      reason = await _showReasonDialog(context);
+      if (reason == null || !context.mounted) return;
+    }
+
     final ok = await ref
         .read(diagnosisFlowControllerProvider.notifier)
-        .saveEmpiricalTreatment();
+        .saveEmpiricalTreatment(reason: reason);
     if (!context.mounted) return;
 
     if (!ok) {
@@ -67,6 +77,63 @@ class DiagnosisResultScreen extends ConsumerWidget {
     context.go(
       '${PatientRoutes.detail}?id=${Uri.encodeComponent(patient.id)}',
       extra: 'saved',
+    );
+  }
+
+  /// Collects the mandatory reason for replacing a recommended medicine.
+  /// Returns null when cancelled.
+  Future<String?> _showReasonDialog(BuildContext context) {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final c = dialogContext.respiraColors;
+        return AlertDialog(
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.lg),
+          title: Text(
+            'Lý do thay đổi lựa chọn thuốc',
+            style: TypographyTokens.bodyLarge(dialogContext)
+                .copyWith(fontWeight: FontWeight.w700),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              AppText(
+                'Bạn đã thay đổi thuốc trong phác đồ khuyến nghị. '
+                'Vui lòng nêu lý do để lưu vào hồ sơ.',
+                type: AppTextType.caption,
+              ),
+              const SizedBox(height: Spacing.control),
+              AppTextField(
+                label: 'Lý do',
+                hintText: 'Ví dụ: bệnh nhân dị ứng với thuốc khuyến nghị',
+                onChanged: (value) => controller.text = value,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () {
+                final text = controller.text.trim();
+                if (text.isEmpty) return;
+                Navigator.of(dialogContext).pop(text);
+              },
+              child: Text(
+                'Xác nhận',
+                style: TypographyTokens.body(dialogContext)
+                    .copyWith(color: c.primary, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
   @override
@@ -125,8 +192,7 @@ class DiagnosisResultScreen extends ConsumerWidget {
                       const SizedBox(height: Spacing.section),
                       switch (tab) {
                         DiagnosisTab.result => _ResultTab(result: result),
-                        DiagnosisTab.medicines =>
-                          _MedicinesTab(medicines: result.medicines),
+                        DiagnosisTab.medicines => _MedicinesTab(result: result),
                         DiagnosisTab.references =>
                           _ReferencesTab(references: result.references),
                       },
@@ -317,31 +383,326 @@ class _ResultTab extends ConsumerWidget {
   }
 }
 
-class _MedicinesTab extends StatelessWidget {
-  const _MedicinesTab({required this.medicines});
+/// 'Thuốc khuyến nghị' tab: the protocol's recommended medicines, each
+/// replaceable with a same-antibiotic-group medicine from the API's
+/// full pick-pool (`medicines`) — or removable entirely (a reason is
+/// mandatory on save when anything changed).
+class _MedicinesTab extends ConsumerWidget {
+  const _MedicinesTab({required this.result});
 
-  final List<AntibioticResultDto> medicines;
+  final EmpiricalDiagnoseResultDto result;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selection = ref.watch(medicineSelectionControllerProvider);
+    // Recommendations drive the tab; an empty protocol list falls back
+    // to the full pool so the tab is never blank.
+    final recommendations =
+        result.recommendations.isNotEmpty ? result.recommendations : result.medicines;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const _SectionTitle('Thuốc khuyến nghị'),
         const SizedBox(height: Spacing.control + 4),
-        AppText('Liều và đường dùng: theo phác đồ đã chọn.',
-            type: AppTextType.caption),
+        AppText(
+          'Liều và đường dùng: theo phác đồ đã chọn. Có thể thay hoặc bỏ '
+          'thuốc; thay/bỏ cần nêu lý do khi lưu.',
+          type: AppTextType.caption,
+        ),
         const SizedBox(height: Spacing.block - 4),
-        for (final medicine in medicines) ...[
-          MedicineCardWidget(
-            name: medicine.name,
-            regimenLine: medicine.dosages.isEmpty
-                ? medicine.antibioticGroupName
-                : '${medicine.dosages.first.routeOfAdministration} · ${medicine.dosages.first.dose}',
+        for (final recommendation in recommendations) ...[
+          _RecommendedMedicineCard(
+            recommendation: recommendation,
+            pool: result.medicines,
+            chosenId: selection.removed.contains(recommendation.id)
+                ? null
+                : selection.replacements[recommendation.id],
+            removed: selection.removed.contains(recommendation.id),
+            remainingCount: recommendations.length - selection.removed.length,
           ),
-          if (medicine != medicines.last) const SizedBox(height: Spacing.group),
+          if (recommendation != recommendations.last)
+            const SizedBox(height: Spacing.group),
         ],
       ],
+    );
+  }
+}
+
+/// One recommendation row: the currently chosen medicine (original,
+/// replacement or removed state) with same-group 'Thay thế', removal
+/// and restore actions.
+class _RecommendedMedicineCard extends ConsumerWidget {
+  const _RecommendedMedicineCard({
+    required this.recommendation,
+    required this.pool,
+    required this.chosenId,
+    required this.removed,
+    required this.remainingCount,
+  });
+
+  final AntibioticResultDto recommendation;
+  final List<AntibioticResultDto> pool;
+
+  /// Non-null when the doctor picked a replacement.
+  final String? chosenId;
+
+  /// True when the doctor removed this recommendation entirely.
+  final bool removed;
+
+  /// How many recommendations remain after removals — the backend
+  /// requires at least one chosen medicine.
+  final int remainingCount;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final c = context.respiraColors;
+    final selection = ref.read(medicineSelectionControllerProvider.notifier);
+    final replaced = !removed && chosenId != null;
+    final chosen = replaced
+        ? pool.firstWhere(
+            (m) => m.id == chosenId,
+            orElse: () => recommendation,
+          )
+        : recommendation;
+    final routeDose = chosen.dosages.isEmpty
+        ? chosen.antibioticGroupName
+        : '${chosen.dosages.first.routeOfAdministration} · ${chosen.dosages.first.dose}';
+
+    return AppSurface(
+      radius: AppRadius.mdValue,
+      color: removed ? c.surfaceSecondary : c.surface,
+      padding: const EdgeInsets.all(Spacing.control + 2),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: ControlSize.touchTargetMin - 4,
+                height: ControlSize.touchTargetMin - 4,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: removed
+                      ? c.borderSubtle
+                      : replaced
+                          ? c.warningSoft
+                          : c.primarySoft,
+                  borderRadius: BorderRadius.circular(AppRadius.smValue),
+                ),
+                child: AppIcon(
+                  removed
+                      ? LucideIcons.trash2
+                      : replaced
+                          ? LucideIcons.repeat
+                          : LucideIcons.pill,
+                  size: ControlSize.iconLg,
+                  color: removed
+                      ? c.textTertiary
+                      : replaced
+                          ? c.warning
+                          : c.primary,
+                ),
+              ),
+              const SizedBox(width: Spacing.control),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      removed ? recommendation.name : chosen.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TypographyTokens.body(context).copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: removed
+                                ? c.textTertiary
+                                : c.textPrimary,
+                            decoration: removed
+                                ? TextDecoration.lineThrough
+                                : TextDecoration.none,
+                          ),
+                    ),
+                    const SizedBox(height: Spacing.xxxs),
+                    Text(
+                      '${(removed ? recommendation : chosen).antibioticGroupName} · $routeDose',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TypographyTokens.caption(context)
+                          .copyWith(color: c.textSecondary),
+                    ),
+                    if (replaced) ...[
+                      const SizedBox(height: Spacing.xxxs),
+                      AppText(
+                        'Thay thế cho ${recommendation.name}',
+                        type: AppTextType.label,
+                        color: c.warning,
+                      ),
+                    ],
+                    if (removed) ...[
+                      const SizedBox(height: Spacing.xxxs),
+                      AppText(
+                        'Đã xóa khỏi phác đồ',
+                        type: AppTextType.label,
+                        color: c.error,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: Spacing.control),
+          Row(
+            children: [
+              if (removed) ...[
+                Expanded(
+                  child: AppButton(
+                    label: 'Khôi phục',
+                    type: AppButtonType.outline,
+                    onPressed: () => selection.restore(recommendation.id),
+                  ),
+                ),
+              ] else ...[
+                Expanded(
+                  child: AppButton(
+                    label: 'Thay thế',
+                    type: AppButtonType.outline,
+                    onPressed: () => _showReplacementSheet(context, ref),
+                  ),
+                ),                const SizedBox(width: Spacing.control),
+                Expanded(
+                  child: AppButton(
+                    label: 'Xóa',
+                    type: AppButtonType.destructive,
+                    onPressed: remainingCount > 1
+                        ? () => selection.remove(recommendation.id)
+                        : null,
+                  ),
+                ),
+                if (replaced) ...[
+                  const SizedBox(width: Spacing.control),
+                  Expanded(
+                    child: AppButton(
+                      label: 'Khôi phục',
+                      type: AppButtonType.outline,
+                      onPressed: () => selection.restore(recommendation.id),
+                    ),
+                  ),
+                ],
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Same-antibiotic-group candidates from the pick-pool, excluding the
+  /// currently chosen medicine. Selecting a row applies the replacement
+  /// to the controller directly and closes the dialog.
+  void _showReplacementSheet(BuildContext context, WidgetRef ref) {
+    final candidates = pool
+        .where((m) =>
+            m.id != recommendation.id &&
+            m.antibioticGroupId == recommendation.antibioticGroupId &&
+            m.dosages.isNotEmpty)
+        .toList();
+
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        final c = dialogContext.respiraColors;
+        return AlertDialog(
+          backgroundColor: c.surface,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.lg),
+          title: Text(
+            'Thay ${recommendation.name} — cùng nhóm '
+            '${recommendation.antibioticGroupName}',
+            style: TypographyTokens.bodyLarge(dialogContext)
+                .copyWith(fontWeight: FontWeight.w700),
+          ),
+          content: candidates.isEmpty
+              ? AppText(
+                  'Không có thuốc nào cùng nhóm trong danh sách.',
+                  type: AppTextType.caption,
+                )
+              : AppCard.divided([
+                  for (final candidate in candidates)
+                    _ReplacementOptionRow(
+                      candidate: candidate,
+                      onTap: () {
+                        ref
+                            .read(medicineSelectionControllerProvider.notifier)
+                            .replace(recommendation.id, candidate.id);
+                        Navigator.of(dialogContext).pop();
+                      },
+                    ),
+                ]),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Đóng'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ReplacementOptionRow extends StatelessWidget {
+  const _ReplacementOptionRow({required this.candidate, required this.onTap});
+
+  final AntibioticResultDto candidate;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.respiraColors;
+    final routeDose = candidate.dosages.isEmpty
+        ? ''
+        : '${candidate.dosages.first.routeOfAdministration} · ${candidate.dosages.first.dose}';
+
+    return TextButton(
+      onPressed: onTap,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(
+          horizontal: Spacing.inline,
+          vertical: Spacing.control,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.sm),
+        foregroundColor: c.textPrimary,
+        alignment: Alignment.centerLeft,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  candidate.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TypographyTokens.body(context)
+                      .copyWith(fontWeight: FontWeight.w600),
+                ),
+                if (routeDose.isNotEmpty) ...[
+                  const SizedBox(height: Spacing.xxxs),
+                  AppText(routeDose, type: AppTextType.caption),
+                ],
+              ],
+            ),
+          ),
+          AppIcon(
+            LucideIcons.chevronRight,
+            size: ControlSize.iconSm,
+            color: c.textTertiary,
+          ),
+        ],
+      ),
     );
   }
 }

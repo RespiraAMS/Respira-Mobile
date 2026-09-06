@@ -13,12 +13,4 @@ class AddProgressController extends _$AddProgressController {
   void selectTreatment(TreatmentType type) {
     state = state.copyWith(treatmentType: type);
   }
-
-  void toggleMicrobiologyResult() {
-    state = state.copyWith(microbiologyResult: !state.microbiologyResult);
-  }
-
-  void togglePoorResponse() {
-    state = state.copyWith(poorResponse: !state.poorResponse);
-  }
 }

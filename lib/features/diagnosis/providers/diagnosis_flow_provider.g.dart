@@ -7,7 +7,7 @@ part of 'diagnosis_flow_provider.dart';
 // **************************************************************************
 
 String _$diagnosisFlowControllerHash() =>
-    r'b63e0ab32f29308d83e66d4a544307af84a36499';
+    r'1fed2d3dcd564b8eb67d84abd26e6a4a269dcbab';
 
 /// Orchestrates the API-backed diagnosis flow: disease + criteria
 /// loading, empirical diagnosis, treatment persistence.

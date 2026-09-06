@@ -258,6 +258,24 @@ class FakeApiAdapter implements HttpClientAdapter {
         'status': status,
       };
 
+  /// Diagnose-response medicine (`AntibioticResult`) — [group] drives
+  /// the same-group replacement filter in the medicines tab.
+  static Map<String, dynamic> medicineNamed(
+    String name,
+    String route, {
+    String group = 'Beta-lactam',
+  }) =>
+      {
+        'id': 'med-$name',
+        'name': name,
+        'antibioticGroupId': 'group-$group',
+        'antibioticGroupName': group,
+        'classification': 'Access',
+        'dosages': [
+          {'routeOfAdministration': route, 'dose': '1 g mỗi 8 giờ'},
+        ],
+      };
+
   static Map<String, dynamic> _patient(
     String name,
     String code,
@@ -296,13 +314,14 @@ class FakeApiAdapter implements HttpClientAdapter {
 
   static Map<String, dynamic> _medicine(
     String name,
-    String route,
-  ) =>
+    String route, {
+    String group = 'Beta-lactam',
+  }) =>
       {
         'id': 'med-$name',
         'name': name,
-        'antibioticGroupId': 'group-1',
-        'antibioticGroupName': 'Beta-lactam',
+        'antibioticGroupId': 'group-$group',
+        'antibioticGroupName': group,
         'classification': 'Access',
         'dosages': [
           {'routeOfAdministration': route, 'dose': '1 g mỗi 8 giờ'},
@@ -313,9 +332,17 @@ class FakeApiAdapter implements HttpClientAdapter {
         'crcl': 84.2,
         'severity': 'Severe',
         'treatmentSite': 'Inpatient',
+        'recommendations': [
+          _medicine('Meropenem', 'Intravenous'),
+          _medicine('Levofloxacin', 'Oral', group: 'Fluoroquinolone'),
+        ],
         'medicines': [
           _medicine('Meropenem', 'Intravenous'),
           _medicine('Amoxicillin', 'Oral'),
+          _medicine('Levofloxacin', 'Oral', group: 'Fluoroquinolone'),
+          _medicine('Ciprofloxacin', 'Oral', group: 'Fluoroquinolone'),
+          // Different group — must NOT appear as a replacement candidate.
+          _medicine('Vancomycin', 'Intravenous', group: 'Glycopeptide'),
         ],
         'infectionProbabilities': [
           {

@@ -18,12 +18,6 @@ enum TreatmentType {
 class AddProgressFormState with _$AddProgressFormState {
   const factory AddProgressFormState({
     @Default(TreatmentType.empirical) TreatmentType treatmentType,
-
-    /// "Có kết quả vi sinh".
-    @Default(true) bool microbiologyResult,
-
-    /// "Đáp ứng kém".
-    @Default(false) bool poorResponse,
   }) = _AddProgressFormState;
 
   factory AddProgressFormState.fromJson(Map<String, dynamic> json) =>

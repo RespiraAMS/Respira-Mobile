@@ -7,7 +7,7 @@ part of 'add_progress_controller.dart';
 // **************************************************************************
 
 String _$addProgressControllerHash() =>
-    r'cc1603aef56a33b5f11f9bda0364c756763f387a';
+    r'a73a5d5398e29e1c43c53889af0ffdbe1354c686';
 
 /// Holds the "Thêm diễn biến" form state.
 ///

@@ -123,15 +123,38 @@ void main() {
       expect(find.text('Cao'), findsOneWidget);
       expect(find.text('CURB-65 = 2'), findsOneWidget);
 
+      // ── Medicines tab: recommended-first + replace / remove ───────
       await tester.tap(find.text('Thuốc khuyến nghị').last);
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('Meropenem'), findsWidgets);
+
+      // Remove the second recommendation (Levofloxacin) — keeps at
+      // least one medicine, as the backend requires.
+      await tester.ensureVisible(find.text('Xóa').last);
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text('Levofloxacin'), findsOneWidget);
+      await tester.tap(find.text('Xóa').last);
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.text('Đã xóa khỏi phác đồ'), findsOneWidget);
+
+      // Open the replacement sheet for Meropenem (its card is the only
+      // one with a 'Thay thế' button after the removal) — only the same
+      // antibiotic group is offered (Amoxicillin yes, Vancomycin no).
+      await tester.ensureVisible(find.text('Thay thế'));
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text('Thay thế'));
+      await tester.pumpAndSettle(const Duration(milliseconds: 200));
+      expect(find.text('Amoxicillin'), findsOneWidget);
+      expect(find.text('Vancomycin'), findsNothing);
+      await tester.tap(find.text('Amoxicillin'));
+      await tester.pumpAndSettle(const Duration(milliseconds: 300));
+      expect(find.text('Thay thế cho Meropenem'), findsOneWidget);
 
       await tester.tap(find.text('Tham khảo').last);
       await tester.pump(const Duration(milliseconds: 200));
       expect(find.text('Phác đồ A · Viêm phổi cộng đồng'), findsOneWidget);
 
-      // ── Confirm dialog completes the route ────────────────────────
+      // ── Confirm dialog + mandatory reason (changes present) ───────
       await tester.ensureVisible(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 200));
       await tester.tap(find.text('Xác nhận chẩn đoán'));
@@ -149,6 +172,17 @@ void main() {
       await tester.tap(find.text('Xác nhận chẩn đoán'));
       await tester.pump(const Duration(milliseconds: 300));
       await tester.tap(find.text('Xác nhận lưu'));
+      await tester.pump(const Duration(milliseconds: 300));
+
+      // A replacement + a removal were made — the mandatory reason
+      // dialog appears.
+      expect(find.text('Lý do thay đổi lựa chọn thuốc'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(AppTextField, 'Lý do'),
+        'Bệnh nhân dị ứng với thuốc khuyến nghị',
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      await tester.tap(find.text('Xác nhận'));
       await tester.pump(const Duration(milliseconds: 600));
       await _settleNavigation(tester);
       // Detail refetches GET /patients/{id} (provider invalidated after

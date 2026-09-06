@@ -26,7 +26,7 @@ final pathogenListProvider = FutureProvider<List<PathogenItemDto>>.internal(
 // ignore: unused_element
 typedef PathogenListRef = FutureProviderRef<List<PathogenItemDto>>;
 String _$targetedDiagnoseResultHash() =>
-    r'5cd5e2ac022ded02cf809dfaa3430f1d125c6e23';
+    r'79f9b16c37219b56eb6f50fcb34efb98fe21b9c0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -50,26 +50,30 @@ class _SystemHash {
 }
 
 /// Real targeted diagnosis from `POST /diagnose/target` for the given
-/// pathogen, using the active patient's demographics.
+/// pathogen, using the active patient's demographics. Auto-disposed so
+/// a failed/stale result never leaks between patients.
 ///
 /// Copied from [targetedDiagnoseResult].
 @ProviderFor(targetedDiagnoseResult)
 const targetedDiagnoseResultProvider = TargetedDiagnoseResultFamily();
 
 /// Real targeted diagnosis from `POST /diagnose/target` for the given
-/// pathogen, using the active patient's demographics.
+/// pathogen, using the active patient's demographics. Auto-disposed so
+/// a failed/stale result never leaks between patients.
 ///
 /// Copied from [targetedDiagnoseResult].
 class TargetedDiagnoseResultFamily
     extends Family<AsyncValue<TargetedDiagnoseResultDto>> {
   /// Real targeted diagnosis from `POST /diagnose/target` for the given
-  /// pathogen, using the active patient's demographics.
+  /// pathogen, using the active patient's demographics. Auto-disposed so
+  /// a failed/stale result never leaks between patients.
   ///
   /// Copied from [targetedDiagnoseResult].
   const TargetedDiagnoseResultFamily();
 
   /// Real targeted diagnosis from `POST /diagnose/target` for the given
-  /// pathogen, using the active patient's demographics.
+  /// pathogen, using the active patient's demographics. Auto-disposed so
+  /// a failed/stale result never leaks between patients.
   ///
   /// Copied from [targetedDiagnoseResult].
   TargetedDiagnoseResultProvider call(String pathogenId) {
@@ -99,13 +103,15 @@ class TargetedDiagnoseResultFamily
 }
 
 /// Real targeted diagnosis from `POST /diagnose/target` for the given
-/// pathogen, using the active patient's demographics.
+/// pathogen, using the active patient's demographics. Auto-disposed so
+/// a failed/stale result never leaks between patients.
 ///
 /// Copied from [targetedDiagnoseResult].
 class TargetedDiagnoseResultProvider
-    extends FutureProvider<TargetedDiagnoseResultDto> {
+    extends AutoDisposeFutureProvider<TargetedDiagnoseResultDto> {
   /// Real targeted diagnosis from `POST /diagnose/target` for the given
-  /// pathogen, using the active patient's demographics.
+  /// pathogen, using the active patient's demographics. Auto-disposed so
+  /// a failed/stale result never leaks between patients.
   ///
   /// Copied from [targetedDiagnoseResult].
   TargetedDiagnoseResultProvider(String pathogenId)
@@ -159,7 +165,7 @@ class TargetedDiagnoseResultProvider
   }
 
   @override
-  FutureProviderElement<TargetedDiagnoseResultDto> createElement() {
+  AutoDisposeFutureProviderElement<TargetedDiagnoseResultDto> createElement() {
     return _TargetedDiagnoseResultProviderElement(this);
   }
 
@@ -181,13 +187,13 @@ class TargetedDiagnoseResultProvider
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 mixin TargetedDiagnoseResultRef
-    on FutureProviderRef<TargetedDiagnoseResultDto> {
+    on AutoDisposeFutureProviderRef<TargetedDiagnoseResultDto> {
   /// The parameter `pathogenId` of this provider.
   String get pathogenId;
 }
 
 class _TargetedDiagnoseResultProviderElement
-    extends FutureProviderElement<TargetedDiagnoseResultDto>
+    extends AutoDisposeFutureProviderElement<TargetedDiagnoseResultDto>
     with TargetedDiagnoseResultRef {
   _TargetedDiagnoseResultProviderElement(super.provider);
 
